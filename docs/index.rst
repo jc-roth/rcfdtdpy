@@ -48,8 +48,8 @@ Ideas
    :maxdepth: 2
    :caption: Contents:
 
-.. automodule:: rcfdtd
-   :members:
+   rcfdtd
+   sim
 
 Indices and tables
 ==================
