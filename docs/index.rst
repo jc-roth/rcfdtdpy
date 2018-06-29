@@ -40,6 +40,10 @@ Tools
 -----
 * Visualization - Use matplotlib to export heat map of field intensity in space
 
+Ideas
+-----
+* Parallelize the calculations in time to speed up.
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
