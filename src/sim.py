@@ -1,9 +1,11 @@
-"""Contains the class used to represent a simulation"""
+import numpy as np
+
+"""Contains the classes used to represent a simulation"""
 
 class Sim:
     """Represents a single simulation."""
     
-    def __init__(self, vacuum_permittivity, infinity_permittivity, delta_t, delta_z):
+    def __init__(self, vacuum_permittivity, infinity_permittivity, delta_t, delta_z, num_n, num_i):
         self._vacuum_permittivity = vacuum_permittivity
         self._infinity_permittivity = infinity_permittivity
         self._delta_t = delta_t
@@ -64,3 +66,15 @@ class Sim:
         :param delta_z: :math:`\Delta z`
         """
         self._delta_z = delta_z
+
+class Field:
+    """Represents either an electric or magnetic field"""
+
+    def __init__(self, num_i):
+        self._field = list(np.zeros(num_i, dtype=np.complex64))
+
+    def get_field(self, n=0):
+        return self._field[n]
+
+    def iterate_field(self, next_state):
+        self._field.append(next_state)
