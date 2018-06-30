@@ -5,11 +5,13 @@ import numpy as np
 class Sim:
     """Represents a single simulation."""
     
-    def __init__(self, vacuum_permittivity, infinity_permittivity, delta_t, delta_z, num_n, num_i):
+    def __init__(self, vacuum_permittivity, infinity_permittivity, delta_t, delta_z, num_n, num_i, current, susceptibility):
         self._vacuum_permittivity = vacuum_permittivity
         self._infinity_permittivity = infinity_permittivity
         self._delta_t = delta_t
         self._delta_z = delta_z
+        self._current = current
+        self._susceptibility = susceptibility
 
     def set_vacuum_permittivity(self, vacuum_permittivity):
         """
@@ -66,6 +68,24 @@ class Sim:
         :param delta_z: :math:`\Delta z`
         """
         self._delta_z = delta_z
+
+    def _calc_electric_susceptibility(self):
+        pass
+
+    def _calc_efield_susceptibility_convolution(self):
+        pass
+
+    def _iterate_efield(self):
+        pass
+
+    def _iterate_mfield(self):
+        pass
+
+class Current:
+    """Represents a current"""
+
+    def __init__(self):
+        pass
 
 class Field:
     """Represents either an electric or magnetic field"""
