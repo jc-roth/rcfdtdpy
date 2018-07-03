@@ -179,14 +179,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">num_i</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">num_i</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Sim.set_vacuum_permittivity"><a class="viewcode-back" href="../sim.html#sim.Sim.set_vacuum_permittivity">[docs]</a>    <span class="k">def</span> <span class="nf">set_vacuum_permittivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vacuum_permittivity</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets :math:`\epsilon_0`</span>
-
-<span class="sd">        :param vacuum_permittivity: :math:`\epsilon_0`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vacuum_permittivity</span> <span class="o">=</span> <span class="n">vacuum_permittivity</span></div>
-
 <div class="viewcode-block" id="Sim.get_vacuum_permittivity"><a class="viewcode-back" href="../sim.html#sim.Sim.get_vacuum_permittivity">[docs]</a>    <span class="k">def</span> <span class="nf">get_vacuum_permittivity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets :math:`\epsilon_0`</span>
@@ -195,13 +187,21 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vacuum_permittivity</span></div>
 
-<div class="viewcode-block" id="Sim.set_infinity_permittivity"><a class="viewcode-back" href="../sim.html#sim.Sim.set_infinity_permittivity">[docs]</a>    <span class="k">def</span> <span class="nf">set_infinity_permittivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infinity_permittivity</span><span class="p">):</span>
+<div class="viewcode-block" id="Sim.get_infinity_permittivity"><a class="viewcode-back" href="../sim.html#sim.Sim.get_infinity_permittivity">[docs]</a>    <span class="k">def</span> <span class="nf">get_infinity_permittivity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets :math:`\epsilon_\infty`</span>
-
-<span class="sd">        :param infinity_permittivity: :math:`\epsilon_\infty`</span>
+<span class="sd">        Gets :math:`\epsilon_\infty`</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: :math:`\epsilon_\infty`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_infinity_permittivity</span> <span class="o">=</span> <span class="n">infinity_permittivity</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infinity_permittivity</span></div>
+
+<div class="viewcode-block" id="Sim.get_vacuum_permeability"><a class="viewcode-back" href="../sim.html#sim.Sim.get_vacuum_permeability">[docs]</a>    <span class="k">def</span> <span class="nf">get_vacuum_permeability</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets :math:`\mu_0`</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: :math:`\mu_0`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vacuum_permeability</span></div>
 
 <div class="viewcode-block" id="Sim.get_delta_t"><a class="viewcode-back" href="../sim.html#sim.Sim.get_delta_t">[docs]</a>    <span class="k">def</span> <span class="nf">get_delta_t</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -211,14 +211,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta_t</span></div>
 
-<div class="viewcode-block" id="Sim.set_delta_t"><a class="viewcode-back" href="../sim.html#sim.Sim.set_delta_t">[docs]</a>    <span class="k">def</span> <span class="nf">set_delta_t</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets :math:`\Delta t`</span>
-<span class="sd">        </span>
-<span class="sd">        :param delta_t: :math:`\Delta t`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_delta_t</span> <span class="o">=</span> <span class="n">delta_t</span></div>
-
 <div class="viewcode-block" id="Sim.get_delta_z"><a class="viewcode-back" href="../sim.html#sim.Sim.get_delta_z">[docs]</a>    <span class="k">def</span> <span class="nf">get_delta_z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets :math:`\Delta z`</span>
@@ -227,14 +219,22 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delta_z</span></div>
 
-<div class="viewcode-block" id="Sim.set_delta_z"><a class="viewcode-back" href="../sim.html#sim.Sim.set_delta_z">[docs]</a>    <span class="k">def</span> <span class="nf">set_delta_z</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">delta_z</span><span class="p">):</span>
+<div class="viewcode-block" id="Sim.get_num_n"><a class="viewcode-back" href="../sim.html#sim.Sim.get_num_n">[docs]</a>    <span class="k">def</span> <span class="nf">get_num_n</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets :math:`\Delta z`</span>
+<span class="sd">        Gets the number of temporal indicies.</span>
 <span class="sd">        </span>
-<span class="sd">        :param delta_z: :math:`\Delta z`</span>
+<span class="sd">        :returns: The number of temporal indicies</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_delta_z</span> <span class="o">=</span> <span class="n">delta_z</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_n</span></div>
 
+<div class="viewcode-block" id="Sim.get_num_i"><a class="viewcode-back" href="../sim.html#sim.Sim.get_num_i">[docs]</a>    <span class="k">def</span> <span class="nf">get_num_i</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the number of spatial indicies.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: The number of spatial indicies</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_i</span></div>
+        
 <div class="viewcode-block" id="Sim.iterate_efield"><a class="viewcode-back" href="../sim.html#sim.Sim.iterate_efield">[docs]</a>    <span class="k">def</span> <span class="nf">iterate_efield</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pef</span><span class="p">,</span> <span class="n">phf</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Iterates the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n+\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`</span>
@@ -296,18 +296,21 @@
 
 <div class="viewcode-block" id="Field"><a class="viewcode-back" href="../sim.html#sim.Field">[docs]</a><span class="k">class</span> <span class="nc">Field</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents either an electric or magnetic field.</span>
+<span class="sd">    Represents either an electric or magnetic field using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space.</span>
 
+<span class="sd">    :param num_n: The number of temporal indexes in the field</span>
 <span class="sd">    :param num_i: The number of spatial indexes in the field</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_i</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_n</span><span class="p">,</span> <span class="n">num_i</span><span class="p">):</span>
         <span class="c1"># Set the field time index to zero</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># Set the field temporal length to num_n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_n</span> <span class="o">=</span> <span class="n">num_n</span>
         <span class="c1"># Set the field spatial length to num_i</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_i</span> <span class="o">=</span> <span class="n">num_i</span>
         <span class="c1"># Initialize a zero field</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_field</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_i</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_n</span><span class="p">,</span> <span class="n">num_i</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Field.get_time_index"><a class="viewcode-back" href="../sim.html#sim.Field.get_time_index">[docs]</a>    <span class="k">def</span> <span class="nf">get_time_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -323,6 +326,9 @@
 
 <span class="sd">        :param n: :math:`n`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Check for that n is within the accepted range</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_n</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;The n argument is of out of bounds&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">n</span></div>
 
 <div class="viewcode-block" id="Field.get_field"><a class="viewcode-back" href="../sim.html#sim.Field.get_field">[docs]</a>    <span class="k">def</span> <span class="nf">get_field</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -341,17 +347,16 @@
 
 <div class="viewcode-block" id="Field.get_index"><a class="viewcode-back" href="../sim.html#sim.Field.get_index">[docs]</a>    <span class="k">def</span> <span class="nf">get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets the value of the field at the current time index and at the the :math:`i` th spatial index. If the requested index is out of the field bounds, the returned value is zero.</span>
+<span class="sd">        Gets the value of the field at the current time index :math:`n` and at the :math:`i` th spatial index. If the requested index is out of the field bounds, the returned value is zero.</span>
 <span class="sd">        </span>
 <span class="sd">        :param i: The spatial index of the field to access</span>
-<span class="sd">        :return: The value of the field at time index :math:`n` and spatial index :math:`i`</span>
+<span class="sd">        :return: The value of the field a the current time index :math:`n` and spatial index :math:`i`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check to see if the requested index is out of bounds, if so return zero</span>
         <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_i</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
         <span class="c1"># Return the requested field</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">])[</span><span class="n">i</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span><span class="n">i</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -361,26 +366,37 @@
 
 <div class="viewcode-block" id="Field.set_index"><a class="viewcode-back" href="../sim.html#sim.Field.set_index">[docs]</a>    <span class="k">def</span> <span class="nf">set_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets the value of the field at the current time index and at the the :math:`i` th spatial index.</span>
+<span class="sd">        Sets the value of the field at the current time index :math:`n` and at the :math:`i` th spatial index.</span>
 <span class="sd">        </span>
 <span class="sd">        :param i: The spatial index of the field to set</span>
 <span class="sd">        :param value: The value to set at time index :math:`n` and spatial index :math:`i`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">])[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Field.append_field"><a class="viewcode-back" href="../sim.html#sim.Field.append_field">[docs]</a>    <span class="k">def</span> <span class="nf">append_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nfield</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.update_field"><a class="viewcode-back" href="../sim.html#sim.Field.update_field">[docs]</a>    <span class="k">def</span> <span class="nf">update_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nfield</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Appends a new field to the list of fields, and updates the current time to that of the new field. Raises a ValueError if the new field is not of the correct spatial length.</span>
+<span class="sd">        Iterates to the next temporal index and updates the field at that time to nfield. Raises a ValueError if the new field is not of the correct spatial length and a RuntimeError if the end of the temporal indicies has been reached.</span>
 
 <span class="sd">        :param nfield: The new field to append of length num_i</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check for nfield length, raise error if necessary</span>
         <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nfield</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_i</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The nfield argument is of the incorrect length, found &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nfield</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;, expected&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_i</span><span class="p">))</span>
-        
-        <span class="c1"># Update time and append new field</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nfield</span><span class="p">)</span></div></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The nfield argument is of the incorrect length, found &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nfield</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;, expected &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_i</span><span class="p">))</span>
+        <span class="c1"># Iterate the temporal index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># Check that the field isn&#39;t at its last time index, raise error if necessary</span>
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_n</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;End of the temporal indicies has been reached, cannot update&#39;</span><span class="p">)</span>
+        <span class="c1"># Set the new field value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">]</span> <span class="o">=</span> <span class="n">nfield</span></div>
+
+<div class="viewcode-block" id="Field.export"><a class="viewcode-back" href="../sim.html#sim.Field.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the Numpy array that contains the temporal (axis=0) and spatial values (axis=1) of the field.</span>
+
+<span class="sd">        :return: A Numpy array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span></div></div>
 </pre></div>
 
            </div>

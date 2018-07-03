@@ -216,6 +216,12 @@
 <li>Discuss the choice of <span class="math notranslate nohighlight">\(\frac{\Delta t}{\Delta z}\approx c\)</span></li>
 </ul>
 </div>
+<div class="section" id="the-field-class">
+<h2>The Field Class<a class="headerlink" href="#the-field-class" title="Permalink to this headline">¶</a></h2>
+<p>The field class can store both current field values as well as past field values as as Numpy array. The array has the following structure</p>
+<a class="reference internal image-reference" href="_images/numpy_structure.png"><img alt="_images/numpy_structure.png" class="align-center" src="_images/numpy_structure.png" style="width: 276.5px; height: 269.0px;" /></a>
+<p>The user never directly interacts with the entire Numpy array. Rather they set a “current time <span class="math notranslate nohighlight">\(n\)</span>” which selects a row of the array. Any further operations are performed on that row. The <a class="reference internal" href="sim.html#sim.Field.export" title="sim.Field.export"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sim.Field.export()</span></code></a> function simply returns the Numpy field.</p>
+</div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>

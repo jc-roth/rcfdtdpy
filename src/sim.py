@@ -34,14 +34,6 @@ class Sim:
         self._efield = Field(num_i)
         self._hfield = Field(num_i)
 
-    def set_vacuum_permittivity(self, vacuum_permittivity):
-        """
-        Sets :math:`\epsilon_0`
-
-        :param vacuum_permittivity: :math:`\epsilon_0`
-        """
-        self._vacuum_permittivity = vacuum_permittivity
-
     def get_vacuum_permittivity(self):
         """
         Gets :math:`\epsilon_0`
@@ -50,13 +42,21 @@ class Sim:
         """
         return self._vacuum_permittivity
 
-    def set_infinity_permittivity(self, infinity_permittivity):
+    def get_infinity_permittivity(self):
         """
-        Sets :math:`\epsilon_\infty`
+        Gets :math:`\epsilon_\infty`
+        
+        :returns: :math:`\epsilon_\infty`
+        """
+        return self._infinity_permittivity
 
-        :param infinity_permittivity: :math:`\epsilon_\infty`
+    def get_vacuum_permeability(self):
         """
-        self._infinity_permittivity = infinity_permittivity
+        Gets :math:`\mu_0`
+        
+        :returns: :math:`\mu_0`
+        """
+        return self._vacuum_permeability
 
     def get_delta_t(self):
         """
@@ -66,14 +66,6 @@ class Sim:
         """
         return self._delta_t
 
-    def set_delta_t(self, delta_t):
-        """
-        Sets :math:`\Delta t`
-        
-        :param delta_t: :math:`\Delta t`
-        """
-        self._delta_t = delta_t
-
     def get_delta_z(self):
         """
         Gets :math:`\Delta z`
@@ -82,14 +74,22 @@ class Sim:
         """
         return self._delta_z
 
-    def set_delta_z(self, delta_z):
+    def get_num_n(self):
         """
-        Sets :math:`\Delta z`
+        Gets the number of temporal indicies.
         
-        :param delta_z: :math:`\Delta z`
+        :returns: The number of temporal indicies
         """
-        self._delta_z = delta_z
+        return self._num_n
 
+    def get_num_i(self):
+        """
+        Gets the number of spatial indicies.
+        
+        :returns: The number of spatial indicies
+        """
+        return self._num_i
+        
     def iterate_efield(self, pef, phf):
         r"""
         Iterates the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n+\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`
@@ -151,18 +151,21 @@ class Current:
 
 class Field:
     """
-    Represents either an electric or magnetic field.
+    Represents either an electric or magnetic field using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space.
 
+    :param num_n: The number of temporal indexes in the field
     :param num_i: The number of spatial indexes in the field
     """
 
-    def __init__(self, num_i):
+    def __init__(self, num_n, num_i):
         # Set the field time index to zero
         self._n = 0
+        # Set the field temporal length to num_n
+        self._num_n = num_n
         # Set the field spatial length to num_i
         self._num_i = num_i
         # Initialize a zero field
-        self._field = list(np.zeros(num_i, dtype=np.complex64))
+        self._field = np.zeros((num_n, num_i), dtype=np.complex64)
 
     def get_time_index(self):
         """
@@ -178,6 +181,9 @@ class Field:
 
         :param n: :math:`n`
         """
+        # Check for that n is within the accepted range
+        if(n < 0 or n >= self._num_n):
+            raise IndexError('The n argument is of out of bounds')
         self._n = n
 
     def get_field(self):
@@ -196,17 +202,16 @@ class Field:
 
     def get_index(self, i):
         """
-        Gets the value of the field at the current time index and at the the :math:`i` th spatial index. If the requested index is out of the field bounds, the returned value is zero.
+        Gets the value of the field at the current time index :math:`n` and at the :math:`i` th spatial index. If the requested index is out of the field bounds, the returned value is zero.
         
         :param i: The spatial index of the field to access
-        :return: The value of the field at time index :math:`n` and spatial index :math:`i`
+        :return: The value of the field a the current time index :math:`n` and spatial index :math:`i`
         """
         # Check to see if the requested index is out of bounds, if so return zero
         if(i < 0 or i >= self._num_i):
             return np.complex64(0)
-
         # Return the requested field
-        return (self._field[self._n])[i]
+        return self._field[self._n,i]
 
     def __setitem__(self, key, value):
         """
@@ -216,23 +221,34 @@ class Field:
 
     def set_index(self, i, value):
         """
-        Sets the value of the field at the current time index and at the the :math:`i` th spatial index.
+        Sets the value of the field at the current time index :math:`n` and at the :math:`i` th spatial index.
         
         :param i: The spatial index of the field to set
         :param value: The value to set at time index :math:`n` and spatial index :math:`i`
         """
-        (self._field[self._n])[i] = np.complex64(value)
+        self._field[self._n,i] = np.complex64(value)
 
-    def append_field(self, nfield):
+    def update_field(self, nfield):
         """
-        Appends a new field to the list of fields, and updates the current time to that of the new field. Raises a ValueError if the new field is not of the correct spatial length.
+        Iterates to the next temporal index and updates the field at that time to nfield. Raises a ValueError if the new field is not of the correct spatial length and a RuntimeError if the end of the temporal indicies has been reached.
 
         :param nfield: The new field to append of length num_i
         """
         # Check for nfield length, raise error if necessary
         if(len(nfield) != self._num_i):
-            raise ValueError('The nfield argument is of the incorrect length, found ' + str(len(nfield)) + ', expected' + str(self._num_i))
-        
-        # Update time and append new field
-        self._n = len(self._field)
-        self._field.append(nfield)
+            raise ValueError('The nfield argument is of the incorrect length, found ' + str(len(nfield)) + ', expected ' + str(self._num_i))
+        # Iterate the temporal index
+        self._n += 1
+        # Check that the field isn't at its last time index, raise error if necessary
+        if(self._n >= self._num_n):
+            raise RuntimeError('End of the temporal indicies has been reached, cannot update')
+        # Set the new field value
+        self._field[self._n] = nfield
+
+    def export(self):
+        """
+        Returns the Numpy array that contains the temporal (axis=0) and spatial values (axis=1) of the field.
+
+        :return: A Numpy array
+        """
+        return self._field

@@ -155,25 +155,29 @@
 
 <dl class="class">
 <dt id="sim.Field">
-<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>num_i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents either an electric or magnetic field.</p>
+<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>num_n</em>, <em>num_i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents either an electric or magnetic field using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_i</strong> – The number of spatial indexes in the field</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_n</strong> – The number of temporal indexes in the field</li>
+<li><strong>num_i</strong> – The number of spatial indexes in the field</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="sim.Field.append_field">
-<code class="descname">append_field</code><span class="sig-paren">(</span><em>nfield</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.append_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.append_field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Appends a new field to the list of fields, and updates the current time to that of the new field. Raises a ValueError if the new field is not of the correct spatial length.</p>
+<dt id="sim.Field.export">
+<code class="descname">export</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.export" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Numpy array that contains the temporal (axis=0) and spatial values (axis=1) of the field.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nfield</strong> – The new field to append of length num_i</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A Numpy array</td>
 </tr>
 </tbody>
 </table>
@@ -196,14 +200,14 @@
 <dl class="method">
 <dt id="sim.Field.get_index">
 <code class="descname">get_index</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.get_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.get_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the value of the field at the current time index and at the the <span class="math notranslate nohighlight">\(i\)</span> th spatial index. If the requested index is out of the field bounds, the returned value is zero.</p>
+<dd><p>Gets the value of the field at the current time index <span class="math notranslate nohighlight">\(n\)</span> and at the <span class="math notranslate nohighlight">\(i\)</span> th spatial index. If the requested index is out of the field bounds, the returned value is zero.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> – The spatial index of the field to access</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The value of the field at time index <span class="math notranslate nohighlight">\(n\)</span> and spatial index <span class="math notranslate nohighlight">\(i\)</span></td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The value of the field a the current time index <span class="math notranslate nohighlight">\(n\)</span> and spatial index <span class="math notranslate nohighlight">\(i\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -226,7 +230,7 @@
 <dl class="method">
 <dt id="sim.Field.set_index">
 <code class="descname">set_index</code><span class="sig-paren">(</span><em>i</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.set_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.set_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the value of the field at the current time index and at the the <span class="math notranslate nohighlight">\(i\)</span> th spatial index.</p>
+<dd><p>Sets the value of the field at the current time index <span class="math notranslate nohighlight">\(n\)</span> and at the <span class="math notranslate nohighlight">\(i\)</span> th spatial index.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -250,6 +254,20 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> – <span class="math notranslate nohighlight">\(n\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.update_field">
+<code class="descname">update_field</code><span class="sig-paren">(</span><em>nfield</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.update_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.update_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates to the next temporal index and updates the field at that time to nfield. Raises a ValueError if the new field is not of the correct spatial length and a RuntimeError if the end of the temporal indicies has been reached.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nfield</strong> – The new field to append of length num_i</td>
 </tr>
 </tbody>
 </table>
@@ -324,6 +342,62 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="sim.Sim.get_infinity_permittivity">
+<code class="descname">get_infinity_permittivity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_infinity_permittivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_infinity_permittivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><span class="math notranslate nohighlight">\(\epsilon_\infty\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_num_i">
+<code class="descname">get_num_i</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_num_i"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_num_i" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the number of spatial indicies.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The number of spatial indicies</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_num_n">
+<code class="descname">get_num_n</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_num_n"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_num_n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the number of temporal indicies.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The number of temporal indicies</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_vacuum_permeability">
+<code class="descname">get_vacuum_permeability</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_vacuum_permeability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_vacuum_permeability" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets <span class="math notranslate nohighlight">\(\mu_0\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><span class="math notranslate nohighlight">\(\mu_0\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="sim.Sim.get_vacuum_permittivity">
 <code class="descname">get_vacuum_permittivity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_vacuum_permittivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_vacuum_permittivity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets <span class="math notranslate nohighlight">\(\epsilon_0\)</span></p>
@@ -382,62 +456,6 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Zero</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Sim.set_delta_t">
-<code class="descname">set_delta_t</code><span class="sig-paren">(</span><em>delta_t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.set_delta_t"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.set_delta_t" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets <span class="math notranslate nohighlight">\(\Delta t\)</span></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delta_t</strong> – <span class="math notranslate nohighlight">\(\Delta t\)</span></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Sim.set_delta_z">
-<code class="descname">set_delta_z</code><span class="sig-paren">(</span><em>delta_z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.set_delta_z"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.set_delta_z" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets <span class="math notranslate nohighlight">\(\Delta z\)</span></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>delta_z</strong> – <span class="math notranslate nohighlight">\(\Delta z\)</span></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Sim.set_infinity_permittivity">
-<code class="descname">set_infinity_permittivity</code><span class="sig-paren">(</span><em>infinity_permittivity</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.set_infinity_permittivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.set_infinity_permittivity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>infinity_permittivity</strong> – <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Sim.set_vacuum_permittivity">
-<code class="descname">set_vacuum_permittivity</code><span class="sig-paren">(</span><em>vacuum_permittivity</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.set_vacuum_permittivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.set_vacuum_permittivity" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets <span class="math notranslate nohighlight">\(\epsilon_0\)</span></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vacuum_permittivity</strong> – <span class="math notranslate nohighlight">\(\epsilon_0\)</span></td>
 </tr>
 </tbody>
 </table>
