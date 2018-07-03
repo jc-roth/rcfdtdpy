@@ -143,15 +143,14 @@
            <div itemprop="articleBody">
             
   <h1>Source code for sim</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Contains the classes used to represent a simulation</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
 
 <div class="viewcode-block" id="Sim"><a class="viewcode-back" href="../sim.html#sim.Sim">[docs]</a><span class="k">class</span> <span class="nc">Sim</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents a single simulation. Field is initialized to all zeros.</span>
+    <span class="sd">&quot;&quot;&quot;Represents a single simulation. Field is initialized to all zeros.</span>
 
 <span class="sd">    :param vacuum_permittivity: :math:`\epsilon_0`</span>
 <span class="sd">    :param infinity_permittivity: :math:`\epsilon_\infty`</span>
@@ -160,18 +159,19 @@
 <span class="sd">    :param delta_z: :math:`\Delta z`</span>
 <span class="sd">    :param num_n: The number of time indexes</span>
 <span class="sd">    :param num_i: The number of spatial indexes</span>
-<span class="sd">    :param current: A current object</span>
+<span class="sd">    :param current: A field object that represents the current</span>
 <span class="sd">    :param susceptibility: A susceptibility object</span>
 <span class="sd">    :param initial_susceptibility: The initial susceptability. Eventually will be included in the susceptibility object.</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vacuum_permittivity</span><span class="p">,</span> <span class="n">infinity_permittivity</span><span class="p">,</span> <span class="n">vacuum_permeability</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">delta_z</span><span class="p">,</span> <span class="n">num_n</span><span class="p">,</span> <span class="n">num_i</span><span class="p">,</span> <span class="n">current</span><span class="p">,</span> <span class="n">susceptibility</span><span class="p">,</span> <span class="n">initial_susceptibility</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vacuum_permittivity</span><span class="p">,</span> <span class="n">infinity_permittivity</span><span class="p">,</span> <span class="n">vacuum_permeability</span><span class="p">,</span> <span class="n">delta_t</span><span class="p">,</span> <span class="n">delta_z</span><span class="p">,</span> <span class="n">num_n</span><span class="p">,</span> <span class="n">num_i</span><span class="p">,</span> <span class="n">current_field</span><span class="p">,</span> <span class="n">susceptibility</span><span class="p">,</span> <span class="n">initial_susceptibility</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_vacuum_permittivity</span> <span class="o">=</span> <span class="n">vacuum_permittivity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_infinity_permittivity</span> <span class="o">=</span> <span class="n">infinity_permittivity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_vacuum_permeability</span> <span class="o">=</span> <span class="n">vacuum_permeability</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_delta_t</span> <span class="o">=</span> <span class="n">delta_t</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_delta_z</span> <span class="o">=</span> <span class="n">delta_z</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="o">=</span> <span class="n">current</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span> <span class="o">=</span> <span class="n">current_field</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_susceptibility</span> <span class="o">=</span> <span class="n">susceptibility</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initial_susceptibility</span> <span class="o">=</span> <span class="n">initial_susceptibility</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_n</span> <span class="o">=</span> <span class="n">num_n</span>
@@ -257,10 +257,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_n</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">iterate_hfield</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">iterate_efield</span><span class="p">()</span></div>
+            <span class="c1"># Iterate the H and E, and current fields</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_iterate_hfield</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_iterate_efield</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_iterate_cfield</span><span class="p">()</span></div>
+            
 
-<div class="viewcode-block" id="Sim.iterate_efield"><a class="viewcode-back" href="../sim.html#sim.Sim.iterate_efield">[docs]</a>    <span class="k">def</span> <span class="nf">iterate_efield</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_iterate_efield</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Iterates the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n+\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`. Note that the prior electric field array is located half a time index away at :math:`n-1` and the prior magnetic field array is located half a time index away at :math:`n-1/2`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -271,11 +274,13 @@
             <span class="n">term1</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_infinity_permittivity</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_infinity_permittivity</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_susceptibility</span><span class="p">)</span>
             <span class="n">term2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">psi</span><span class="p">()</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_infinity_permittivity</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_susceptibility</span><span class="p">)</span>
             <span class="n">term3</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta_t</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vacuum_permittivity</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta_z</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_infinity_permittivity</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_susceptibility</span><span class="p">))</span>
-            <span class="n">term4</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current</span><span class="p">()</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta_t</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_vacuum_permittivity</span>
+            <span class="n">term4</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta_t</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">_vacuum_permittivity</span>
             <span class="n">nefield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">term1</span> <span class="o">+</span> <span class="n">term2</span> <span class="o">+</span> <span class="n">term3</span> <span class="o">-</span> <span class="n">term4</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="o">.</span><span class="n">update_field</span><span class="p">(</span><span class="n">nefield</span><span class="p">)</span></div>
+        <span class="c1"># Update the field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="o">.</span><span class="n">update_field</span><span class="p">(</span><span class="n">nefield</span><span class="p">)</span>
+
         
-<div class="viewcode-block" id="Sim.iterate_hfield"><a class="viewcode-back" href="../sim.html#sim.Sim.iterate_hfield">[docs]</a>    <span class="k">def</span> <span class="nf">iterate_hfield</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_iterate_hfield</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Iterates the magnetic field according to :math:`H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]`. Note that the prior electric field array is located half a time index away at :math:`n-1/2` and the prior magnetic field array is located a whole time index away at :math:`n-1`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -286,7 +291,16 @@
             <span class="n">term1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
             <span class="n">term2</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta_t</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span><span class="o">/</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vacuum_permeability</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_delta_z</span><span class="p">)</span>
             <span class="n">nhfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">term1</span> <span class="o">-</span> <span class="n">term2</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="o">.</span><span class="n">update_field</span><span class="p">(</span><span class="n">nhfield</span><span class="p">)</span></div>
+        <span class="c1"># Update the field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="o">.</span><span class="n">update_field</span><span class="p">(</span><span class="n">nhfield</span><span class="p">)</span>
+
+        
+    <span class="k">def</span> <span class="nf">_iterate_cfield</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iterates the current field by simply increasing the temporal index by one.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prior_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span><span class="o">.</span><span class="n">get_time_index</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span><span class="o">.</span><span class="n">set_time_index</span><span class="p">(</span><span class="n">prior_time</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Sim.psi"><a class="viewcode-back" href="../sim.html#sim.Sim.psi">[docs]</a>    <span class="k">def</span> <span class="nf">psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -296,26 +310,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="Sim.current"><a class="viewcode-back" href="../sim.html#sim.Sim.current">[docs]</a>    <span class="k">def</span> <span class="nf">current</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates the current at time :math:`n` using the current object. Currently not implemented, and will simply return zero.</span>
+<span class="sd">        Gets the current at location :math:`i` and current time :math:`n` using the simulation&#39;s associated current field.</span>
 
-<span class="sd">        :return: Zero</span>
+<span class="sd">        :return: The current at location :math:`i` and current time :math:`n`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="mi">0</span></div></div>
-
-
-<div class="viewcode-block" id="Current"><a class="viewcode-back" href="../sim.html#sim.Current">[docs]</a><span class="k">class</span> <span class="nc">Current</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents a current</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="Field"><a class="viewcode-back" href="../sim.html#sim.Field">[docs]</a><span class="k">class</span> <span class="nc">Field</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents either an electric or magnetic field using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space.</span>
+<span class="sd">    Represents any field (i.e. electric, magnetic, current, susceptibility) using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space.</span>
 
 <span class="sd">    :param num_n: The number of temporal indexes in the field</span>
 <span class="sd">    :param num_i: The number of spatial indexes in the field</span>
