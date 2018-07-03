@@ -42,7 +42,8 @@ Tools
 
 Ideas
 -----
-* Parallelize the calculations in time to speed up.
+* Parallelize the calculations in time (i.e. calculate each index simultaneously) to speed up.
+* Replace the Numpy arrays with h5py datasets, which can store much larger files locally.
 
 .. toctree::
    :maxdepth: 2

@@ -1,4 +1,5 @@
 import numpy as np
+from tqdm import tqdm
 
 """
 Contains the classes used to represent a simulation
@@ -90,6 +91,16 @@ class Sim:
         """
         return self._num_i
         
+    def simulate(self):
+        for j in tqdm(range(self._num_n)):
+            pefn = self._efield.get_time_index() - 1
+            pef = self._efield.get_field(pefn)
+            phfn = self._hfield.get_time_index() - 1
+            phf = self._hfield.get_field(phfn)
+
+            self.iterate_hfield(pef, phf)
+            self.iterate_efield(pef, phf)
+
     def iterate_efield(self, pef, phf):
         r"""
         Iterates the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n+\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`
@@ -106,7 +117,7 @@ class Sim:
             term3 = (self._delta_t*(phf[i-1]-phf[i]))/(self._vacuum_permittivity*self._delta_z*(self._infinity_permittivity+self._initial_susceptibility))
             term4 = (self.current()*self._delta_t)/self._vacuum_permittivity
             nefield[i] = term1 + term2 + term3 - term4
-        self._efield.append_field(nefield)
+        self._efield.update_field(nefield)
         
     def iterate_hfield(self, pef, phf):
         r"""
@@ -122,7 +133,7 @@ class Sim:
             term1 = phf[i]
             term2 = (self._delta_t*(pef[i+1]-pef[i]))/(self._vacuum_permeability*self._delta_z)
             nhfield[i] = term1 - term2
-        self._hfield.append_field(nhfield)
+        self._hfield.update_field(nhfield)
 
     def psi(self):
         """
@@ -186,13 +197,20 @@ class Field:
             raise IndexError('The n argument is of out of bounds')
         self._n = n
 
-    def get_field(self):
+    def get_field(self, n=-1):
         """
-        Gets the field at the current time index :math:`n`
+        Gets the field at time :math:`n`, and the current time if :math:`n` is unspecified.
 
+        :param n: :math:`n`
         :return: The field at time `n`
         """
-        return self._field[self._n]
+        # If n is -1, return the current field
+        if(n == -1):
+            return self._field[self._n]
+        # Check for that n is within the accepted range
+        if(n < 0 or n >= self._num_n):
+            raise IndexError('The n argument is of out of bounds')
+        return self._field[n]
 
     def __getitem__(self, key):
         """
