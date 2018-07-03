@@ -92,6 +92,9 @@ class Sim:
         return self._num_i
         
     def simulate(self):
+        """
+        Executes the simulation
+        """
         for j in tqdm(range(self._num_n)):
             pefn = self._efield.get_time_index() - 1
             pef = self._efield.get_field(pefn)
