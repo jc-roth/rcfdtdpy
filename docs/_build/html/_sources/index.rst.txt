@@ -51,6 +51,16 @@ Ideas
    rcfdtd
    sim
 
+The Simulation Class
+--------------------
+The simulation class treats field indicies as follows
+
+.. image:: ../images/field_structure.png
+   :align: center
+   :scale: 50
+
+Both the electric and magnetic fields are initialized to the same length, meaning that they have a slight offset in starting and ending locations in the simulation. The field at each time is stored in a Numpy array. The Numpy arrays are stored in a list, which allows each field at previous times to be accessed.
+
 Indices and tables
 ==================
 

@@ -147,11 +147,124 @@
             
   <div class="section" id="module-sim">
 <span id="sim"></span><h1>sim<a class="headerlink" href="#module-sim" title="Permalink to this headline">¶</a></h1>
-<p>Contains the class used to represent a simulation</p>
+<dl class="class">
+<dt id="sim.Current">
+<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Current</code><a class="reference internal" href="_modules/sim.html#Current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Current" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a current</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="sim.Field">
+<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>num_i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents either an electric or magnetic field</p>
+<dl class="method">
+<dt id="sim.Field.append_field">
+<code class="descname">append_field</code><span class="sig-paren">(</span><em>nfield</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.append_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.append_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends a new field to the list of fields, and updates the current time to that of the new field. Raises a ValueError if the new field is not of the correct spatial length.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nfield</strong> – The new field to append of length num_i</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.get">
+<code class="descname">get</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the value of the field at the current time index and at the the <span class="math notranslate nohighlight">\(i\)</span> th spatial index. If the requested index is out of the field bounds, the returned value is zero.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> – The spatial index of the field to access</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The value of the field at time index <span class="math notranslate nohighlight">\(n\)</span> and spatial index <span class="math notranslate nohighlight">\(i\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.get_field">
+<code class="descname">get_field</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.get_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.get_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the field at the current time index <span class="math notranslate nohighlight">\(n\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The field at time <cite>n</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.get_time_index">
+<code class="descname">get_time_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.get_time_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.get_time_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the current time index <span class="math notranslate nohighlight">\(n\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current time index <span class="math notranslate nohighlight">\(n\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.set_index">
+<code class="descname">set_index</code><span class="sig-paren">(</span><em>i</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.set_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.set_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the value of the field at the current time index and at the the <span class="math notranslate nohighlight">\(i\)</span> th spatial index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>i</strong> – The spatial index of the field to set</li>
+<li><strong>value</strong> – The value to set at time index <span class="math notranslate nohighlight">\(n\)</span> and spatial index <span class="math notranslate nohighlight">\(i\)</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.set_time_index">
+<code class="descname">set_time_index</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.set_time_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.set_time_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the current time index to <span class="math notranslate nohighlight">\(n\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> – <span class="math notranslate nohighlight">\(n\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="sim.Sim">
-<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>vacuum_permittivity</em>, <em>infinity_permittivity</em>, <em>delta_t</em>, <em>delta_z</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents a single simulation.</p>
+<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>vacuum_permittivity</em>, <em>infinity_permittivity</em>, <em>vacuum_permeability</em>, <em>delta_t</em>, <em>delta_z</em>, <em>num_n</em>, <em>num_i</em>, <em>current</em>, <em>susceptibility</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a single simulation. Field is initialized to all zeros.</p>
+<dl class="method">
+<dt id="sim.Sim.calc_efield_susceptibility_convolution">
+<code class="descname">calc_efield_susceptibility_convolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.calc_efield_susceptibility_convolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.calc_efield_susceptibility_convolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>WRITE DOCS</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.calc_electric_susceptibility">
+<code class="descname">calc_electric_susceptibility</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.calc_electric_susceptibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.calc_electric_susceptibility" title="Permalink to this definition">¶</a></dt>
+<dd><p>WRITE DOCS</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="sim.Sim.get_delta_t">
 <code class="descname">get_delta_t</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_delta_t"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_delta_t" title="Permalink to this definition">¶</a></dt>
@@ -181,6 +294,18 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="sim.Sim.get_efield">
+<code class="descname">get_efield</code><span class="sig-paren">(</span><em>n=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_efield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_efield" title="Permalink to this definition">¶</a></dt>
+<dd><p>WRITE DOCS</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_hfield">
+<code class="descname">get_hfield</code><span class="sig-paren">(</span><em>n=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_hfield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_hfield" title="Permalink to this definition">¶</a></dt>
+<dd><p>WRITE DOCS</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="sim.Sim.get_vacuum_permittivity">
 <code class="descname">get_vacuum_permittivity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_vacuum_permittivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_vacuum_permittivity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets <span class="math notranslate nohighlight">\(\epsilon_0\)</span></p>
@@ -189,6 +314,30 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><span class="math notranslate nohighlight">\(\epsilon_0\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.iterate_efield">
+<code class="descname">iterate_efield</code><span class="sig-paren">(</span><em>next_state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.iterate_efield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.iterate_efield" title="Permalink to this definition">¶</a></dt>
+<dd><p>WRITE DOCS</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.iterate_hfield">
+<code class="descname">iterate_hfield</code><span class="sig-paren">(</span><em>pef</em>, <em>phf</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.iterate_hfield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.iterate_hfield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates the magnetic field according to <span class="math notranslate nohighlight">\(H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pef</strong> – The prior electric field array (located half a time index away at <span class="math notranslate nohighlight">\(n-1/2\)</span>)</li>
+<li><strong>phf</strong> – The prior magnetic field array (located a whole time index away at <span class="math notranslate nohighlight">\(n-1\)</span>)</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
