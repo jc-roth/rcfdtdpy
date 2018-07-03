@@ -1,5 +1,0 @@
-rcfdtd
-======
-
-.. automodule:: rcfdtd
-   :members:
