@@ -161,9 +161,9 @@ class Field:
         """
         Allows the [] operator to be used to get field values
         """
-        return self.get(key)
+        return self.get_index(key)
 
-    def get(self, i):
+    def get_index(self, i):
         """
         Gets the value of the field at the current time index and at the the :math:`i` th spatial index. If the requested index is out of the field bounds, the returned value is zero.
         
