@@ -1,12 +1,11 @@
+import numpy as np
+from tqdm import tqdm
 """
 Contains the classes used to represent a simulation
 """
-import numpy as np
-from tqdm import tqdm
 
 class Sim:
-    """
-    Represents a single simulation. Field is initialized to all zeros.
+    """Represents a single simulation. Field is initialized to all zeros.
 
     :param vacuum_permittivity: :math:`\epsilon_0`
     :param infinity_permittivity: :math:`\epsilon_\infty`
@@ -15,18 +14,19 @@ class Sim:
     :param delta_z: :math:`\Delta z`
     :param num_n: The number of time indexes
     :param num_i: The number of spatial indexes
-    :param current: A current object
+    :param current: A field object that represents the current
     :param susceptibility: A susceptibility object
     :param initial_susceptibility: The initial susceptability. Eventually will be included in the susceptibility object.
+    
     """
     
-    def __init__(self, vacuum_permittivity, infinity_permittivity, vacuum_permeability, delta_t, delta_z, num_n, num_i, current, susceptibility, initial_susceptibility):
+    def __init__(self, vacuum_permittivity, infinity_permittivity, vacuum_permeability, delta_t, delta_z, num_n, num_i, current_field, susceptibility, initial_susceptibility):
         self._vacuum_permittivity = vacuum_permittivity
         self._infinity_permittivity = infinity_permittivity
         self._vacuum_permeability = vacuum_permeability
         self._delta_t = delta_t
         self._delta_z = delta_z
-        self._current = current
+        self._cfield = current_field
         self._susceptibility = susceptibility
         self._initial_susceptibility = initial_susceptibility
         self._num_n = num_n
@@ -112,10 +112,13 @@ class Sim:
         """
         # Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index
         for j in tqdm(range(self._num_n-1)):
-            self.iterate_hfield()
-            self.iterate_efield()
+            # Iterate the H and E, and current fields
+            self._iterate_hfield()
+            self._iterate_efield()
+            self._iterate_cfield()
+            
 
-    def iterate_efield(self):
+    def _iterate_efield(self):
         r"""
         Iterates the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n+\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`. Note that the prior electric field array is located half a time index away at :math:`n-1` and the prior magnetic field array is located half a time index away at :math:`n-1/2`.
         """
@@ -126,11 +129,13 @@ class Sim:
             term1 = (self._infinity_permittivity*self._efield[i])/(self._infinity_permittivity+self._initial_susceptibility)
             term2 = self.psi()/(self._infinity_permittivity+self._initial_susceptibility)
             term3 = (self._delta_t*(self._hfield[i-1]-self._hfield[i]))/(self._vacuum_permittivity*self._delta_z*(self._infinity_permittivity+self._initial_susceptibility))
-            term4 = (self.current()*self._delta_t)/self._vacuum_permittivity
+            term4 = (self._current(i)*self._delta_t)/self._vacuum_permittivity
             nefield[i] = term1 + term2 + term3 - term4
+        # Update the field
         self._efield.update_field(nefield)
+
         
-    def iterate_hfield(self):
+    def _iterate_hfield(self):
         r"""
         Iterates the magnetic field according to :math:`H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]`. Note that the prior electric field array is located half a time index away at :math:`n-1/2` and the prior magnetic field array is located a whole time index away at :math:`n-1`.
         """
@@ -141,7 +146,16 @@ class Sim:
             term1 = self._hfield[i]
             term2 = (self._delta_t*(self._efield[i+1]-self._efield[i]))/(self._vacuum_permeability*self._delta_z)
             nhfield[i] = term1 - term2
+        # Update the field
         self._hfield.update_field(nhfield)
+
+        
+    def _iterate_cfield(self):
+        """
+        Iterates the current field by simply increasing the temporal index by one.
+        """
+        prior_time = self._cfield.get_time_index()
+        self._cfield.set_time_index(prior_time+1)
 
     def psi(self):
         """
@@ -151,26 +165,17 @@ class Sim:
         """
         return 0
 
-    def current(self):
+    def _current(self, i):
         """
-        Calculates the current at time :math:`n` using the current object. Currently not implemented, and will simply return zero.
+        Gets the current at location :math:`i` and current time :math:`n` using the simulation's associated current field.
 
-        :return: Zero
+        :return: The current at location :math:`i` and current time :math:`n`
         """
-        return 0
-
-
-class Current:
-    """
-    Represents a current
-    """
-
-    def __init__(self):
-        pass
+        return self._cfield[i]
 
 class Field:
     """
-    Represents either an electric or magnetic field using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space.
+    Represents any field (i.e. electric, magnetic, current, susceptibility) using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space.
 
     :param num_n: The number of temporal indexes in the field
     :param num_i: The number of spatial indexes in the field
