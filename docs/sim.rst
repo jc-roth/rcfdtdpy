@@ -1,5 +1,5 @@
 sim
 ===
 
-.. automodule:: sim
+.. automodule::sim
    :members:

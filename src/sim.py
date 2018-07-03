@@ -32,8 +32,8 @@ class Sim:
         self._initial_susceptibility = initial_susceptibility
         self._num_n = num_n
         self._num_i = num_i
-        self._efield = Field(num_i)
-        self._hfield = Field(num_i)
+        self._efield = Field(num_n, num_i)
+        self._hfield = Field(num_n, num_i)
 
     def get_vacuum_permittivity(self):
         """
@@ -90,51 +90,57 @@ class Sim:
         :returns: The number of spatial indicies
         """
         return self._num_i
+
+    def get_efield(self):
+        """
+        Returns the E-field as a Field object.
+
+        :return: The E-field as a Field object
+        """
+        return self._efield
+
+    def get_hfield(self):
+        """
+        Returns the H-field as a Field object.
+
+        :return: The H-field as a Field object
+        """
+        return self._hfield
         
     def simulate(self):
         """
         Executes the simulation
         """
-        for j in tqdm(range(self._num_n)):
-            pefn = self._efield.get_time_index() - 1
-            pef = self._efield.get_field(pefn)
-            phfn = self._hfield.get_time_index() - 1
-            phf = self._hfield.get_field(phfn)
+        # Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index
+        for j in tqdm(range(self._num_n-1)):
+            self.iterate_hfield()
+            self.iterate_efield()
 
-            self.iterate_hfield(pef, phf)
-            self.iterate_efield(pef, phf)
-
-    def iterate_efield(self, pef, phf):
+    def iterate_efield(self):
         r"""
-        Iterates the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n+\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`
-        
-        :param pef: The prior electric field array (located half a time index away at :math:`n-1`)
-        :param phf: The prior magnetic field array (located half a time index away at :math:`n-1/2`)
+        Iterates the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n+\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`. Note that the prior electric field array is located half a time index away at :math:`n-1` and the prior magnetic field array is located half a time index away at :math:`n-1/2`.
         """
         # Create an array to hold the next field iteration
         nefield = np.zeros(self._num_i, dtype=np.complex64)
         # Compute the values along the next field
         for i in range(self._num_i):
-            term1 = (self._infinity_permittivity*pef[i])/(self._infinity_permittivity+self._initial_susceptibility)
+            term1 = (self._infinity_permittivity*self._efield[i])/(self._infinity_permittivity+self._initial_susceptibility)
             term2 = self.psi()/(self._infinity_permittivity+self._initial_susceptibility)
-            term3 = (self._delta_t*(phf[i-1]-phf[i]))/(self._vacuum_permittivity*self._delta_z*(self._infinity_permittivity+self._initial_susceptibility))
+            term3 = (self._delta_t*(self._hfield[i-1]-self._hfield[i]))/(self._vacuum_permittivity*self._delta_z*(self._infinity_permittivity+self._initial_susceptibility))
             term4 = (self.current()*self._delta_t)/self._vacuum_permittivity
             nefield[i] = term1 + term2 + term3 - term4
         self._efield.update_field(nefield)
         
-    def iterate_hfield(self, pef, phf):
+    def iterate_hfield(self):
         r"""
-        Iterates the magnetic field according to :math:`H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]`
-
-        :param pef: The prior electric field array (located half a time index away at :math:`n-1/2`)
-        :param phf: The prior magnetic field array (located a whole time index away at :math:`n-1`)
+        Iterates the magnetic field according to :math:`H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]`. Note that the prior electric field array is located half a time index away at :math:`n-1/2` and the prior magnetic field array is located a whole time index away at :math:`n-1`.
         """
         # Create an array to hold the next field iteration
         nhfield = np.zeros(self._num_i, dtype=np.complex64)
         # Compute the values along the next field
         for i in range(self._num_i):
-            term1 = phf[i]
-            term2 = (self._delta_t*(pef[i+1]-pef[i]))/(self._vacuum_permeability*self._delta_z)
+            term1 = self._hfield[i]
+            term2 = (self._delta_t*(self._efield[i+1]-self._efield[i]))/(self._vacuum_permeability*self._delta_z)
             nhfield[i] = term1 - term2
         self._hfield.update_field(nhfield)
 

@@ -6,51 +6,19 @@
 Welcome to RCFDTD.py's documentation!
 =====================================
 
-Code Outline
-============
-Constants
----------
-* epsilon_inf
-* epsilon_0
-* delta_t
-* delta_z
-
-Functions
----------
-* diff_chi(A1, A2, gamma, beta, delta_t, m)
-* psi(n, I, diff_chi variables)
-* electric_field_update(chi_0, epsilon_inf, E_array, H_array, psi variables, epsilon_0, delta_t, delta_z, i, n, current)
-* magnetic_field_update(mu_0, E_array, H_array, delta_t, delta_z, i, n)
-
-Data Structures
----------------
-* magnetic field array (2-dimensional, space, time)
-* electric field array (2-dimensional, space, time)
-
-Loops
------
-* Outer loop - Loops over time
-
-  * Inner loop - Loops over space
-
-    * Updates E-field
-    * Updates H-field
-
-Tools
------
-* Visualization - Use matplotlib to export heat map of field intensity in space
-
-Ideas
------
-* Parallelize the calculations in time (i.e. calculate each index simultaneously) to speed up.
-* Replace the Numpy arrays with h5py datasets, which can store much larger files locally.
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
    rcfdtd
    sim
+
+Ideas
+-----
+* Parallelize the calculations in time (i.e. calculate each index simultaneously) to speed up.
+* Replace the Numpy arrays with h5py datasets, which can store much larger files locally.
+* Visualization - Use matplotlib to export heat map of field intensity in space
+* Create a VectorField class that can be used for non-plane wave simulations
 
 The Simulation Class
 --------------------
