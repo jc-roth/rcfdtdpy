@@ -12,11 +12,24 @@ def prep_sim():
     """
 
 if __name__ == '__main__':
-    cfield = Field(50, 50)
-    cfield[14] = 0.4981
-    s = Sim(1,1,1,1,1,50,50,cfield,0,0)
+    # Prepare constants
+    vacuum_permittivity = 4*np.pi*(10.0**(-7))
+    infinity_permittivity = 0
+    vacuum_permability = 8.854187817 * (10**(-12))
+    delta_z = 3e4
+    delta_t = 3e-4
+
+    # Prepare current field
+    cfield = Field(500000, 5000)
+    cfield[200] = 0.500
+
+    # Prepare and perform simulation
+    s = Sim(vacuum_permittivity,infinity_permittivity,vacuum_permability,delta_t,delta_z,500000,5000,cfield,0,0)
     s.simulate()
+
+    # Export simulation result
     arr = s.get_efield().export()
-    for i in range(50):
-        print(str(i) + ':\t' + str(arr[i]))
-    vis.contor_plot(arr, 1, 1)
+
+    # Visualize result
+    print(np.shape(arr))
+    vis.contor_plot(arr, delta_z, delta_z)
