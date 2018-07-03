@@ -336,7 +336,7 @@
 <div class="section" id="sim-field">
 <h2>sim.Field<a class="headerlink" href="#sim-field" title="Permalink to this headline">¶</a></h2>
 <p>The field class can store both current field values as well as past field values as as Numpy array. The array has the following structure</p>
-<a class="reference internal image-reference" href="_images/numpy_structure.png"><img alt="_images/numpy_structure.png" class="align-center" src="_images/numpy_structure.png" style="width: 276.5px; height: 269.0px;" /></a>
+<a class="reference internal image-reference" href="_images/numpy_structure.png"><img alt="_images/numpy_structure.png" class="align-center" src="_images/numpy_structure.png" style="width: 480.0px; height: 360.0px;" /></a>
 <p>The user never directly interacts with the entire Numpy array. Rather they set a “current time <span class="math notranslate nohighlight">\(n\)</span>” which selects a row of the array. Any further operations are performed on that row. The <a class="reference internal" href="#sim.Field.export" title="sim.Field.export"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sim.Field.export()</span></code></a> function simply returns the Numpy field.</p>
 <dl class="class">
 <dt id="sim.Field">
