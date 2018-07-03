@@ -10,13 +10,17 @@ from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
 import numpy as np
 
-def contor_plot(arr, delta_z, delta_t):
+def contor_plot(arr):
     # make these smaller to increase the resolution
     # delta_z, delta_t
-
+    
     # generate 2 2d grids for the x & y bounds
-    t, z = np.mgrid[slice(0, 50, delta_t),
-                    slice(0, 50, delta_z)]
+    dim_t, dim_z = np.shape(arr)
+    t, z = np.mgrid[slice(0, dim_t, 1),
+                    slice(0, dim_z, 1)]
+
+    print(np.shape(t))
+    print(np.shape(z))
 
     i = np.real(arr)
 

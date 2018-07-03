@@ -19,17 +19,24 @@ if __name__ == '__main__':
     delta_z = 3e4
     delta_t = 3e-4
 
+    dim_n = 10000
+    dim_i = 2000
+
     # Prepare current field
-    cfield = Field(500000, 5000)
+    cfield = Field(dim_n, dim_i)
     cfield[200] = 0.500
 
     # Prepare and perform simulation
-    s = Sim(vacuum_permittivity,infinity_permittivity,vacuum_permability,delta_t,delta_z,500000,5000,cfield,0,0)
-    s.simulate()
+    s = Sim(vacuum_permittivity, infinity_permittivity, vacuum_permability, delta_t, delta_z, dim_n, dim_i, cfield, 0, 0)
+    #s.simulate()
 
     # Export simulation result
-    arr = s.get_efield().export()
+    #arr = s.get_efield().export()
+    arr = np.load('sim.npy')
+
+    # Save the result
+    #np.save('sim.npy', arr)
 
     # Visualize result
     print(np.shape(arr))
-    vis.contor_plot(arr, delta_z, delta_z)
+    vis.contor_plot(arr[0:50,100:300])
