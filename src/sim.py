@@ -1,9 +1,8 @@
-import numpy as np
-from tqdm import tqdm
-
 """
 Contains the classes used to represent a simulation
 """
+import numpy as np
+from tqdm import tqdm
 
 class Sim:
     """

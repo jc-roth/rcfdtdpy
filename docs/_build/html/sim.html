@@ -1,0 +1,557 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>sim &mdash; RCFDTD.py  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="rcfdtd" href="rcfdtd.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> RCFDTD.py
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="rcfdtd.html">rcfdtd</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">sim</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sim-sim">sim.Sim</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sim-field">sim.Field</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RCFDTD.py</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>sim</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/sim.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sim">
+<h1>sim<a class="headerlink" href="#sim" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="sim-sim">
+<h2>sim.Sim<a class="headerlink" href="#sim-sim" title="Permalink to this headline">¶</a></h2>
+<p>The simulation class treats field indicies as follows</p>
+<a class="reference internal image-reference" href="_images/field_structure.png"><img alt="_images/field_structure.png" class="align-center" src="_images/field_structure.png" style="width: 367.5px; height: 212.5px;" /></a>
+<p>Both the electric and magnetic fields are initialized to the same length, meaning that they have a slight offset in starting and ending locations in the simulation. The field at each time is stored in a Numpy array. The Numpy arrays are stored in a list, which allows each field at previous times to be accessed.</p>
+<ul class="simple">
+<li>Discuss the choice of <span class="math notranslate nohighlight">\(\frac{\Delta t}{\Delta z}\approx c\)</span></li>
+</ul>
+<dl class="class">
+<dt id="sim.Sim">
+<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>vacuum_permittivity</em>, <em>infinity_permittivity</em>, <em>vacuum_permeability</em>, <em>delta_t</em>, <em>delta_z</em>, <em>num_n</em>, <em>num_i</em>, <em>current</em>, <em>susceptibility</em>, <em>initial_susceptibility</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a single simulation. Field is initialized to all zeros.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vacuum_permittivity</strong> – <span class="math notranslate nohighlight">\(\epsilon_0\)</span></li>
+<li><strong>infinity_permittivity</strong> – <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span></li>
+<li><strong>vacuum_permeability</strong> – <span class="math notranslate nohighlight">\(\mu_0\)</span></li>
+<li><strong>delta_t</strong> – <span class="math notranslate nohighlight">\(\Delta t\)</span></li>
+<li><strong>delta_z</strong> – <span class="math notranslate nohighlight">\(\Delta z\)</span></li>
+<li><strong>num_n</strong> – The number of time indexes</li>
+<li><strong>num_i</strong> – The number of spatial indexes</li>
+<li><strong>current</strong> – A current object</li>
+<li><strong>susceptibility</strong> – A susceptibility object</li>
+<li><strong>initial_susceptibility</strong> – The initial susceptability. Eventually will be included in the susceptibility object.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="sim.Sim.current">
+<code class="descname">current</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.current" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the current at time <span class="math notranslate nohighlight">\(n\)</span> using the current object. Currently not implemented, and will simply return zero.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Zero</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_delta_t">
+<code class="descname">get_delta_t</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_delta_t"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_delta_t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets <span class="math notranslate nohighlight">\(\Delta t\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><span class="math notranslate nohighlight">\(\Delta t\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_delta_z">
+<code class="descname">get_delta_z</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_delta_z"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_delta_z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets <span class="math notranslate nohighlight">\(\Delta z\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><span class="math notranslate nohighlight">\(\Delta z\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_efield">
+<code class="descname">get_efield</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_efield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_efield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the E-field as a Field object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The E-field as a Field object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_hfield">
+<code class="descname">get_hfield</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_hfield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_hfield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the H-field as a Field object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The H-field as a Field object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_infinity_permittivity">
+<code class="descname">get_infinity_permittivity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_infinity_permittivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_infinity_permittivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><span class="math notranslate nohighlight">\(\epsilon_\infty\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_num_i">
+<code class="descname">get_num_i</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_num_i"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_num_i" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the number of spatial indicies.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The number of spatial indicies</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_num_n">
+<code class="descname">get_num_n</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_num_n"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_num_n" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the number of temporal indicies.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The number of temporal indicies</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_vacuum_permeability">
+<code class="descname">get_vacuum_permeability</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_vacuum_permeability"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_vacuum_permeability" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets <span class="math notranslate nohighlight">\(\mu_0\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><span class="math notranslate nohighlight">\(\mu_0\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_vacuum_permittivity">
+<code class="descname">get_vacuum_permittivity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_vacuum_permittivity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_vacuum_permittivity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets <span class="math notranslate nohighlight">\(\epsilon_0\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><span class="math notranslate nohighlight">\(\epsilon_0\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.iterate_efield">
+<code class="descname">iterate_efield</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.iterate_efield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.iterate_efield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates the electric field according to <span class="math notranslate nohighlight">\(E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n+\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\)</span>. Note that the prior electric field array is located half a time index away at <span class="math notranslate nohighlight">\(n-1\)</span> and the prior magnetic field array is located half a time index away at <span class="math notranslate nohighlight">\(n-1/2\)</span>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.iterate_hfield">
+<code class="descname">iterate_hfield</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.iterate_hfield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.iterate_hfield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates the magnetic field according to <span class="math notranslate nohighlight">\(H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]\)</span>. Note that the prior electric field array is located half a time index away at <span class="math notranslate nohighlight">\(n-1/2\)</span> and the prior magnetic field array is located a whole time index away at <span class="math notranslate nohighlight">\(n-1\)</span>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.psi">
+<code class="descname">psi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.psi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.psi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates psi according to <span class="math notranslate nohighlight">\(\psi^n=\sum^{n-1}_{m=0}E^{i,n-m}\Delta\chi_e^m\)</span> at the current time <span class="math notranslate nohighlight">\(n\)</span> and position <span class="math notranslate nohighlight">\(i\)</span>. Currently not implemented, and will simply return zero.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Zero</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.simulate">
+<code class="descname">simulate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.simulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes the simulation</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="sim-field">
+<h2>sim.Field<a class="headerlink" href="#sim-field" title="Permalink to this headline">¶</a></h2>
+<p>The field class can store both current field values as well as past field values as as Numpy array. The array has the following structure</p>
+<a class="reference internal image-reference" href="_images/numpy_structure.png"><img alt="_images/numpy_structure.png" class="align-center" src="_images/numpy_structure.png" style="width: 276.5px; height: 269.0px;" /></a>
+<p>The user never directly interacts with the entire Numpy array. Rather they set a “current time <span class="math notranslate nohighlight">\(n\)</span>” which selects a row of the array. Any further operations are performed on that row. The <a class="reference internal" href="#sim.Field.export" title="sim.Field.export"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sim.Field.export()</span></code></a> function simply returns the Numpy field.</p>
+<dl class="class">
+<dt id="sim.Field">
+<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>num_n</em>, <em>num_i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents either an electric or magnetic field using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>num_n</strong> – The number of temporal indexes in the field</li>
+<li><strong>num_i</strong> – The number of spatial indexes in the field</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="sim.Field.export">
+<code class="descname">export</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.export" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Numpy array that contains the temporal (axis=0) and spatial values (axis=1) of the field.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A Numpy array</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.get_field">
+<code class="descname">get_field</code><span class="sig-paren">(</span><em>n=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.get_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.get_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the field at time <span class="math notranslate nohighlight">\(n\)</span>, and the current time if <span class="math notranslate nohighlight">\(n\)</span> is unspecified.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> – <span class="math notranslate nohighlight">\(n\)</span></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The field at time <cite>n</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.get_index">
+<code class="descname">get_index</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.get_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.get_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the value of the field at the current time index <span class="math notranslate nohighlight">\(n\)</span> and at the <span class="math notranslate nohighlight">\(i\)</span> th spatial index. If the requested index is out of the field bounds, the returned value is zero.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> – The spatial index of the field to access</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The value of the field a the current time index <span class="math notranslate nohighlight">\(n\)</span> and spatial index <span class="math notranslate nohighlight">\(i\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.get_time_index">
+<code class="descname">get_time_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.get_time_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.get_time_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the current time index <span class="math notranslate nohighlight">\(n\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current time index <span class="math notranslate nohighlight">\(n\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.set_index">
+<code class="descname">set_index</code><span class="sig-paren">(</span><em>i</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.set_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.set_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the value of the field at the current time index <span class="math notranslate nohighlight">\(n\)</span> and at the <span class="math notranslate nohighlight">\(i\)</span> th spatial index.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>i</strong> – The spatial index of the field to set</li>
+<li><strong>value</strong> – The value to set at time index <span class="math notranslate nohighlight">\(n\)</span> and spatial index <span class="math notranslate nohighlight">\(i\)</span></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.set_time_index">
+<code class="descname">set_time_index</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.set_time_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.set_time_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the current time index to <span class="math notranslate nohighlight">\(n\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> – <span class="math notranslate nohighlight">\(n\)</span></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.update_field">
+<code class="descname">update_field</code><span class="sig-paren">(</span><em>nfield</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.update_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.update_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates to the next temporal index and updates the field at that time to nfield. Raises a ValueError if the new field is not of the correct spatial length and a RuntimeError if the end of the temporal indicies has been reached.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nfield</strong> – The new field to append of length num_i</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="rcfdtd.html" class="btn btn-neutral" title="rcfdtd" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Jack Roth.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
