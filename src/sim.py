@@ -17,9 +17,10 @@ class Sim:
     :param num_i: The number of spatial indexes
     :param current: A current object
     :param susceptibility: A susceptibility object
+    :param initial_susceptibility: The initial susceptability. Eventually will be included in the susceptibility object.
     """
     
-    def __init__(self, vacuum_permittivity, infinity_permittivity, vacuum_permeability, delta_t, delta_z, num_n, num_i, current, susceptibility):
+    def __init__(self, vacuum_permittivity, infinity_permittivity, vacuum_permeability, delta_t, delta_z, num_n, num_i, current, susceptibility, initial_susceptibility):
         self._vacuum_permittivity = vacuum_permittivity
         self._infinity_permittivity = infinity_permittivity
         self._vacuum_permeability = vacuum_permeability
@@ -27,6 +28,7 @@ class Sim:
         self._delta_z = delta_z
         self._current = current
         self._susceptibility = susceptibility
+        self._initial_susceptibility = initial_susceptibility
         self._num_n = num_n
         self._num_i = num_i
         self._efield = Field(num_i)
@@ -88,22 +90,6 @@ class Sim:
         """
         self._delta_z = delta_z
 
-    def calc_electric_susceptibility(self):
-        """WRITE DOCS"""
-        pass
-
-    def calc_efield_susceptibility_convolution(self):
-        """WRITE DOCS"""
-        pass
-
-    def get_efield(self, n=0):
-        """WRITE DOCS"""
-        return self._efield[n]
-
-    def get_hfield(self, n=0):
-        """WRITE DOCS"""
-        return self._hfield[n]
-
     def iterate_efield(self, pef, phf):
         r"""
         Iterates the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n+\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`
@@ -115,10 +101,10 @@ class Sim:
         nefield = np.zeros(self._num_i, dtype=np.complex64)
         # Compute the values along the next field
         for i in range(self._num_i):
-            term1 = (self._infinity_permittivity)/(self._infinity_permittivity+pef[i])
-            term2 = 0
-            term3 = 0
-            term4 = 0
+            term1 = (self._infinity_permittivity*pef[i])/(self._infinity_permittivity+self._initial_susceptibility)
+            term2 = self.psi()/(self._infinity_permittivity+self._initial_susceptibility)
+            term3 = (self._delta_t*(phf[i-1]-phf[i]))/(self._vacuum_permittivity*self._delta_z*(self._infinity_permittivity+self._initial_susceptibility))
+            term4 = (self.current()*self._delta_t)/self._vacuum_permittivity
             nefield[i] = term1 + term2 + term3 - term4
         self._efield.append_field(nefield)
         
@@ -138,6 +124,22 @@ class Sim:
             nhfield[i] = term1 - term2
         self._hfield.append_field(nhfield)
 
+    def psi(self):
+        """
+        Calculates psi according to :math:`\psi^n=\sum^{n-1}_{m=0}E^{i,n-m}\Delta\chi_e^m` at the current time :math:`n` and position :math:`i`. Currently not implemented, and will simply return zero.
+
+        :return: Zero
+        """
+        return 0
+
+    def current(self):
+        """
+        Calculates the current at time :math:`n` using the current object. Currently not implemented, and will simply return zero.
+
+        :return: Zero
+        """
+        return 0
+
 
 class Current:
     """
@@ -151,7 +153,7 @@ class Field:
     """
     Represents either an electric or magnetic field.
 
-    :param num_i: The number of spatial indexes
+    :param num_i: The number of spatial indexes in the field
     """
 
     def __init__(self, num_i):

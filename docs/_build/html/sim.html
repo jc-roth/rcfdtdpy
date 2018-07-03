@@ -161,7 +161,7 @@
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_i</strong> – The number of spatial indexes</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_i</strong> – The number of spatial indexes in the field</td>
 </tr>
 </tbody>
 </table>
@@ -259,7 +259,7 @@
 
 <dl class="class">
 <dt id="sim.Sim">
-<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>vacuum_permittivity</em>, <em>infinity_permittivity</em>, <em>vacuum_permeability</em>, <em>delta_t</em>, <em>delta_z</em>, <em>num_n</em>, <em>num_i</em>, <em>current</em>, <em>susceptibility</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>vacuum_permittivity</em>, <em>infinity_permittivity</em>, <em>vacuum_permeability</em>, <em>delta_t</em>, <em>delta_z</em>, <em>num_n</em>, <em>num_i</em>, <em>current</em>, <em>susceptibility</em>, <em>initial_susceptibility</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a single simulation. Field is initialized to all zeros.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -275,21 +275,24 @@
 <li><strong>num_i</strong> – The number of spatial indexes</li>
 <li><strong>current</strong> – A current object</li>
 <li><strong>susceptibility</strong> – A susceptibility object</li>
+<li><strong>initial_susceptibility</strong> – The initial susceptability. Eventually will be included in the susceptibility object.</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="sim.Sim.calc_efield_susceptibility_convolution">
-<code class="descname">calc_efield_susceptibility_convolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.calc_efield_susceptibility_convolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.calc_efield_susceptibility_convolution" title="Permalink to this definition">¶</a></dt>
-<dd><p>WRITE DOCS</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Sim.calc_electric_susceptibility">
-<code class="descname">calc_electric_susceptibility</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.calc_electric_susceptibility"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.calc_electric_susceptibility" title="Permalink to this definition">¶</a></dt>
-<dd><p>WRITE DOCS</p>
+<dt id="sim.Sim.current">
+<code class="descname">current</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.current" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the current at time <span class="math notranslate nohighlight">\(n\)</span> using the current object. Currently not implemented, and will simply return zero.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Zero</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -318,18 +321,6 @@
 </tr>
 </tbody>
 </table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Sim.get_efield">
-<code class="descname">get_efield</code><span class="sig-paren">(</span><em>n=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_efield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_efield" title="Permalink to this definition">¶</a></dt>
-<dd><p>WRITE DOCS</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Sim.get_hfield">
-<code class="descname">get_hfield</code><span class="sig-paren">(</span><em>n=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_hfield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_hfield" title="Permalink to this definition">¶</a></dt>
-<dd><p>WRITE DOCS</p>
 </dd></dl>
 
 <dl class="method">
@@ -377,6 +368,20 @@
 <li><strong>phf</strong> – The prior magnetic field array (located a whole time index away at <span class="math notranslate nohighlight">\(n-1\)</span>)</li>
 </ul>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.psi">
+<code class="descname">psi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.psi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.psi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates psi according to <span class="math notranslate nohighlight">\(\psi^n=\sum^{n-1}_{m=0}E^{i,n-m}\Delta\chi_e^m\)</span> at the current time <span class="math notranslate nohighlight">\(n\)</span> and position <span class="math notranslate nohighlight">\(i\)</span>. Currently not implemented, and will simply return zero.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Zero</td>
 </tr>
 </tbody>
 </table>

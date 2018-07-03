@@ -61,6 +61,8 @@ The simulation class treats field indicies as follows
 
 Both the electric and magnetic fields are initialized to the same length, meaning that they have a slight offset in starting and ending locations in the simulation. The field at each time is stored in a Numpy array. The Numpy arrays are stored in a list, which allows each field at previous times to be accessed.
 
+* Discuss the choice of :math:`\frac{\Delta t}{\Delta z}\approx c`
+
 Indices and tables
 ==================
 
