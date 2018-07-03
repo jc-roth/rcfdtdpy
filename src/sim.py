@@ -7,6 +7,16 @@ Contains the classes used to represent a simulation
 class Sim:
     """
     Represents a single simulation. Field is initialized to all zeros.
+
+    :param vacuum_permittivity: :math:`\epsilon_0`
+    :param infinity_permittivity: :math:`\epsilon_\infty`
+    :param vacuum_permeability: :math:`\mu_0`
+    :param delta_t: :math:`\Delta t`
+    :param delta_z: :math:`\Delta z`
+    :param num_n: The number of time indexes
+    :param num_i: The number of spatial indexes
+    :param current: A current object
+    :param susceptibility: A susceptibility object
     """
     
     def __init__(self, vacuum_permittivity, infinity_permittivity, vacuum_permeability, delta_t, delta_z, num_n, num_i, current, susceptibility):
@@ -19,8 +29,8 @@ class Sim:
         self._susceptibility = susceptibility
         self._num_n = num_n
         self._num_i = num_i
-        self._efield = list(np.zeros(num_i, dtype=np.complex64))
-        self._hfield = list(np.zeros(num_i, dtype=np.complex64))
+        self._efield = Field(num_i)
+        self._hfield = Field(num_i)
 
     def set_vacuum_permittivity(self, vacuum_permittivity):
         """
@@ -94,10 +104,24 @@ class Sim:
         """WRITE DOCS"""
         return self._hfield[n]
 
-    def iterate_efield(self, next_state):
-        """WRITE DOCS"""
-        self._efield.append(next_state)
-
+    def iterate_efield(self, pef, phf):
+        r"""
+        Iterates the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n+\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`
+        
+        :param pef: The prior electric field array (located half a time index away at :math:`n-1`)
+        :param phf: The prior magnetic field array (located half a time index away at :math:`n-1/2`)
+        """
+        # Create an array to hold the next field iteration
+        nefield = np.zeros(self._num_i, dtype=np.complex64)
+        # Compute the values along the next field
+        for i in range(self._num_i):
+            term1 = (self._infinity_permittivity)/(self._infinity_permittivity+pef[i])
+            term2 = 0
+            term3 = 0
+            term4 = 0
+            nefield[i] = term1 + term2 + term3 - term4
+        self._efield.append_field(nefield)
+        
     def iterate_hfield(self, pef, phf):
         r"""
         Iterates the magnetic field according to :math:`H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]`
@@ -109,8 +133,11 @@ class Sim:
         nhfield = np.zeros(self._num_i, dtype=np.complex64)
         # Compute the values along the next field
         for i in range(self._num_i):
-            nhfield[i] = phf[i]-(self._delta_t*(pef[i+1]-pef[i]))/(self._vacuum_permeability*self._delta_z)
-        
+            term1 = phf[i]
+            term2 = (self._delta_t*(pef[i+1]-pef[i]))/(self._vacuum_permeability*self._delta_z)
+            nhfield[i] = term1 - term2
+        self._hfield.append_field(nhfield)
+
 
 class Current:
     """
@@ -122,7 +149,9 @@ class Current:
 
 class Field:
     """
-    Represents either an electric or magnetic field
+    Represents either an electric or magnetic field.
+
+    :param num_i: The number of spatial indexes
     """
 
     def __init__(self, num_i):

@@ -156,7 +156,15 @@
 <dl class="class">
 <dt id="sim.Field">
 <em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>num_i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents either an electric or magnetic field</p>
+<dd><p>Represents either an electric or magnetic field.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>num_i</strong> – The number of spatial indexes</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="sim.Field.append_field">
 <code class="descname">append_field</code><span class="sig-paren">(</span><em>nfield</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.append_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.append_field" title="Permalink to this definition">¶</a></dt>
@@ -253,6 +261,25 @@
 <dt id="sim.Sim">
 <em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>vacuum_permittivity</em>, <em>infinity_permittivity</em>, <em>vacuum_permeability</em>, <em>delta_t</em>, <em>delta_z</em>, <em>num_n</em>, <em>num_i</em>, <em>current</em>, <em>susceptibility</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a single simulation. Field is initialized to all zeros.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vacuum_permittivity</strong> – <span class="math notranslate nohighlight">\(\epsilon_0\)</span></li>
+<li><strong>infinity_permittivity</strong> – <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span></li>
+<li><strong>vacuum_permeability</strong> – <span class="math notranslate nohighlight">\(\mu_0\)</span></li>
+<li><strong>delta_t</strong> – <span class="math notranslate nohighlight">\(\Delta t\)</span></li>
+<li><strong>delta_z</strong> – <span class="math notranslate nohighlight">\(\Delta z\)</span></li>
+<li><strong>num_n</strong> – The number of time indexes</li>
+<li><strong>num_i</strong> – The number of spatial indexes</li>
+<li><strong>current</strong> – A current object</li>
+<li><strong>susceptibility</strong> – A susceptibility object</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="method">
 <dt id="sim.Sim.calc_efield_susceptibility_convolution">
 <code class="descname">calc_efield_susceptibility_convolution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.calc_efield_susceptibility_convolution"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.calc_efield_susceptibility_convolution" title="Permalink to this definition">¶</a></dt>
@@ -321,8 +348,20 @@
 
 <dl class="method">
 <dt id="sim.Sim.iterate_efield">
-<code class="descname">iterate_efield</code><span class="sig-paren">(</span><em>next_state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.iterate_efield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.iterate_efield" title="Permalink to this definition">¶</a></dt>
-<dd><p>WRITE DOCS</p>
+<code class="descname">iterate_efield</code><span class="sig-paren">(</span><em>pef</em>, <em>phf</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.iterate_efield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.iterate_efield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates the electric field according to <span class="math notranslate nohighlight">\(E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n+\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\)</span></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>pef</strong> – The prior electric field array (located half a time index away at <span class="math notranslate nohighlight">\(n-1\)</span>)</li>
+<li><strong>phf</strong> – The prior magnetic field array (located half a time index away at <span class="math notranslate nohighlight">\(n-1/2\)</span>)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
