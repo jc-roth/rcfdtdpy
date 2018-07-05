@@ -335,9 +335,9 @@
 </div>
 <div class="section" id="sim-field">
 <h2>sim.Field<a class="headerlink" href="#sim-field" title="Permalink to this headline">¶</a></h2>
-<p>The field class can store both current field values as well as past field values as as Numpy array. The array has the following structure</p>
+<p>The field class can store both current field values as well as past field values as as Numpy array. The E-field array has the following structure</p>
 <a class="reference internal image-reference" href="_images/numpy_structure.png"><img alt="_images/numpy_structure.png" class="align-center" src="_images/numpy_structure.png" style="width: 480.0px; height: 360.0px;" /></a>
-<p>The user never directly interacts with the entire Numpy array. Rather they set a “current time <span class="math notranslate nohighlight">\(n\)</span>” which selects a row of the array. Any further operations are performed on that row. The <a class="reference internal" href="#sim.Field.export" title="sim.Field.export"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sim.Field.export()</span></code></a> function simply returns the Numpy field.</p>
+<p>The H-field array has a corresponding structure. The user never directly interacts with the entire Numpy array. Rather they set a “current time <span class="math notranslate nohighlight">\(n\)</span>” which selects a row of the array. Any further operations are performed on that row. The <a class="reference internal" href="#sim.Field.export" title="sim.Field.export"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sim.Field.export()</span></code></a> function simply returns the Numpy field.</p>
 <dl class="class">
 <dt id="sim.Field">
 <em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>num_n</em>, <em>num_i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field" title="Permalink to this definition">¶</a></dt>
@@ -415,6 +415,20 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="sim.Field.set_field">
+<code class="descname">set_field</code><span class="sig-paren">(</span><em>nfield</em>, <em>n=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.set_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.set_field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the field at time <span class="math notranslate nohighlight">\(n\)</span>, and the current time if <span class="math notranslate nohighlight">\(n\)</span> is unspecified. Raises a ValueError if the new field is not of the correct spatial length.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nfield</strong> – The new field to append of length num_i</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
 <dt id="sim.Field.set_index">
 <code class="descname">set_index</code><span class="sig-paren">(</span><em>i</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.set_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.set_index" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the value of the field at the current time index <span class="math notranslate nohighlight">\(n\)</span> and at the <span class="math notranslate nohighlight">\(i\)</span> th spatial index.</p>
@@ -441,20 +455,6 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> – <span class="math notranslate nohighlight">\(n\)</span></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Field.update_field">
-<code class="descname">update_field</code><span class="sig-paren">(</span><em>nfield</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.update_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.update_field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterates to the next temporal index and updates the field at that time to nfield. Raises a ValueError if the new field is not of the correct spatial length and a RuntimeError if the end of the temporal indicies has been reached.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nfield</strong> – The new field to append of length num_i</td>
 </tr>
 </tbody>
 </table>
