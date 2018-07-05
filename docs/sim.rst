@@ -19,13 +19,13 @@ Both the electric and magnetic fields are initialized to the same length, meanin
 
 sim.Field
 ---------
-The field class can store both current field values as well as past field values as as Numpy array. The array has the following structure
+The field class can store both current field values as well as past field values as as Numpy array. The E-field array has the following structure
 
 .. image:: ../images/numpy_structure.png
    :align: center
    :scale: 50
 
-The user never directly interacts with the entire Numpy array. Rather they set a "current time :math:`n`" which selects a row of the array. Any further operations are performed on that row. The :meth:`sim.Field.export` function simply returns the Numpy field.
+The H-field array has a corresponding structure. The user never directly interacts with the entire Numpy array. Rather they set a "current time :math:`n`" which selects a row of the array. Any further operations are performed on that row. The :meth:`sim.Field.export` function simply returns the Numpy field.
 
 .. autoclass:: sim.Field
    :members:
