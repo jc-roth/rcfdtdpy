@@ -14,7 +14,7 @@ def plot(e, h, n):
     dim_t, dim_z = np.shape(e)
     step = np.linspace(0, dim_z, dim_z)
     plt.plot(step, e[n], label='E')
-    plt.plot(step, h[n], label='H')
+    plt.plot(step+0.5, h[n], label='H')
     plt.legend()
     plt.show()
 
