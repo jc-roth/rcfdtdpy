@@ -10,13 +10,23 @@ from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
 import numpy as np
 
-def plot(e, h, n):
+def timeseries(e, h, c, fname):
     dim_t, dim_z = np.shape(e)
     step = np.linspace(0, dim_z, dim_z)
-    plt.plot(step, e[n], label='E')
-    plt.plot(step+0.5, h[n], label='H')
-    plt.legend()
-    plt.show()
+    for t in range(dim_t):
+        plt.plot(step, e[t], label='E')
+        plt.plot(step+0.5, h[t], label='H')
+        plt.plot(step, 100*c[t], label='C [scaled by 100]')
+        plt.legend()
+        plt.ylim((-150, 150))
+        plt.title(str(t))
+        plt.savefig(fname + str(t))
+        plt.gcf().clear()
+
+def plot(e, h, c, n):
+    dim_t, dim_z = np.shape(e)
+    step = np.linspace(0, dim_z, dim_z)
+    return plt
 
 def contor_plot(e, h):
     # make these smaller to increase the resolution
