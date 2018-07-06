@@ -154,12 +154,14 @@ class Sim:
                 hfield = self._calc_hfield(False)
                 efield = self._calc_efield(False)
                 # Iterate the H and E, and current fields
-                self._iterate_hfield()
-                self._iterate_efield()
+                #self._iterate_hfield()
+                #self._iterate_efield()
+                self._hfield.iterate()
+                self._efield.iterate()
                 self._iterate_cfield()
                 # Update the field values
-                self._efield.set_field(efield)
-                self._hfield.set_field(hfield)
+                #self._efield.set_field(efield)
+                #self._hfield.set_field(hfield)
             
 
     def _calc_efield(self, diagnostics=False, print_i=0):
@@ -174,7 +176,7 @@ class Sim:
             term2 = self._e_calc_term2_prop_const * self.psi()
             term3 = self._e_calc_term3_prop_const * (self._hfield[i]-self._hfield[i-1])
             term4 = self._e_calc_term4_prop_const * self._current(i)
-            nefield[i] = term1 + term2 - term3 - term4
+            self._efield[i] = term1 + term2 - term3 - term4
             if diagnostics:
                 if type(print_i) == tuple and i in print_i:
                     print('E=\ti:' + str(i) + '\tt1:' + str(term1) + '\tt2:' + str(term2) + '\tt3:' + str(term3) + '\tt4:' + str(term4) + '\tsum:' + str(nefield[i]))
@@ -194,7 +196,7 @@ class Sim:
         for i in range(self._num_i):
             term1 = self._hfield[i]
             term2 = self._h_calc_term2_prop_const * (self._efield[i+1]-self._efield[i])
-            nhfield[i] = term1 - term2
+            self._hfield[i] = term1 - term2
             if diagnostics:
                 if type(print_i) == tuple and i in print_i:
                     print('H=\ti:' + str(i) + '\tt1:' + str(term1) + '\tt2:' + str(term2) + '\tsum:' + str(nhfield[i]))
@@ -251,15 +253,22 @@ class Field:
     :param num_i: The number of spatial indexes in the field
     """
 
-    def __init__(self, num_n, num_i):
+    def __init__(self, num_n=0, num_i=0, field=None):
         # Set the field time index to zero
         self._n = 0
         # Set the field temporal length to num_n
         self._num_n = num_n
         # Set the field spatial length to num_i
         self._num_i = num_i
-        # Initialize a zero field
-        self._field = np.zeros((num_n, num_i), dtype=np.float64)
+        # Initialize field
+        if field is None:
+            # Initialize a zero field
+            self._field = np.zeros((num_n, num_i), dtype=np.float64)
+        else:
+            # Set the field
+            self._field = np.float64(field)
+            # Extract field spatial and temporal indicies
+            self._num_n, self._num_i = np.shape(field)
 
     def get_time_index(self):
         """
@@ -347,6 +356,19 @@ class Field:
                 raise IndexError('The n argument is of out of bounds')
             # Set the new field value
             self._field[n] = nfield
+
+    def iterate(self):
+        """
+        TODO DOCUMENT THIS FUNCTION
+        """
+        # Check for that n is within the accepted range
+        if(self._n + 1 >= self._num_n):
+            raise IndexError('The end of the n dimension was reached, cannot iterate')
+        # Copy the current field to the next temporal index
+        self._field[self._n+1] = self._field[self._n]
+        # Iterate the temporal index
+        self._n += 1
+
 
     def export(self):
         """
