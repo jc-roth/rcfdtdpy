@@ -27,7 +27,6 @@ class Sim:
         self._delta_t = delta_t
         self._delta_z = delta_z
         self._cfield = current_field
-        self._cfield.set_time_index(0) # Set the time index of the current field to zero
         self._susceptibility = susceptibility
         self._initial_susceptibility = initial_susceptibility
         self._num_n = num_n
@@ -123,25 +122,47 @@ class Sim:
         """
         return self._hfield
         
-    def simulate(self):
+    def simulate(self, diagnostics=False, i=0):
         """
         Executes the simulation
+
+        :param diagnostics: Display information about the spatial index specified by i during simulation
+        :param i: A spatial index or a tuple of spatial indicies to display information about
         """
+        self._efield.set_time_index(0) # Set the time index of the electric field to zero
+        self._hfield.set_time_index(0) # Set the time index of the magnetic field to zero
+        self._cfield.set_time_index(0) # Set the time index of the current field to zero
         # Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index
-        for j in tqdm(range(self._num_n-1)):
-            # Calculate the H and E fields
-            efield = self._calc_efield(j)
-            hfield = self._calc_hfield(j)
-            # Iterate the H and E, and current fields
-            self._iterate_hfield()
-            self._iterate_efield()
-            self._iterate_cfield()
-            # Update the field values
-            self._efield.set_field(efield)
-            self._hfield.set_field(hfield)
+        if diagnostics:
+            # Display diagnostics
+            for j in range(self._num_n-1):
+                print('j=' + str(j))
+                # Calculate the H and E fields
+                hfield = self._calc_hfield(True, i)
+                efield = self._calc_efield(True, i)
+                # Iterate the H and E, and current fields
+                self._iterate_hfield()
+                self._iterate_efield()
+                self._iterate_cfield()
+                # Update the field values
+                self._efield.set_field(efield)
+                self._hfield.set_field(hfield)
+        else:
+            # Do not display diagnostics
+            for j in tqdm(range(self._num_n-1)):
+                # Calculate the H and E fields
+                hfield = self._calc_hfield(False)
+                efield = self._calc_efield(False)
+                # Iterate the H and E, and current fields
+                self._iterate_hfield()
+                self._iterate_efield()
+                self._iterate_cfield()
+                # Update the field values
+                self._efield.set_field(efield)
+                self._hfield.set_field(hfield)
             
 
-    def _calc_efield(self, j):
+    def _calc_efield(self, diagnostics=False, print_i=0):
         r"""
         Calcualtes the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n-\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`. Note that the prior electric field array is located half a time index away at :math:`n-1` and the prior magnetic field array is located half a time index away at :math:`n-1/2`.
         """
@@ -154,11 +175,16 @@ class Sim:
             term3 = self._e_calc_term3_prop_const * (self._hfield[i]-self._hfield[i-1])
             term4 = self._e_calc_term4_prop_const * self._current(i)
             nefield[i] = term1 + term2 - term3 - term4
+            if diagnostics:
+                if type(print_i) == tuple and i in print_i:
+                    print('E=\ti:' + str(i) + '\tt1:' + str(term1) + '\tt2:' + str(term2) + '\tt3:' + str(term3) + '\tt4:' + str(term4) + '\tsum:' + str(nefield[i]))
+                elif i == print_i:
+                    print('E=\tt1:' + str(term1) + '\tt2:' + str(term2) + '\tt3:' + str(term3) + '\tt4:' + str(term4) + '\tsum:' + str(nefield[i]))
         # Return the field
         return nefield
 
         
-    def _calc_hfield(self, j):
+    def _calc_hfield(self, diagnostics=False, print_i=0):
         r"""
         Calculates the magnetic field according to :math:`H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]`. Note that the prior electric field array is located half a time index away at :math:`n-1/2` and the prior magnetic field array is located a whole time index away at :math:`n-1`.
         """
@@ -169,6 +195,11 @@ class Sim:
             term1 = self._hfield[i]
             term2 = self._h_calc_term2_prop_const * (self._efield[i+1]-self._efield[i])
             nhfield[i] = term1 - term2
+            if diagnostics:
+                if type(print_i) == tuple and i in print_i:
+                    print('H=\ti:' + str(i) + '\tt1:' + str(term1) + '\tt2:' + str(term2) + '\tsum:' + str(nhfield[i]))
+                elif i == print_i:
+                    print('H=\tt1:' + str(term1) + '\tt2:' + str(term2) + '\tsum:' + str(nhfield[i]))
         # Return the field
         return nhfield
 
