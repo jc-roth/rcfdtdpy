@@ -43,13 +43,6 @@ class Sim:
 
         self._h_calc_term2_prop_const = self._delta_t/(self._vacuum_permeability * self._delta_z)
 
-        self._e_calc_term1_prop_const = 1
-        self._e_calc_term2_prop_const = 1
-        self._e_calc_term3_prop_const = 37673
-        self._e_calc_term4_prop_const = 0.112941
-
-        self._h_calc_term2_prop_const = 0.265442
-
         print('=====')
         print(self._e_calc_term1_prop_const)
         print(self._e_calc_term2_prop_const)
@@ -146,13 +139,11 @@ class Sim:
             # Update the field values
             self._efield.set_field(efield)
             self._hfield.set_field(hfield)
-            if(j%1 == 0):
-                print('j: ' + str(j) + '\t\t\tE: ' + str(self._efield[250]) + '\t\t\tH: ' + str(self._hfield[250]))
             
 
     def _calc_efield(self, j):
         r"""
-        Calcualtes the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n+\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`. Note that the prior electric field array is located half a time index away at :math:`n-1` and the prior magnetic field array is located half a time index away at :math:`n-1/2`.
+        Calcualtes the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n-\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`. Note that the prior electric field array is located half a time index away at :math:`n-1` and the prior magnetic field array is located half a time index away at :math:`n-1/2`.
         """
         # Create an array to hold the next field iteration
         nefield = np.zeros(self._num_i, dtype=np.float64)
@@ -163,11 +154,6 @@ class Sim:
             term3 = self._e_calc_term3_prop_const * (self._hfield[i]-self._hfield[i-1])
             term4 = self._e_calc_term4_prop_const * self._current(i)
             nefield[i] = term1 + term2 - term3 - term4
-            if(i == 250 and j%1 == 0):
-                print('E: ' + str(term1))
-                print('E: ' + str(term2))
-                print('E: ' + str(term3))
-                print('E: ' + str(term4))
         # Return the field
         return nefield
 
@@ -183,9 +169,6 @@ class Sim:
             term1 = self._hfield[i]
             term2 = self._h_calc_term2_prop_const * (self._efield[i+1]-self._efield[i])
             nhfield[i] = term1 - term2
-            if(i == 250 and j%1 == 0):
-                print('H: ' + str(term1))
-                print('H: ' + str(term2))
         # Return the field
         return nhfield
 
