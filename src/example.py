@@ -2,6 +2,7 @@ from sim import Sim
 from sim import Field
 import vis
 import numpy as np
+from matplotlib import pyplot as plt
 """
 A module that shows how to use the sim module to prepare and run RC-FDTD simulations.
 """
@@ -12,9 +13,10 @@ def prep_sim():
     """
 
 def source_calc(n):
-    return np.exp(-((n-1)**2)/2)
+    #return np.exp(-((n-20)**2)/10)
     #return np.sin(2*np.pi*(n/2))
     #return (-1)**n
+    pass
 
 if __name__ == '__main__':
     
@@ -32,22 +34,24 @@ if __name__ == '__main__':
     infinity_permittivity = 1
     initial_susceptability = 0
     delta_t = 1
-    delta_z = delta_t * 0.004
-
-    loc = 10
-
-    dim_n = loc + 1
-    dim_i = 500
+    delta_z = delta_t
+    
+    dim_n = 100
+    dim_i = 100
 
     # Prepare current field
     cfield = Field(dim_n, dim_i)
-    for n in range(dim_n):
-        cfield.set_time_index(n)
-        cfield[250] = source_calc(n)
+    current = np.zeros((dim_n, dim_i))
+
+    x = np.arange(0, dim_n+2, 1)
+
+    current[:, 49] = np.diff(np.diff(np.exp(-((x-20)**2)/(5))))
+
+    cfield = Field(field=current)
 
     # Prepare and perform simulation
     s = Sim(vacuum_permittivity, infinity_permittivity, vacuum_permability, delta_t, delta_z, dim_n, dim_i, cfield, 0, initial_susceptability)
-    s.simulate(True, (245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255))
+    s.simulate()
 
     # Export simulation result
     e = s.get_efield().export()
@@ -61,4 +65,5 @@ if __name__ == '__main__':
     print(np.shape(e))
     print(np.shape(h))
     #vis.contor_plot(e, h)
-    #vis.plot(e, h, loc)
+    #vis.plot(e, h, cfield.export(), loc)
+    vis.timeseries(e, h, cfield.export(), '../temp/plt')
