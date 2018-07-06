@@ -17,10 +17,10 @@ if __name__ == '__main__':
     vacuum_permability = (4 * np.pi)*1e-7
     infinity_permittivity = 1
     initial_susceptability = 0
-    delta_z = 3e-6
-    delta_t = 1
+    delta_t = 1e-12
+    delta_z = delta_t*3e8
 
-    dim_n = 10
+    dim_n = 1000
     dim_i = 500
 
     # Prepare current field
@@ -43,4 +43,4 @@ if __name__ == '__main__':
     # Visualize result
     print(np.shape(e))
     print(np.shape(h))
-    #vis.contor_plot(e, h)
+    vis.contor_plot(e, h)
