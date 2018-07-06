@@ -128,7 +128,7 @@ class Sim:
         Executes the simulation
         """
         # Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index
-        for j in range(self._num_n-1): # in tqdm(range(self._num_n-1)):
+        for j in tqdm(range(self._num_n-1)):
             # Calculate the H and E fields
             efield = self._calc_efield(j)
             hfield = self._calc_hfield(j)
