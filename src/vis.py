@@ -16,12 +16,12 @@ def timeseries(e, h, c, fname):
     for t in range(dim_t):
         plt.plot(step, e[t], label='E')
         plt.plot(step+0.5, h[t], label='H')
-        plt.plot(step, 100*c[t], label='C [scaled by 100]')
+        #plt.plot(step, c[t], label='C')
         plt.legend()
-        plt.ylim((-150, 150))
+        plt.ylim((-0.5, 0.5))
         plt.title(str(t))
         plt.savefig(fname + str(t))
-        plt.gcf().clear()
+        plt.gcf().clear() 
 
 def plot(e, h, c, n):
     dim_t, dim_z = np.shape(e)
