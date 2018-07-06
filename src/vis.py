@@ -10,6 +10,14 @@ from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
 import numpy as np
 
+def plot(e, h, n):
+    dim_t, dim_z = np.shape(e)
+    step = np.linspace(0, dim_z, dim_z)
+    plt.plot(step, e[n], label='E')
+    plt.plot(step, h[n], label='H')
+    plt.legend()
+    plt.show()
+
 def contor_plot(e, h):
     # make these smaller to increase the resolution
     # delta_z, delta_t
