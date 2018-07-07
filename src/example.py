@@ -7,26 +7,7 @@ from matplotlib import pyplot as plt
 A module that shows how to use the sim module to prepare and run RC-FDTD simulations.
 """
 
-def prep_sim():
-    """
-    Used to prepare the simulation object
-    """
-
-def source_calc(n):
-    #return np.exp(-((n-20)**2)/10)
-    #return np.sin(2*np.pi*(n/2))
-    #return (-1)**n
-    pass
-
 if __name__ == '__main__':
-    
-    # Prepare constants
-    vacuum_permittivity = 8.854187817e-12 # F/m
-    vacuum_permability = 1.2566370614e-6 # N/A^2
-    infinity_permittivity = 1
-    initial_susceptability = 0
-    delta_t = 1e-12 # s (i.e. one picosecond)
-    delta_z = delta_t * (3e8)
 
     # Prepare constants
     vacuum_permittivity = 1
@@ -35,22 +16,20 @@ if __name__ == '__main__':
     initial_susceptability = 0
     delta_t = 1
     delta_z = delta_t
-    
-    dim_n = 100
-    dim_i = 100
+
+    n_dim = 250
+    i_dim = 1000
 
     # Prepare current field
-    cfield = Field(dim_n, dim_i)
-    current = np.zeros((dim_n, dim_i))
-
-    x = np.arange(0, dim_n+2, 1)
-
-    current[:, 49] = np.diff(np.diff(np.exp(-((x-20)**2)/(5))))
-
-    cfield = Field(field=current)
+    ci_index = 500
+    cn_index = 10
+    cfield = np.zeros((n_dim, i_dim))
+    t = np.arange(0, n_dim, 1)
+    cfield[:, ci_index] = np.append(np.diff(np.diff(np.exp(-((t-cn_index)**2)/(5)))), [0,0])
+    cfield = Field(field=cfield)
 
     # Prepare and perform simulation
-    s = Sim(vacuum_permittivity, infinity_permittivity, vacuum_permability, delta_t, delta_z, dim_n, dim_i, cfield, 0, initial_susceptability)
+    s = Sim(vacuum_permittivity, infinity_permittivity, vacuum_permability, delta_z, delta_t, n_dim, i_dim, cfield, 0, initial_susceptability)
     s.simulate()
 
     # Export simulation result
