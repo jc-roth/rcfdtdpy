@@ -18,10 +18,10 @@ if __name__ == '__main__':
     delta_z = delta_t
 
     n_dim = 250
-    i_dim = 1000
+    i_dim = 500
 
     # Prepare current field
-    ci_index = 500
+    ci_index = 250
     cn_index = 10
     cfield = np.zeros((n_dim, i_dim))
     t = np.arange(0, n_dim, 1)
