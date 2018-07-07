@@ -35,20 +35,21 @@ class Sim:
         self._hfield = Field(num_n, num_i)
 
         # Calculate simulation proportionality constants
-        self._e_calc_term1_prop_const = self._infinity_permittivity/(self._infinity_permittivity + self._initial_susceptibility)
-        self._e_calc_term2_prop_const = 1.0/(self._infinity_permittivity + self._initial_susceptibility)
-        self._e_calc_term3_prop_const = self._delta_t/(self._vacuum_permittivity * self._delta_z * (self._infinity_permittivity + self._initial_susceptibility))
-        self._e_calc_term4_prop_const = self._delta_t/(self._vacuum_permittivity * (self._infinity_permittivity + self._initial_susceptibility))
+        self._e_calc_term1_prop_coeff = self._infinity_permittivity/(self._infinity_permittivity + self._initial_susceptibility)
+        self._e_calc_term2_prop_coeff = 1.0/(self._infinity_permittivity + self._initial_susceptibility)
+        self._e_calc_term3_prop_coeff = self._delta_t/(self._vacuum_permittivity * self._delta_z * (self._infinity_permittivity + self._initial_susceptibility))
+        self._e_calc_term4_prop_coeff = self._delta_t/(self._vacuum_permittivity * (self._infinity_permittivity + self._initial_susceptibility))
 
-        self._h_calc_term2_prop_const = self._delta_t/(self._vacuum_permeability * self._delta_z)
+        self._h_calc_term2_prop_coeff = self._delta_t/(self._vacuum_permeability * self._delta_z)
 
-        print('=====')
-        print(self._e_calc_term1_prop_const)
-        print(self._e_calc_term2_prop_const)
-        print(self._e_calc_term3_prop_const)
-        print(self._e_calc_term4_prop_const)
-        print(self._h_calc_term2_prop_const)
-        print('=====')
+        # Print constants
+        print('Coefficients:\n=============')
+        print(str(self._e_calc_term1_prop_coeff)[:13])
+        print(str(self._e_calc_term2_prop_coeff)[:13])
+        print(str(self._e_calc_term3_prop_coeff)[:13])
+        print(str(self._e_calc_term4_prop_coeff)[:13])
+        print(str(self._h_calc_term2_prop_coeff)[:13])
+        print('=============')
 
     def get_vacuum_permittivity(self):
         """
@@ -121,106 +122,56 @@ class Sim:
         :return: The H-field as a Field object
         """
         return self._hfield
-        
-    def simulate(self, diagnostics=False, i=0):
-        """
-        Executes the simulation
 
-        :param diagnostics: Display information about the spatial index specified by i during simulation
-        :param i: A spatial index or a tuple of spatial indicies to display information about
+    def get_cfield(self):
+        """
+        Returns the current field as a Field object.
+
+        :return: The current field as a Field object
+        """
+        return self._cfield
+        
+    def simulate(self):
+        """
+        Executes the simulation.
         """
         self._efield.set_time_index(0) # Set the time index of the electric field to zero
         self._hfield.set_time_index(0) # Set the time index of the magnetic field to zero
         self._cfield.set_time_index(0) # Set the time index of the current field to zero
         # Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index
-        if diagnostics:
-            # Display diagnostics
-            for j in range(self._num_n-1):
-                print('j=' + str(j))
-                # Calculate the H and E fields
-                hfield = self._calc_hfield(True, i)
-                efield = self._calc_efield(True, i)
-                # Iterate the H and E, and current fields
-                self._iterate_hfield()
-                self._iterate_efield()
-                self._iterate_cfield()
-                # Update the field values
-                self._efield.set_field(efield)
-                self._hfield.set_field(hfield)
-        else:
-            # Do not display diagnostics
-            for j in tqdm(range(self._num_n-1)):
-                # Calculate the H and E fields
-                hfield = self._calc_hfield(False)
-                efield = self._calc_efield(False)
-                # Iterate the H and E, and current fields
-                #self._iterate_hfield()
-                #self._iterate_efield()
-                self._hfield.iterate()
-                self._efield.iterate()
-                self._iterate_cfield()
-                # Update the field values
-                #self._efield.set_field(efield)
-                #self._hfield.set_field(hfield)
+        for j in tqdm(range(self._num_n-1)):
+            # Calculate the H and E fields
+            self._calc_hfield()
+            self._calc_efield()
+            # Iterate the H and E, and current fields
+            self._hfield.iterate()
+            self._efield.iterate()
+            self._iterate_cfield()
             
 
-    def _calc_efield(self, diagnostics=False, print_i=0):
+    def _calc_efield(self):
         r"""
         Calcualtes the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n-\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`. Note that the prior electric field array is located half a time index away at :math:`n-1` and the prior magnetic field array is located half a time index away at :math:`n-1/2`.
         """
-        # Create an array to hold the next field iteration
-        nefield = np.zeros(self._num_i, dtype=np.float64)
-        # Compute the values along the next field
+        # Compute the values along the field
         for i in range(self._num_i):
-            term1 = self._e_calc_term1_prop_const * self._efield[i]
-            term2 = self._e_calc_term2_prop_const * self.psi()
-            term3 = self._e_calc_term3_prop_const * (self._hfield[i]-self._hfield[i-1])
-            term4 = self._e_calc_term4_prop_const * self._current(i)
+            # TODO Can this calculation be done via vectors? This will likely improve efficiency
+            term1 = self._e_calc_term1_prop_coeff * self._efield[i]
+            term2 = self._e_calc_term2_prop_coeff * self.psi()
+            term3 = self._e_calc_term3_prop_coeff * (self._hfield[i]-self._hfield[i-1])
+            term4 = self._e_calc_term4_prop_coeff * self._current(i)
             self._efield[i] = term1 + term2 - term3 - term4
-            if diagnostics:
-                if type(print_i) == tuple and i in print_i:
-                    print('E=\ti:' + str(i) + '\tt1:' + str(term1) + '\tt2:' + str(term2) + '\tt3:' + str(term3) + '\tt4:' + str(term4) + '\tsum:' + str(nefield[i]))
-                elif i == print_i:
-                    print('E=\tt1:' + str(term1) + '\tt2:' + str(term2) + '\tt3:' + str(term3) + '\tt4:' + str(term4) + '\tsum:' + str(nefield[i]))
-        # Return the field
-        return nefield
-
         
-    def _calc_hfield(self, diagnostics=False, print_i=0):
+    def _calc_hfield(self):
         r"""
         Calculates the magnetic field according to :math:`H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]`. Note that the prior electric field array is located half a time index away at :math:`n-1/2` and the prior magnetic field array is located a whole time index away at :math:`n-1`.
         """
-        # Create an array to hold the next field iteration
-        nhfield = np.zeros(self._num_i, dtype=np.float64)
-        # Compute the values along the next field
+        # Compute the values along the field
         for i in range(self._num_i):
+            # TODO Can this calculation be done via vectors? This will likely improve efficiency
             term1 = self._hfield[i]
-            term2 = self._h_calc_term2_prop_const * (self._efield[i+1]-self._efield[i])
+            term2 = self._h_calc_term2_prop_coeff * (self._efield[i+1]-self._efield[i])
             self._hfield[i] = term1 - term2
-            if diagnostics:
-                if type(print_i) == tuple and i in print_i:
-                    print('H=\ti:' + str(i) + '\tt1:' + str(term1) + '\tt2:' + str(term2) + '\tsum:' + str(nhfield[i]))
-                elif i == print_i:
-                    print('H=\tt1:' + str(term1) + '\tt2:' + str(term2) + '\tsum:' + str(nhfield[i]))
-        # Return the field
-        return nhfield
-
-        
-    def _iterate_efield(self):
-        """
-        Iterates the E-field by simply increasing the temporal index by one.
-        """
-        prior_time = self._efield.get_time_index()
-        self._efield.set_time_index(prior_time+1)
-
-        
-    def _iterate_hfield(self):
-        """
-        Iterates the H-field by simply increasing the temporal index by one.
-        """
-        prior_time = self._hfield.get_time_index()
-        self._hfield.set_time_index(prior_time+1)
-
         
     def _iterate_cfield(self):
         """
@@ -251,6 +202,7 @@ class Field:
 
     :param num_n: The number of temporal indexes in the field
     :param num_i: The number of spatial indexes in the field
+    :param field: A Numpy array that sets the field values in space and time. The field dimensions override num_n and num_i
     """
 
     def __init__(self, num_n=0, num_i=0, field=None):
@@ -359,11 +311,11 @@ class Field:
 
     def iterate(self):
         """
-        TODO DOCUMENT THIS FUNCTION
+        Copies the field at the current temporal location to the next temporal location, then iterates the temporal location.
         """
         # Check for that n is within the accepted range
         if(self._n + 1 >= self._num_n):
-            raise IndexError('The end of the n dimension was reached, cannot iterate')
+            raise IndexError('Cannot iterate as the end of the temporal index has been reached.')
         # Copy the current field to the next temporal index
         self._field[self._n+1] = self._field[self._n]
         # Iterate the temporal index
