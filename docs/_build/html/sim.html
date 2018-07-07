@@ -328,6 +328,18 @@
 <dt id="sim.Sim.simulate">
 <code class="descname">simulate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Executes the simulation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>diagnostics</strong> – Display information about the spatial index specified by i during simulation</li>
+<li><strong>i</strong> – A spatial index or a tuple of spatial indicies to display information about</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </dd></dl>
@@ -340,7 +352,7 @@
 <p>The H-field array has a corresponding structure. The user never directly interacts with the entire Numpy array. Rather they set a “current time <span class="math notranslate nohighlight">\(n\)</span>” which selects a row of the array. Any further operations are performed on that row. The <a class="reference internal" href="#sim.Field.export" title="sim.Field.export"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sim.Field.export()</span></code></a> function simply returns the Numpy field.</p>
 <dl class="class">
 <dt id="sim.Field">
-<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>num_n</em>, <em>num_i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>num_n=0</em>, <em>num_i=0</em>, <em>field=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents any field (i.e. electric, magnetic, current, susceptibility) using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -349,6 +361,7 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>num_n</strong> – The number of temporal indexes in the field</li>
 <li><strong>num_i</strong> – The number of spatial indexes in the field</li>
+<li><strong>field</strong> – A Numpy array that sets the field values in space and time. The field dimensions override num_n and num_i</li>
 </ul>
 </td>
 </tr>
@@ -412,6 +425,12 @@
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Field.iterate">
+<code class="descname">iterate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.iterate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.iterate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the field at the current temporal location to the next temporal location, then iterates the temporal location.</p>
 </dd></dl>
 
 <dl class="method">
