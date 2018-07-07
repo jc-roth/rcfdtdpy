@@ -18,7 +18,7 @@ def timeseries(e, h, c, fname):
         plt.plot(step+0.5, h[t], label='H')
         #plt.plot(step, c[t], label='C')
         plt.legend()
-        plt.ylim((-0.5, 0.5))
+        #plt.ylim((-0.5, 0.5))
         plt.title(str(t))
         plt.savefig(fname + str(t))
         plt.gcf().clear() 
