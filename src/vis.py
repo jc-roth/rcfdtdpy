@@ -12,31 +12,47 @@ from matplotlib import animation
 from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
 
-def plot(sim, n, fname=None):
+def plot(sim, n, fname=None, xscale=1, yscale_e=1, yscale_h=1, xunit='NA', yunit_e='NA', yunit_h='NA'):
     """
     Displays the E and H-fields at a given index in time.
 
     :param sim: The simulation to visualize
     :param n: The temporal index :math:`n` to display
     :param fname: The filename to export to, does not export if blank
+    :param xscale: The scalar factor that the x-axis is scaled by
+    :param yscale_e: The scalar factor that the y-axis of the E-field is scaled by
+    :param yscale_h: The scalar factor that the y-axis of the H-field is scaled by
+    :param xunit: The units given to the x-label
+    :param yunit_e: The units given to the y-label for the E-field axis
+    :param yunit_h: The units given to the y-label for the H-field axis
     """
     # Export variables from the simulation
-    n, i, e, h, c = sim.export()
-    # Create a new figure and place lines on it
+    n_arr, i, e, h, c = sim.export()
+    # Apply scale factors
+    i *= xscale
+    e *= yscale_e
+    h *= yscale_h
+    # Create a new figure and set x-limits
     fig = plt.figure()
-    ax = plt.axes()
-    ax.plot(i, e[n], label='E')
-    ax.plot(i, h[n], label='H')
-    ax.legend(loc=1)
-    # Determine axis limits
-    ax.set_xlim(i[0], i[-1])
-    emax = max(np.abs([np.max(e), np.min(e)]))
-    hmax = max(np.abs([np.max(h), np.min(h)]))
-    ylim = max(emax, hmax) * 1.1
-    ax.set_ylim(ylim, -ylim)
+    ax0 = plt.axes()
+    ax0.set_xlim(i[0], i[-1])
+    # Determine y-axis limits
+    emax = max(np.abs([np.max(e[n]), np.min(e[n])])) * 1.1
+    hmax = max(np.abs([np.max(h[n]), np.min(h[n])])) * 1.1
+    # Create the second axis
+    ax1 = ax0.twinx()
+    # Set axis limits
+    ax0.set_ylim(emax, -emax)
+    ax1.set_ylim(hmax, -hmax)
+    # Plot
+    le = ax0.plot(i, e[n], color='#1f77b4')
+    lh = ax1.plot(i, h[n], color='#ff7f0e')
+    # Add legend
+    ax0.legend((le + lh), ('E', 'H'), loc=1)
     # Label axes
-    ax.set_ylabel('Field Amplitude [UNITS?]')
-    ax.set_xlabel('$z$ [UNITS?]')
+    ax0.set_xlabel('$z$ [%s]' % xunit)
+    ax0.set_ylabel('$E$ [%s]' % yunit_e)
+    ax1.set_ylabel('$H$ [%s]' % yunit_h)
     # Final preparations
     plt.tight_layout()
     # Display or save
@@ -45,7 +61,7 @@ def plot(sim, n, fname=None):
     else:
         plt.savefig(fname)
 
-def timeseries(sim, fname=None, interval=10):
+def timeseries(sim, fname=None, interval=10, xscale=1, yscale_e=1, yscale_h=1, xunit='NA', yunit_e='NA', yunit_h='NA'):
     """
     Animates the E and H-fields in time.
 
@@ -55,21 +71,31 @@ def timeseries(sim, fname=None, interval=10):
     """
     # Export variables from the simulation
     n, i, e, h, c = sim.export()
-    # Create a new figure and place lines on it
+    # Apply scale factors
+    i *= xscale
+    e *= yscale_e
+    h *= yscale_h
+    # Create a new figure and set x-limits
     fig = plt.figure()
-    ax = plt.axes()
-    le, = ax.plot([], [], label='E')
-    lh, = ax.plot([], [], label='H')
-    ax.legend(loc=1)
-    # Determine axis limits
-    ax.set_xlim(i[0], i[-1])
-    emax = max(np.abs([np.max(e), np.min(e)]))
-    hmax = max(np.abs([np.max(h), np.min(h)]))
-    ylim = max(emax, hmax) * 1.1
-    ax.set_ylim(ylim, -ylim)
+    ax0 = plt.axes()
+    ax0.set_xlim(i[0], i[-1])
+    # Determine y-axis limits
+    emax = max(np.abs([np.max(e), np.min(e)])) * 1.1
+    hmax = max(np.abs([np.max(h), np.min(h)])) * 1.1
+    # Create the second axis
+    ax1 = ax0.twinx()
+    # Set axis limits
+    ax0.set_ylim(-emax, emax)
+    ax1.set_ylim(-hmax, hmax)
+    # Plot
+    le, = ax0.plot([], [], color='#1f77b4')
+    lh, = ax1.plot([], [], color='#ff7f0e')
+    # Add legend
+    ax0.legend((le, lh), ('E', 'H'), loc=1)
     # Label axes
-    ax.set_ylabel('Field Amplitude [UNITS?]')
-    ax.set_xlabel('$z$ [UNITS?]')
+    ax0.set_xlabel('$z$ [%s]' % xunit)
+    ax0.set_ylabel('$E$ [%s]' % yunit_e)
+    ax1.set_ylabel('$H$ [%s]' % yunit_h)
     # Final preparations
     plt.tight_layout()
     # Define the initialization and update functions
