@@ -241,20 +241,6 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="sim.Sim.get_cfield">
-<code class="descname">get_cfield</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_cfield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_cfield" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the current field as a Field object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current field as a Field object</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="sim.Sim.get_dims">
 <code class="descname">get_dims</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_dims" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the dimensions of the field in cells</p>
@@ -263,48 +249,6 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A tuple <code class="code docutils literal notranslate"><span class="pre">(nlen,</span> <span class="pre">ilen)</span></code> containing the temporal and spatial dimensions in cells</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Sim.get_efield">
-<code class="descname">get_efield</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_efield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_efield" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the E-field as a Field object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The E-field as a Field object</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Sim.get_hfield">
-<code class="descname">get_hfield</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_hfield"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_hfield" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the H-field as a Field object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The H-field as a Field object</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Sim.psi">
-<code class="descname">psi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.psi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.psi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates psi according to <span class="math notranslate nohighlight">\(\psi^n=\sum^{n-1}_{m=0}E^{i,n-m}\Delta\chi_e^m\)</span> at the current time <span class="math notranslate nohighlight">\(n\)</span> and position <span class="math notranslate nohighlight">\(i\)</span>. Currently not implemented, and will simply return zero.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Zero</td>
 </tr>
 </tbody>
 </table>

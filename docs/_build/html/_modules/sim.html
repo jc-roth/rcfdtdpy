@@ -221,46 +221,6 @@
         <span class="n">to_return</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">-------</span><span class="se">\n</span><span class="s1">Dimensions:</span><span class="se">\n</span><span class="s1">&#39;</span>
         <span class="n">to_return</span> <span class="o">+=</span> <span class="s1">&#39;( n x i ) ( &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; x &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; )&#39;</span>
         <span class="k">return</span> <span class="n">to_return</span>
-
-<div class="viewcode-block" id="Sim.get_efield"><a class="viewcode-back" href="../sim.html#sim.Sim.get_efield">[docs]</a>    <span class="k">def</span> <span class="nf">get_efield</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the E-field as a Field object.</span>
-
-<span class="sd">        :return: The E-field as a Field object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span></div>
-
-<div class="viewcode-block" id="Sim.get_hfield"><a class="viewcode-back" href="../sim.html#sim.Sim.get_hfield">[docs]</a>    <span class="k">def</span> <span class="nf">get_hfield</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the H-field as a Field object.</span>
-
-<span class="sd">        :return: The H-field as a Field object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span></div>
-
-<div class="viewcode-block" id="Sim.get_cfield"><a class="viewcode-back" href="../sim.html#sim.Sim.get_cfield">[docs]</a>    <span class="k">def</span> <span class="nf">get_cfield</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the current field as a Field object.</span>
-
-<span class="sd">        :return: The current field as a Field object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span></div>
-
-<div class="viewcode-block" id="Sim.get_bound_res"><a class="viewcode-back" href="../sim.html#sim.Sim.get_bound_res">[docs]</a>    <span class="k">def</span> <span class="nf">get_bound_res</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the boundaries and resolution of the simulation</span>
-
-<span class="sd">        :return: A tuple :code:`(n0, n1, dn, i0, i1, di)`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_di</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="Sim.get_dims"><a class="viewcode-back" href="../sim.html#sim.Sim.get_dims">[docs]</a>    <span class="k">def</span> <span class="nf">get_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the dimensions of the field in cells</span>
-
-<span class="sd">        :returns: A tuple :code:`(nlen, ilen)` containing the temporal and spatial dimensions in cells</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="Sim.simulate"><a class="viewcode-back" href="../sim.html#sim.Sim.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -304,13 +264,29 @@
             <span class="n">term2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coeffh1</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">term1</span> <span class="o">-</span> <span class="n">term2</span>
 
-<div class="viewcode-block" id="Sim.psi"><a class="viewcode-back" href="../sim.html#sim.Sim.psi">[docs]</a>    <span class="k">def</span> <span class="nf">psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates psi according to :math:`\psi^n=\sum^{n-1}_{m=0}E^{i,n-m}\Delta\chi_e^m` at the current time :math:`n` and position :math:`i`. Currently not implemented, and will simply return zero.</span>
 
 <span class="sd">        :return: Zero</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="mi">0</span></div>
+        <span class="k">return</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="Sim.get_bound_res"><a class="viewcode-back" href="../sim.html#sim.Sim.get_bound_res">[docs]</a>    <span class="k">def</span> <span class="nf">get_bound_res</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the boundaries and resolution of the simulation</span>
+
+<span class="sd">        :return: A tuple :code:`(n0, n1, dn, i0, i1, di)`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_di</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Sim.get_dims"><a class="viewcode-back" href="../sim.html#sim.Sim.get_dims">[docs]</a>    <span class="k">def</span> <span class="nf">get_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the dimensions of the field in cells</span>
+
+<span class="sd">        :returns: A tuple :code:`(nlen, ilen)` containing the temporal and spatial dimensions in cells</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Sim.export"><a class="viewcode-back" href="../sim.html#sim.Sim.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
