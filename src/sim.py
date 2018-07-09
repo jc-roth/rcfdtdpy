@@ -159,22 +159,17 @@ class Sim:
         """
         return 0
 
-    def get_field(self, n=-1):
+    def export(self):
         """
-        Gets the field spatial values as well as amplitude at time index :math:`n` or the current time if :math:`n` is unspecified.
+        Exports all field values along with the spatial and temporal bounds of each field cell
 
-        :param n: The time index :math:`n`
-        :return: A tuple :code:`(z, f)` containing the spatial coordinates of the cells in the field and the field amplitudes at each corresponding cell
+        :return: A tuple :code:`(n, i, e, h, c)` where :code:`n` is a Numpy array containing the spatial bounds of each field cell, :code:`i` is a Numpy array containing the temporal bounds of each field cell, :code:`e` is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), :code:`h` is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), and :code:`c` is a Numpy array containing the current field (axis=0 is time and axis=1 is space)
         """
-        # Calcualte the z array
-        z = np.linspace(self._i0, self._i1, self._ilen, False)
-        # If n is -1, return the current field
-        if(n == -1):
-            return (z, self._efield[0])
-        # Check for that n is within the accepted range
-        if(n < 0 or n >= self._nlen):
-            raise IndexError('The n argument is of out of bounds')
-        return (z, self._efield[n])
+        # Calcualte the n and i arrays
+        n = np.linspace(self._n0, self._n1, self._nlen, False)
+        i = np.linspace(self._i0, self._i1, self._ilen, False)
+        # Return
+        return (n, i, self._efield, self._hfield, self._cfield)
         
     @staticmethod
     def calc_dims(i0, i1, di, n0, n1, dn):
