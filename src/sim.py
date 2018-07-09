@@ -169,7 +169,7 @@ class Sim:
         n = np.linspace(self._n0, self._n1, self._nlen, False)
         i = np.linspace(self._i0, self._i1, self._ilen, False)
         # Return
-        return (n, i, self._efield, self._hfield, self._cfield)
+        return (n, i, self._efield.export(), self._hfield.export(), self._cfield.export())
         
     @staticmethod
     def calc_dims(i0, i1, di, n0, n1, dn):
