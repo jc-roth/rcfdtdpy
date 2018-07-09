@@ -39,8 +39,10 @@ if __name__ == '__main__':
 
     cfield = Field(i0, i1, di, n0, n1, dn, field=c) # Create a new field from the Numpy 2D array
 
-    plt.plot(cfield.export()[:,999])
-    plt.show()
+    #plt.plot(cfield.export()[:,999])
+    #plt.show()
+
+
 
     # Prepare and perform simulation
     s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, susceptibility, initial_susceptibility, cfield)
