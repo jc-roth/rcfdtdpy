@@ -14,11 +14,11 @@ if __name__ == '__main__':
 
     dn = 0.05 # 0.05 ps
     n0 = 0 # 0 ps
-    n1 = 15 # 15 ps
+    n1 = 150 # 15 ps
 
     di = dn * c0 # (300 um/ps)(0.05 ps) = 15 um
-    i0 = di * -50 # -750 um
-    i1 = di * 50 # 750 um
+    i0 = di * -15000 # -750 um
+    i1 = di * 15000 # 750 um
 
     vacuum_permittivity = 1
     vacuum_permeability = 1
@@ -42,5 +42,7 @@ if __name__ == '__main__':
     # Create and start simulation
     s = Sim(i0, i1, di, n0, n1, dn, cfield, 'periodic', vacuum_permittivity, infinity_permittivity, vacuum_permeability, susceptibility, initial_susceptibility)
     s.simulate()
-    vis.contor(s)
-    vis.timeseries(s)
+    # Visualize
+    #vis.plot(s, 25)
+    #vis.timeseries(s)
+    vis.timeseries(s, iscale=300, iunit='$\mu$m', eunit='N/c', hunit='A/m')
