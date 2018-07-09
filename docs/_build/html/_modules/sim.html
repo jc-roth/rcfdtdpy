@@ -178,8 +178,8 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;di must be greater than zero.&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">dn</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dn must be greater than zero.&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">current_field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Field</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;current_field must be of type Field.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">cfield</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Field</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;cfield must be of type Field.&quot;</span><span class="p">)</span>
         <span class="c1"># Save field dimensions and resolution</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_i0</span> <span class="o">=</span> <span class="n">i0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_i1</span> <span class="o">=</span> <span class="n">i1</span>
@@ -188,12 +188,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_n1</span> <span class="o">=</span> <span class="n">n1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dn</span> <span class="o">=</span> <span class="n">dn</span>
         <span class="c1"># Determine the number of temporal and spatial cells in the field</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">=</span> <span class="n">calc_dims</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">=</span> <span class="n">Sim</span><span class="o">.</span><span class="n">calc_dims</span><span class="p">(</span><span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">)</span>
         <span class="c1"># Create each field</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="n">boundary</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="n">boundary</span><span class="p">)</span>
         <span class="c1"># Save the current field</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span> <span class="o">=</span> <span class="n">current_field</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span> <span class="o">=</span> <span class="n">cfield</span>
         <span class="c1"># Save constants</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_epsilon0</span> <span class="o">=</span> <span class="n">vacuum_permittivity</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_epsiloninf</span> <span class="o">=</span> <span class="n">infinity_permittivity</span>
@@ -245,6 +245,14 @@
 <span class="sd">        :return: The current field as a Field object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span></div>
+
+<div class="viewcode-block" id="Sim.get_bound_res"><a class="viewcode-back" href="../sim.html#sim.Sim.get_bound_res">[docs]</a>    <span class="k">def</span> <span class="nf">get_bound_res</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the boundaries and resolution of the simulation</span>
+
+<span class="sd">        :return: A tuple :code:`(n0, n1, dn, i0, i1, di)`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_di</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Sim.get_dims"><a class="viewcode-back" href="../sim.html#sim.Sim.get_dims">[docs]</a>    <span class="k">def</span> <span class="nf">get_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -304,25 +312,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="Sim.get_field"><a class="viewcode-back" href="../sim.html#sim.Sim.get_field">[docs]</a>    <span class="k">def</span> <span class="nf">get_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="Sim.export"><a class="viewcode-back" href="../sim.html#sim.Sim.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets the field spatial values as well as amplitude at time index :math:`n` or the current time if :math:`n` is unspecified.</span>
+<span class="sd">        Exports all field values along with the spatial and temporal bounds of each field cell</span>
 
-<span class="sd">        :param n: The time index :math:`n`</span>
-<span class="sd">        :return: A tuple :code:`(z, f)` containing the spatial coordinates of the cells in the field and the field amplitudes at each corresponding cell</span>
+<span class="sd">        :return: A tuple :code:`(n, i, e, h, c)` where :code:`n` is a Numpy array containing the spatial bounds of each field cell, :code:`i` is a Numpy array containing the temporal bounds of each field cell, :code:`e` is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), :code:`h` is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), and :code:`c` is a Numpy array containing the current field (axis=0 is time and axis=1 is space)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Calcualte the z array</span>
-        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="c1"># If n is -1, return the current field</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">])</span>
-        <span class="c1"># Check for that n is within the accepted range</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;The n argument is of out of bounds&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">n</span><span class="p">])</span></div>
+        <span class="c1"># Calcualte the n and i arrays</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="c1"># Return</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="o">.</span><span class="n">export</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="o">.</span><span class="n">export</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span><span class="o">.</span><span class="n">export</span><span class="p">())</span></div>
         
 <div class="viewcode-block" id="Sim.calc_dims"><a class="viewcode-back" href="../sim.html#sim.Sim.calc_dims">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">calc_dims</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">calc_dims</span><span class="p">(</span><span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the dimensions of the simulation in cells.</span>
 
@@ -402,11 +405,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check to see if the requested index is out of bounds, if so return a value based on the boundary condition</span>
         <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">boundary</span> <span class="o">==</span> <span class="s1">&#39;zero&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary</span> <span class="o">==</span> <span class="s1">&#39;zero&#39;</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">boundary</span> <span class="o">==</span> <span class="s1">&#39;periodic&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary</span> <span class="o">==</span> <span class="s1">&#39;periodic&#39;</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span> <span class="n">i</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="n">boundary</span> <span class="o">==</span> <span class="s1">&#39;mirror&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary</span> <span class="o">==</span> <span class="s1">&#39;mirror&#39;</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
                 <span class="k">else</span><span class="p">:</span>

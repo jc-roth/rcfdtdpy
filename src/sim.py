@@ -43,7 +43,7 @@ class Sim:
         self._n1 = n1
         self._dn = dn
         # Determine the number of temporal and spatial cells in the field
-        self._nlen, self._ilen = Sim.calc_dims(i0, i1, di, n0, n1, dn)
+        self._nlen, self._ilen = Sim.calc_dims(n0, n1, dn, i0, i1, di)
         # Create each field
         self._efield = Field(self._nlen, self._ilen, boundary)
         self._hfield = Field(self._nlen, self._ilen, boundary)
@@ -100,6 +100,14 @@ class Sim:
         :return: The current field as a Field object
         """
         return self._cfield
+
+    def get_bound_res(self):
+        """
+        Returns the boundaries and resolution of the simulation
+
+        :return: A tuple :code:`(n0, n1, dn, i0, i1, di)`
+        """
+        return (self._n0, self._n1, self._dn, self._i0, self._i1, self._di)
 
     def get_dims(self):
         """
@@ -172,7 +180,7 @@ class Sim:
         return (n, i, self._efield.export(), self._hfield.export(), self._cfield.export())
         
     @staticmethod
-    def calc_dims(i0, i1, di, n0, n1, dn):
+    def calc_dims(n0, n1, dn, i0, i1, di):
         """
         Calculates the dimensions of the simulation in cells.
 
