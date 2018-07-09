@@ -12,12 +12,13 @@ from matplotlib import animation
 from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
 
-def plot(sim, n):
+def plot(sim, n, fname=None):
     """
     Displays the E and H-fields at a given index in time.
 
-    :param sim: The simulation to export
+    :param sim: The simulation to visualize
     :param n: The temporal index :math:`n` to display
+    :param fname: The filename to export to, does not export if blank
     """
     # Export variables from the simulation
     n, i, e, h, c = sim.export()
@@ -36,14 +37,19 @@ def plot(sim, n):
     # Label axes
     ax.set_ylabel('Field Amplitude [UNITS?]')
     ax.set_xlabel('$z$ [UNITS?]')
-    # Run animation
-    plt.show()
+    # Final preparations
+    plt.tight_layout()
+    # Display or save
+    if fname is None:
+        plt.show()
+    else:
+        plt.savefig(fname)
 
-def timeseries(sim, interval=10, fname=None):
+def timeseries(sim, fname=None, interval=10):
     """
     Animates the E and H-fields in time.
 
-    :param sim: The simulation to export
+    :param sim: The simulation to visualize
     :param interval: The interval between timesteps in milliseconds
     :param fname: The filename to export to, does not export if blank
     """
@@ -64,6 +70,8 @@ def timeseries(sim, interval=10, fname=None):
     # Label axes
     ax.set_ylabel('Field Amplitude [UNITS?]')
     ax.set_xlabel('$z$ [UNITS?]')
+    # Final preparations
+    plt.tight_layout()
     # Define the initialization and update functions
     def init():
         le.set_data([], [])
@@ -75,54 +83,48 @@ def timeseries(sim, interval=10, fname=None):
         return (le,lh)
     # Run animation
     anim = animation.FuncAnimation(fig, update, frames=len(n), interval=interval, init_func=init, blit=True)
+    # Display or save
     if fname is None:
         plt.show()
     else:
         anim.save(fname, fps=int(1000/interval))
 
-def contor_plot(e, h):
-    # make these smaller to increase the resolution
-    # delta_z, delta_t
-    
-    # generate 2 2d grids for the x & y bounds
-    dim_t, dim_z = np.shape(e)
-    t, z = np.mgrid[slice(0, dim_t, 1),
-                    slice(0, dim_z, 1)]
+def contor(sim, fname=None, nlevels=500):
+    """
+    Displays the E and H-fields on a contor plot
 
-    ie = np.real(e)
-    ih = np.real(h)
-
+    :param sim: The simulation to visualize
+    :param fname: The filename to export to, does not export if blank
+    :param nlevels: The number of color levels to display the field intensities with
+    """
+    # Extract simulation results and parameters
+    n, i, e, h, c = sim.export()
+    n0, n1, dn, i0, i1, di = sim.get_bound_res()
+    # Generate mesh grid
+    ngrid, igrid = np.mgrid[n0:n1:dn, i0:i1:di]
+    # Create figure and axes
     fig, axes = plt.subplots(nrows=2, sharex=True)
-
-    # t and z are bounds, so i should be the value *inside* those bounds.
-    # Therefore, remove the last value from the i array.
-    ie = ie[:-1, :-1]
-    levelse = MaxNLocator(nbins=500).tick_values(ie.min(), ie.max())
-
-
-    # pick the desired colormap, sensible levels, and define a normalization
-    # instance which takes data values and translates those into levels.
-    cmape = plt.get_cmap('PiYG')
-    norme = BoundaryNorm(levelse, ncolors=cmape.N, clip=True)
-
-    ime = axes[0].pcolormesh(z, t, ie, cmap=cmape, norm=norme)
-    fig.colorbar(ime, ax=axes[0])
+    # The e-field and h-fields have to fit into the bounds, so we must shrink them by one cell on each dimension
+    e = e[:-1, :-1]
+    h = h[:-1, :-1]
+    # Determine the levels to use
+    lmin = min([np.min(e), np.min(h)])
+    lmax = max([np.max(e), np.max(h)])
+    levels = MaxNLocator(nbins=nlevels).tick_values(lmin, lmax)
+    # Setup the colormap
+    cmap = plt.get_cmap('PiYG')
+    norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
+    # Plot the E-field
+    emap = axes[0].pcolormesh(igrid, ngrid, e, cmap=cmap, norm=norm)
+    fig.colorbar(emap, ax=axes[0])
     axes[0].set_ylabel('E\ntime [n]')
-
-    # t and z are bounds, so i should be the value *inside* those bounds.
-    # Therefore, remove the last value from the i array.
-    ih = ih[:-1, :-1]
-    levelsh = MaxNLocator(nbins=500).tick_values(ih.min(), ih.max())
-
-
-    # pick the desired colormap, sensible levels, and define a normalization
-    # instance which takes data values and translates those into levels.
-    cmaph = plt.get_cmap('PiYG')
-    normh = BoundaryNorm(levelsh, ncolors=cmaph.N, clip=True)
-
-    imh = axes[1].pcolormesh(z, t, ih, cmap=cmaph, norm=normh)
-    fig.colorbar(imh, ax=axes[1])
+    # Plot the H-field
+    hmap = axes[1].pcolormesh(igrid, ngrid, h, cmap=cmap, norm=norm)
+    fig.colorbar(hmap, ax=axes[1])
     axes[1].set_xlabel('space [i]')
     axes[1].set_ylabel('H\ntime [n]')
-
-    plt.show()
+    # Display or save
+    if fname is None:
+        plt.show()
+    else:
+        plt.savefig(fname)
