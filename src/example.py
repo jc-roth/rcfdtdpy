@@ -14,11 +14,11 @@ if __name__ == '__main__':
 
     dn = 0.05 # 0.05 ps
     n0 = 0 # 0 ps
-    n1 = 150 # 15 ps
+    n1 = 100 # 15 ps
 
     di = dn * c0 # (300 um/ps)(0.05 ps) = 15 um
-    i0 = di * -15000 # -750 um
-    i1 = di * 15000 # 750 um
+    i0 = di * -500 # 15 um * -100
+    i1 = di * 500 # 15 um * 100
 
     vacuum_permittivity = 1
     vacuum_permeability = 1
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     c = np.zeros((nlen, ilen))
     t = np.multiply(np.arange(0, nlen, 1), dn) # Create a time stream
     t_center = 4 # Center the pulse at 4ps
-    loc_center = 49
+    loc_center = 99
     c[:, loc_center] = np.append(np.diff(np.diff(np.exp(-((t-t_center)**2)))), [0,0]) # Generate a Gaussian pulse
     cfield = Field(nlen, ilen, field=c)
 
@@ -42,7 +42,6 @@ if __name__ == '__main__':
     # Create and start simulation
     s = Sim(i0, i1, di, n0, n1, dn, cfield, 'periodic', vacuum_permittivity, infinity_permittivity, vacuum_permeability, susceptibility, initial_susceptibility)
     s.simulate()
+
     # Visualize
-    #vis.plot(s, 25)
-    #vis.timeseries(s)
-    vis.timeseries(s, iscale=300, iunit='$\mu$m', eunit='N/c', hunit='A/m')
+    vis.timeseries(s, fname='../temp/vid.mp4', iscale=300, iunit='$\mu$m', eunit='N/c', hunit='A/m')
