@@ -49,4 +49,4 @@ if __name__ == '__main__':
 
     #vis.contor_plot(e, h)
     #vis.plot(e, h, cfield.export(), loc)
-    vis.timeseries(e, h, cfield.export(), '../temp/plt')
+    vis.timeseries(s, '../temp/plt')
