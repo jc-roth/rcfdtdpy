@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
     dn = 0.05 # 0.05 ps
     n0 = 0 # 0 ps
-    n1 = 10 # 4 ps
+    n1 = 15 # 4 ps
 
     di = dn * c0 # (300 um/ps)(0.05 ps) = 15 um
     i0 = -di*1000 # -15000 um
@@ -27,25 +27,20 @@ if __name__ == '__main__':
     initial_susceptibility = 0
 
     # Prepare current field
+    nlen, ilen = Sim.calc_dims(i0, i1, di, n0, n1, dn)
+    c = np.zeros((nlen, ilen))
+    t = np.multiply(np.arange(0, nlen, 1), dn) # Create a time stream
+    t_center = 4 # Center the pulse at 4ps
+    loc_center = 999
+    c[:, loc_center] = np.append(np.diff(np.diff(np.exp(-((t-t_center)**2)))), [0,0]) # Generate a Gaussian pulse
+    cfield = Field(nlen, ilen, field=c)
 
-    cfield = Field(i0, i1, di, n0, n1, dn) # Create a field of the correct dimensions
-    cn, ci = cfield.dims() # Determine the dimensions
-    c = cfield.export() # Export the field into a useable format
-    del cfield # Delete the old field
+    # Plot current in time before proceeding
+    plt.plot(cfield.export()[:,loc_center])
+    plt.show()
 
-    t = np.linspace(n0, n1, cn, False) # Create a time stream
-    tc = 5 # Center the pulse at 0.5ps
-    c[:, 999] = np.append(np.diff(np.diff(np.exp(-((t-tc)**2)))), [0,0]) # Generate a Gaussian pulse
-
-    cfield = Field(i0, i1, di, n0, n1, dn, field=c) # Create a new field from the Numpy 2D array
-
-    #plt.plot(cfield.export()[:,999])
-    #plt.show()
-
-
-
-    # Prepare and perform simulation
-    s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, susceptibility, initial_susceptibility, cfield)
+    # Create and start simulation
+    s = Sim(i0, i1, di, n0, n1, dn, cfield, 'zero', vacuum_permittivity, infinity_permittivity, vacuum_permeability, susceptibility, initial_susceptibility)
     s.simulate()
 
     # Export simulation result
