@@ -2,31 +2,83 @@
 Used to visualize results from the sim module
 """
 from sim import Field
+from sim import Sim
+
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib import animation
 
 
 from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
-import numpy as np
 
-def timeseries(e, h, c, fname):
-    dim_t, dim_z = np.shape(e)
-    step = np.linspace(0, dim_z, dim_z)
-    for t in range(dim_t):
-        plt.plot(step, e[t], label='E')
-        plt.plot(step+0.5, h[t], label='H')
-        #plt.plot(step, c[t], label='C')
-        plt.legend()
-        #plt.ylim((-0.5, 0.5))
-        plt.title(str(t))
-        plt.savefig(fname + str(t))
-        plt.gcf().clear() 
+def plot(sim, n):
+    """
+    Displays the E and H-fields at a given index in time.
 
-def plot(e, h, c, n):
-    dim_t, dim_z = np.shape(e)
-    step = np.linspace(0, dim_z, dim_z)
-    return plt
+    :param sim: The simulation to export
+    :param n: The temporal index :math:`n` to display
+    """
+    # Export variables from the simulation
+    n, i, e, h, c = sim.export()
+    # Create a new figure and place lines on it
+    fig = plt.figure()
+    ax = plt.axes()
+    ax.plot(i, e[n], label='E')
+    ax.plot(i, h[n], label='H')
+    ax.legend(loc=1)
+    # Determine axis limits
+    ax.set_xlim(i[0], i[-1])
+    emax = max(np.abs([np.max(e), np.min(e)]))
+    hmax = max(np.abs([np.max(h), np.min(h)]))
+    ylim = max(emax, hmax) * 1.1
+    ax.set_ylim(ylim, -ylim)
+    # Label axes
+    ax.set_ylabel('Field Amplitude [UNITS?]')
+    ax.set_xlabel('$z$ [UNITS?]')
+    # Run animation
+    plt.show()
+
+def timeseries(sim, interval=10, fname=None):
+    """
+    Animates the E and H-fields in time.
+
+    :param sim: The simulation to export
+    :param interval: The interval between timesteps in milliseconds
+    :param fname: The filename to export to, does not export if blank
+    """
+    # Export variables from the simulation
+    n, i, e, h, c = sim.export()
+    # Create a new figure and place lines on it
+    fig = plt.figure()
+    ax = plt.axes()
+    le, = ax.plot([], [], label='E')
+    lh, = ax.plot([], [], label='H')
+    ax.legend(loc=1)
+    # Determine axis limits
+    ax.set_xlim(i[0], i[-1])
+    emax = max(np.abs([np.max(e), np.min(e)]))
+    hmax = max(np.abs([np.max(h), np.min(h)]))
+    ylim = max(emax, hmax) * 1.1
+    ax.set_ylim(ylim, -ylim)
+    # Label axes
+    ax.set_ylabel('Field Amplitude [UNITS?]')
+    ax.set_xlabel('$z$ [UNITS?]')
+    # Define the initialization and update functions
+    def init():
+        le.set_data([], [])
+        lh.set_data([], [])
+        return (le,lh)
+    def update(n):
+        le.set_data(i, e[n])
+        lh.set_data(i, h[n])
+        return (le,lh)
+    # Run animation
+    anim = animation.FuncAnimation(fig, update, frames=len(n), interval=interval, init_func=init, blit=True)
+    if fname is None:
+        plt.show()
+    else:
+        anim.save(fname, fps=int(1000/interval))
 
 def contor_plot(e, h):
     # make these smaller to increase the resolution

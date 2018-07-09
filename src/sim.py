@@ -7,105 +7,75 @@ Contains the classes used to represent a simulation
 class Sim:
     """Represents a single simulation. Field is initialized to all zeros.
 
+    :param i0: The spatial value at which the field starts
+    :param i1: The spatial value at which the field ends
+    :param di: The spatial step size
+    :param n0: The temporal value at which the field starts
+    :param n1: The temporal value at which the field ends
+    :param dn: The temporal step size
+    :param boundary: The boundary type of the field, either 'zero', for fields bounded by zeros, 'periodic' for periodic boundary conditions, or 'mirror' for boundaries that reflect inner field values.
     :param vacuum_permittivity: :math:`\epsilon_0`
     :param infinity_permittivity: :math:`\epsilon_\infty`
     :param vacuum_permeability: :math:`\mu_0`
-    :param delta_t: :math:`\Delta t`
-    :param delta_z: :math:`\Delta z`
-    :param num_n: The number of time indexes
-    :param num_i: The number of spatial indexes
-    :param current: A field object that represents the current
     :param susceptibility: A susceptibility object
     :param initial_susceptibility: The initial susceptability. Eventually will be included in the susceptibility object.
+    :param current_field: A field object that represents the current
     
     """
     
-    def __init__(self, vacuum_permittivity, infinity_permittivity, vacuum_permeability, delta_t, delta_z, num_n, num_i, current_field, susceptibility, initial_susceptibility):
-        self._vacuum_permittivity = vacuum_permittivity
-        self._infinity_permittivity = infinity_permittivity
-        self._vacuum_permeability = vacuum_permeability
-        self._delta_t = delta_t
-        self._delta_z = delta_z
-        self._cfield = current_field
-        self._susceptibility = susceptibility
-        self._initial_susceptibility = initial_susceptibility
-        self._num_n = num_n
-        self._num_i = num_i
-        self._efield = Field(num_n, num_i)
-        self._hfield = Field(num_n, num_i)
-
+    def __init__(self, i0, i1, di, n0, n1, dn, cfield, boundary, vacuum_permittivity, infinity_permittivity, vacuum_permeability, susceptibility, initial_susceptibility):
+        # Check that arguments have acceptable values
+        if i0 > i1:
+            raise ValueError("i0 must be less than or equal to i1.")
+        elif n0 > n1:
+            raise ValueError("n0 must be less than or equal to n1.")
+        elif di <= 0:
+            raise ValueError("di must be greater than zero.")
+        elif dn <= 0:
+            raise ValueError("dn must be greater than zero.")
+        elif type(cfield) is not Field:
+            raise TypeError("cfield must be of type Field.")
+        # Save field dimensions and resolution
+        self._i0 = i0
+        self._i1 = i1
+        self._di = di
+        self._n0 = n0
+        self._n1 = n1
+        self._dn = dn
+        # Determine the number of temporal and spatial cells in the field
+        self._nlen, self._ilen = Sim.calc_dims(i0, i1, di, n0, n1, dn)
+        # Create each field
+        self._efield = Field(self._nlen, self._ilen, boundary)
+        self._hfield = Field(self._nlen, self._ilen, boundary)
+        # Save the current field
+        self._cfield = cfield
+        # Save constants
+        self._epsilon0 = vacuum_permittivity
+        self._epsiloninf = infinity_permittivity
+        self._mu0 = vacuum_permeability
+        self._chi = susceptibility
+        self._chi0 = initial_susceptibility
         # Calculate simulation proportionality constants
-        self._e_calc_term1_prop_coeff = self._infinity_permittivity/(self._infinity_permittivity + self._initial_susceptibility)
-        self._e_calc_term2_prop_coeff = 1.0/(self._infinity_permittivity + self._initial_susceptibility)
-        self._e_calc_term3_prop_coeff = self._delta_t/(self._vacuum_permittivity * self._delta_z * (self._infinity_permittivity + self._initial_susceptibility))
-        self._e_calc_term4_prop_coeff = self._delta_t/(self._vacuum_permittivity * (self._infinity_permittivity + self._initial_susceptibility))
+        self._coeffe0 = self._epsiloninf/(self._epsiloninf + self._chi0)
+        self._coeffe1 = 1.0/(self._epsiloninf + self._chi0)
+        self._coeffe2 = self._dn/(self._epsilon0 * self._di * (self._epsiloninf + self._chi0))
+        self._coeffe3 = self._dn/(self._epsilon0 * (self._epsiloninf + self._chi0))
+        self._coeffh1 = self._dn/(self._mu0 * self._di)
 
-        self._h_calc_term2_prop_coeff = self._delta_t/(self._vacuum_permeability * self._delta_z)
-
-        # Print constants
-        print('Coefficients:\n=============')
-        print(str(self._e_calc_term1_prop_coeff)[:13])
-        print(str(self._e_calc_term2_prop_coeff)[:13])
-        print(str(self._e_calc_term3_prop_coeff)[:13])
-        print(str(self._e_calc_term4_prop_coeff)[:13])
-        print(str(self._h_calc_term2_prop_coeff)[:13])
-        print('=============')
-
-    def get_vacuum_permittivity(self):
+    def __str__(self):
         """
-        Gets :math:`\epsilon_0`
-        
-        :returns: :math:`\epsilon_0`
+        Returns a descriptive string of the Sim object.
         """
-        return self._vacuum_permittivity
-
-    def get_infinity_permittivity(self):
-        """
-        Gets :math:`\epsilon_\infty`
-        
-        :returns: :math:`\epsilon_\infty`
-        """
-        return self._infinity_permittivity
-
-    def get_vacuum_permeability(self):
-        """
-        Gets :math:`\mu_0`
-        
-        :returns: :math:`\mu_0`
-        """
-        return self._vacuum_permeability
-
-    def get_delta_t(self):
-        """
-        Gets :math:`\Delta t`
-        
-        :returns: :math:`\Delta t`
-        """
-        return self._delta_t
-
-    def get_delta_z(self):
-        """
-        Gets :math:`\Delta z`
-        
-        :returns: :math:`\Delta z`
-        """
-        return self._delta_z
-
-    def get_num_n(self):
-        """
-        Gets the number of temporal indicies.
-        
-        :returns: The number of temporal indicies
-        """
-        return self._num_n
-
-    def get_num_i(self):
-        """
-        Gets the number of spatial indicies.
-        
-        :returns: The number of spatial indicies
-        """
-        return self._num_i
+        to_return = ''
+        to_return += '----------\nConstants:\n'
+        to_return += 'epsilon0:' + '{0:.3f}'.format(self._epsilon0) + ' epsiloninf:' + '{0:.3f}'.format(self._epsiloninf) + ' mu0:' + '{0:.3f}'.format(self._mu0) + ' chi:' + '{0:.3f}'.format(self._chi) + ' chi0:' + '{0:.3f}'.format(self._chi0)
+        to_return += '\n-------------\nCoefficients:\n'
+        to_return += 'e1:' + '{0:.3f}'.format(self._coeffe0) + ' e2:' + '{0:.3f}'.format(self._coeffe1) + ' e3:' + '{0:.3f}'.format(self._coeffe2) + ' e4:' + '{0:.3f}'.format(self._coeffe3) + ' h2:' + '{0:.3f}'.format(self._coeffh1)
+        to_return += '\n-------\nBounds:\n'
+        to_return += 'i0:' + '{0:.3f}'.format(self._i0) + ' i1:' + '{0:.3f}'.format(self._i1) + ' di:' + '{0:.3f}'.format(self._di) + '\nn0:' + '{0:.3f}'.format(self._n0) + ' n1:' + '{0:.3f}'.format(self._n1) + ' dn:' + '{0:.3f}'.format(self._dn)
+        to_return += '\n-------\nDimensions:\n'
+        to_return += '( n x i ) ( ' + str(self._nlen) + ' x ' + str(self._ilen) + ' )'
+        return to_return
 
     def get_efield(self):
         """
@@ -130,6 +100,14 @@ class Sim:
         :return: The current field as a Field object
         """
         return self._cfield
+
+    def get_dims(self):
+        """
+        Returns the dimensions of the field in cells
+
+        :returns: A tuple :code:`(nlen, ilen)` containing the temporal and spatial dimensions in cells
+        """
+        return (self._nlen, self._ilen)
         
     def simulate(self):
         """
@@ -139,14 +117,14 @@ class Sim:
         self._hfield.set_time_index(0) # Set the time index of the magnetic field to zero
         self._cfield.set_time_index(0) # Set the time index of the current field to zero
         # Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index
-        for j in tqdm(range(self._num_n-1)):
+        for n in tqdm(range(self._nlen-1)):
             # Calculate the H and E fields
             self._calc_hfield()
             self._calc_efield()
             # Iterate the H and E, and current fields
-            self._hfield.iterate()
-            self._efield.iterate()
-            self._iterate_cfield()
+            self._hfield.iterate(copy=True)
+            self._efield.iterate(copy=True)
+            self._cfield.iterate()
             
 
     def _calc_efield(self):
@@ -154,12 +132,12 @@ class Sim:
         Calcualtes the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n-\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`. Note that the prior electric field array is located half a time index away at :math:`n-1` and the prior magnetic field array is located half a time index away at :math:`n-1/2`.
         """
         # Compute the values along the field
-        for i in range(self._num_i):
+        for i in range(self._ilen):
             # TODO Can this calculation be done via vectors? This will likely improve efficiency
-            term1 = self._e_calc_term1_prop_coeff * self._efield[i]
-            term2 = self._e_calc_term2_prop_coeff * self.psi()
-            term3 = self._e_calc_term3_prop_coeff * (self._hfield[i]-self._hfield[i-1])
-            term4 = self._e_calc_term4_prop_coeff * self._current(i)
+            term1 = self._coeffe0 * self._efield[i]
+            term2 = self._coeffe1 * self.psi()
+            term3 = self._coeffe2 * (self._hfield[i]-self._hfield[i-1])
+            term4 = self._coeffe3 * self._cfield[i]
             self._efield[i] = term1 + term2 - term3 - term4
         
     def _calc_hfield(self):
@@ -167,18 +145,11 @@ class Sim:
         Calculates the magnetic field according to :math:`H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]`. Note that the prior electric field array is located half a time index away at :math:`n-1/2` and the prior magnetic field array is located a whole time index away at :math:`n-1`.
         """
         # Compute the values along the field
-        for i in range(self._num_i):
+        for i in range(self._ilen):
             # TODO Can this calculation be done via vectors? This will likely improve efficiency
             term1 = self._hfield[i]
-            term2 = self._h_calc_term2_prop_coeff * (self._efield[i+1]-self._efield[i])
+            term2 = self._coeffh1 * (self._efield[i+1]-self._efield[i])
             self._hfield[i] = term1 - term2
-        
-    def _iterate_cfield(self):
-        """
-        Iterates the current field by simply increasing the temporal index by one.
-        """
-        prior_time = self._cfield.get_time_index()
-        self._cfield.set_time_index(prior_time+1)
 
     def psi(self):
         """
@@ -188,39 +159,64 @@ class Sim:
         """
         return 0
 
-    def _current(self, i):
+    def export(self):
         """
-        Gets the current at location :math:`i` and current time :math:`n` using the simulation's associated current field.
+        Exports all field values along with the spatial and temporal bounds of each field cell
 
-        :return: The current at location :math:`i` and current time :math:`n`
+        :return: A tuple :code:`(n, i, e, h, c)` where :code:`n` is a Numpy array containing the spatial bounds of each field cell, :code:`i` is a Numpy array containing the temporal bounds of each field cell, :code:`e` is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), :code:`h` is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), and :code:`c` is a Numpy array containing the current field (axis=0 is time and axis=1 is space)
         """
-        return self._cfield[i]
+        # Calcualte the n and i arrays
+        n = np.linspace(self._n0, self._n1, self._nlen, False)
+        i = np.linspace(self._i0, self._i1, self._ilen, False)
+        # Return
+        return (n, i, self._efield.export(), self._hfield.export(), self._cfield.export())
+        
+    @staticmethod
+    def calc_dims(i0, i1, di, n0, n1, dn):
+        """
+        Calculates the dimensions of the simulation in cells.
+
+        :param i0: The spatial value at which the field starts
+        :param i1: The spatial value at which the field ends
+        :param di: The spatial step size
+        :param n0: The temporal value at which the field starts
+        :param n1: The temporal value at which the field ends
+        :param dn: The temporal step size
+        :return: A tuple (nlen, ilen) of the temporal and spatial dimensions
+        """
+        nlen = int(np.floor((n1-n0)/dn))
+        ilen = int(np.floor((i1-i0)/di))
+        return (nlen, ilen)
 
 class Field:
     """
-    Represents any field (i.e. electric, magnetic, current, susceptibility) using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space.
+    Represents any field (i.e. electric, magnetic, current, susceptibility) using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space. Field dimensions are calculated via floor((i1-i0)/di) and floor((n1-n0)/dn).
 
-    :param num_n: The number of temporal indexes in the field
-    :param num_i: The number of spatial indexes in the field
-    :param field: A Numpy array that sets the field values in space and time. The field dimensions override num_n and num_i
+    :param nlen: The number of temporal cells in the field
+    :param ilen: The number of spatial cells in the field
+    :param boundary: The boundary type of the field, either 'zero', for fields bounded by zeros, 'periodic' for periodic boundary conditions, or 'mirror' for boundaries that reflect inner field values.
+    :param init: A Numpy array containing the field values to set
     """
 
-    def __init__(self, num_n=0, num_i=0, field=None):
+    def __init__(self, nlen, ilen, boundary='zero', field=None):
         # Set the field time index to zero
         self._n = 0
-        # Set the field temporal length to num_n
-        self._num_n = num_n
-        # Set the field spatial length to num_i
-        self._num_i = num_i
-        # Initialize field
+        # Save the field dimensions
+        self._nlen = nlen
+        self._ilen = ilen
+        # Save field boundary type
+        self._boundary = boundary.lower()
+        # Check to see if an initial field was provided
         if field is None:
-            # Initialize a zero field
-            self._field = np.zeros((num_n, num_i), dtype=np.float64)
+            # Initialize zero-valued field
+            self._field = np.zeros((self._nlen, self._ilen), dtype=np.float32)
         else:
-            # Set the field
-            self._field = np.float64(field)
-            # Extract field spatial and temporal indicies
-            self._num_n, self._num_i = np.shape(field)
+            # Check that the given field has consistent dimensions
+            nlen, ilen = np.shape(field)
+            if(self._nlen != nlen or self._ilen != ilen):
+                raise ValueError("The init field should have the same dimensions as those provided")
+            # Initialize the given field
+            self._field = field
 
     def get_time_index(self):
         """
@@ -237,24 +233,9 @@ class Field:
         :param n: :math:`n`
         """
         # Check for that n is within the accepted range
-        if(n < 0 or n >= self._num_n):
+        if(n < 0 or n >= self._nlen):
             raise IndexError('The n argument is of out of bounds')
         self._n = n
-
-    def get_field(self, n=-1):
-        """
-        Gets the field at time :math:`n`, and the current time if :math:`n` is unspecified.
-
-        :param n: :math:`n`
-        :return: The field at time `n`
-        """
-        # If n is -1, return the current field
-        if(n == -1):
-            return self._field[self._n]
-        # Check for that n is within the accepted range
-        if(n < 0 or n >= self._num_n):
-            raise IndexError('The n argument is of out of bounds')
-        return self._field[n]
 
     def __getitem__(self, key):
         """
@@ -269,11 +250,19 @@ class Field:
         :param i: The spatial index of the field to access
         :return: The value of the field a the current time index :math:`n` and spatial index :math:`i`
         """
-        # Check to see if the requested index is out of bounds, if so return zero
-        if(i < 0 or i >= self._num_i):
-            return np.float64(0)
+        # Check to see if the requested index is out of bounds, if so return a value based on the boundary condition
+        if(i < 0 or i >= self._ilen):
+            if self._boundary == 'zero':
+                return np.float32(0)
+            elif self._boundary == 'periodic':
+                return self._field[self._n, i % self._ilen]
+            elif self._boundary == 'mirror':
+                if i < 0:
+                    return self._field[self._n, np.abs(i)]
+                else:
+                    return self._field[self._n, 2*self._ilen - (i + 1)]
         # Return the requested field
-        return self._field[self._n,i]
+        return self._field[self._n, i]
 
     def __setitem__(self, key, value):
         """
@@ -288,39 +277,20 @@ class Field:
         :param i: The spatial index of the field to set
         :param value: The value to set at time index :math:`n` and spatial index :math:`i`
         """
-        self._field[self._n,i] = np.float64(value)
+        self._field[self._n,i] = np.float32(value)
 
-    def set_field(self, nfield, n=-1):
-        """
-        Sets the field at time :math:`n`, and the current time if :math:`n` is unspecified. Raises a ValueError if the new field is not of the correct spatial length.
-
-        :param nfield: The new field to append of length num_i
-        """
-        # Check for nfield length, raise error if necessary
-        if(len(nfield) != self._num_i):
-            raise ValueError('The nfield argument is of the incorrect length, found ' + str(len(nfield)) + ', expected ' + str(self._num_i))
-        # If n is -1, set the current field
-        if(n == -1):
-            self._field[self._n] = nfield
-        else:
-            # Check for that n is within the accepted range
-            if(n < 0 or n >= self._num_n):
-                raise IndexError('The n argument is of out of bounds')
-            # Set the new field value
-            self._field[n] = nfield
-
-    def iterate(self):
+    def iterate(self, copy=False):
         """
         Copies the field at the current temporal location to the next temporal location, then iterates the temporal location.
         """
         # Check for that n is within the accepted range
-        if(self._n + 1 >= self._num_n):
+        if(self._n + 1 >= self._nlen):
             raise IndexError('Cannot iterate as the end of the temporal index has been reached.')
-        # Copy the current field to the next temporal index
-        self._field[self._n+1] = self._field[self._n]
+        if copy:
+            # Copy the current field to the next temporal index
+            self._field[self._n+1] = self._field[self._n]
         # Iterate the temporal index
         self._n += 1
-
 
     def export(self):
         """
