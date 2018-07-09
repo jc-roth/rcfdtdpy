@@ -103,7 +103,7 @@ class Sim:
         for i in range(self._ilen):
             # TODO Can this calculation be done via vectors? This will likely improve efficiency
             term1 = self._coeffe0 * self._efield[i]
-            term2 = self._coeffe1 * self.psi()
+            term2 = self._coeffe1 * self._psi()
             term3 = self._coeffe2 * (self._hfield[i]-self._hfield[i-1])
             term4 = self._coeffe3 * self._cfield[i]
             self._efield[i] = term1 + term2 - term3 - term4
