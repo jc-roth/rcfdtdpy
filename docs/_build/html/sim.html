@@ -189,7 +189,7 @@
 </table>
 <dl class="staticmethod">
 <dt id="sim.Sim.calc_dims">
-<em class="property">static </em><code class="descname">calc_dims</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.calc_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.calc_dims" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">calc_dims</code><span class="sig-paren">(</span><em>n0</em>, <em>n1</em>, <em>dn</em>, <em>i0</em>, <em>i1</em>, <em>di</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.calc_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.calc_dims" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the dimensions of the simulation in cells.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -207,6 +207,34 @@
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple (nlen, ilen) of the temporal and spatial dimensions</p>
 </td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.export">
+<code class="descname">export</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.export" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports all field values along with the spatial and temporal bounds of each field cell</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A tuple <code class="code docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">i,</span> <span class="pre">e,</span> <span class="pre">h,</span> <span class="pre">c)</span></code> where <code class="code docutils literal notranslate"><span class="pre">n</span></code> is a Numpy array containing the spatial bounds of each field cell, <code class="code docutils literal notranslate"><span class="pre">i</span></code> is a Numpy array containing the temporal bounds of each field cell, <code class="code docutils literal notranslate"><span class="pre">e</span></code> is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), <code class="code docutils literal notranslate"><span class="pre">h</span></code> is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), and <code class="code docutils literal notranslate"><span class="pre">c</span></code> is a Numpy array containing the current field (axis=0 is time and axis=1 is space)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sim.Sim.get_bound_res">
+<code class="descname">get_bound_res</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_bound_res"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_bound_res" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the boundaries and resolution of the simulation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A tuple <code class="code docutils literal notranslate"><span class="pre">(n0,</span> <span class="pre">n1,</span> <span class="pre">dn,</span> <span class="pre">i0,</span> <span class="pre">i1,</span> <span class="pre">di)</span></code></td>
 </tr>
 </tbody>
 </table>
@@ -249,22 +277,6 @@
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The E-field as a Field object</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Sim.get_field">
-<code class="descname">get_field</code><span class="sig-paren">(</span><em>n=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the field spatial values as well as amplitude at time index <span class="math notranslate nohighlight">\(n\)</span> or the current time if <span class="math notranslate nohighlight">\(n\)</span> is unspecified.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> – The time index <span class="math notranslate nohighlight">\(n\)</span></td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">A tuple <code class="code docutils literal notranslate"><span class="pre">(z,</span> <span class="pre">f)</span></code> containing the spatial coordinates of the cells in the field and the field amplitudes at each corresponding cell</td>
 </tr>
 </tbody>
 </table>
