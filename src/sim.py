@@ -76,46 +76,6 @@ class Sim:
         to_return += '\n-------\nDimensions:\n'
         to_return += '( n x i ) ( ' + str(self._nlen) + ' x ' + str(self._ilen) + ' )'
         return to_return
-
-    def get_efield(self):
-        """
-        Returns the E-field as a Field object.
-
-        :return: The E-field as a Field object
-        """
-        return self._efield
-
-    def get_hfield(self):
-        """
-        Returns the H-field as a Field object.
-
-        :return: The H-field as a Field object
-        """
-        return self._hfield
-
-    def get_cfield(self):
-        """
-        Returns the current field as a Field object.
-
-        :return: The current field as a Field object
-        """
-        return self._cfield
-
-    def get_bound_res(self):
-        """
-        Returns the boundaries and resolution of the simulation
-
-        :return: A tuple :code:`(n0, n1, dn, i0, i1, di)`
-        """
-        return (self._n0, self._n1, self._dn, self._i0, self._i1, self._di)
-
-    def get_dims(self):
-        """
-        Returns the dimensions of the field in cells
-
-        :returns: A tuple :code:`(nlen, ilen)` containing the temporal and spatial dimensions in cells
-        """
-        return (self._nlen, self._ilen)
         
     def simulate(self):
         """
@@ -159,13 +119,29 @@ class Sim:
             term2 = self._coeffh1 * (self._efield[i+1]-self._efield[i])
             self._hfield[i] = term1 - term2
 
-    def psi(self):
+    def _psi(self):
         """
         Calculates psi according to :math:`\psi^n=\sum^{n-1}_{m=0}E^{i,n-m}\Delta\chi_e^m` at the current time :math:`n` and position :math:`i`. Currently not implemented, and will simply return zero.
 
         :return: Zero
         """
         return 0
+
+    def get_bound_res(self):
+        """
+        Returns the boundaries and resolution of the simulation
+
+        :return: A tuple :code:`(n0, n1, dn, i0, i1, di)`
+        """
+        return (self._n0, self._n1, self._dn, self._i0, self._i1, self._di)
+
+    def get_dims(self):
+        """
+        Returns the dimensions of the field in cells
+
+        :returns: A tuple :code:`(nlen, ilen)` containing the temporal and spatial dimensions in cells
+        """
+        return (self._nlen, self._ilen)
 
     def export(self):
         """
