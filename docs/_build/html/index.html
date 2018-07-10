@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="rcfdtd" href="rcfdtd.html" /> 
+    <link rel="next" title="sim" href="sim.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -79,7 +79,6 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="rcfdtd.html">rcfdtd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sim.html">sim</a></li>
 </ul>
 
@@ -150,13 +149,13 @@
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="rcfdtd.html">rcfdtd</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sim.html">sim</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="sim.html#sim-sim">sim.Sim</a></li>
-<li class="toctree-l2"><a class="reference internal" href="sim.html#sim-field">sim.Field</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sim.html">sim</a></li>
 </ul>
-</li>
-</ul>
+</div>
+<div class="section" id="simulation-details">
+<h2>Simulation Details<a class="headerlink" href="#simulation-details" title="Permalink to this headline">¶</a></h2>
+<p>Calculates the magnetic field according to <span class="math notranslate nohighlight">\(H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]\)</span>. Note that the prior electric field array is located half a time index away at <span class="math notranslate nohighlight">\(n-1/2\)</span> and the prior magnetic field array is located a whole time index away at <span class="math notranslate nohighlight">\(n-1\)</span>.</p>
+<p>Calcualtes the electric field according to <span class="math notranslate nohighlight">\(E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n-\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\)</span>. Note that the prior electric field array is located half a time index away at <span class="math notranslate nohighlight">\(n-1\)</span> and the prior magnetic field array is located half a time index away at <span class="math notranslate nohighlight">\(n-1/2\)</span>.</p>
 </div>
 <div class="section" id="ideas">
 <h2>Ideas<a class="headerlink" href="#ideas" title="Permalink to this headline">¶</a></h2>
@@ -185,7 +184,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="rcfdtd.html" class="btn btn-neutral float-right" title="rcfdtd" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="sim.html" class="btn btn-neutral float-right" title="sim" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>

@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="rcfdtd" href="rcfdtd.html" /> 
+    <link rel="prev" title="Welcome to RCFDTD.py’s documentation!" href="index.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -79,12 +79,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="rcfdtd.html">rcfdtd</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">sim</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#sim-sim">sim.Sim</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#sim-field">sim.Field</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">sim</a></li>
 </ul>
 
             
@@ -151,16 +146,16 @@
             
   <div class="section" id="sim">
 <h1>sim<a class="headerlink" href="#sim" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="sim-sim">
-<h2>sim.Sim<a class="headerlink" href="#sim-sim" title="Permalink to this headline">¶</a></h2>
 <p>The simulation class treats field indicies as follows</p>
 <a class="reference internal image-reference" href="_images/field_structure.png"><img alt="_images/field_structure.png" class="align-center" src="_images/field_structure.png" style="width: 367.5px; height: 212.5px;" /></a>
-<p>Both the electric and magnetic fields are initialized to the same length, meaning that they have a slight offset in starting and ending locations in the simulation. The field at each time is stored in a Numpy array. The Numpy arrays are stored in a list, which allows each field at previous times to be accessed.</p>
+<p>Both the electric and magnetic fields are initialized to the same length, meaning that they have a slight offset in starting and ending locations in the simulation. The E-field at each time is stored in a Numpy array with the following structure</p>
+<a class="reference internal image-reference" href="_images/numpy_structure.png"><img alt="_images/numpy_structure.png" class="align-center" src="_images/numpy_structure.png" style="width: 480.0px; height: 360.0px;" /></a>
+<p>The H-field and current arrays have corresponding structures.</p>
 <ul class="simple">
 <li>Discuss the choice of <span class="math notranslate nohighlight">\(\frac{\Delta t}{\Delta z}\approx c\)</span></li>
 <li>Discuss how to create a current object</li>
 </ul>
-<dl class="class">
+<span class="target" id="module-sim"></span><dl class="class">
 <dt id="sim.Sim">
 <em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em>, <em>cfield</em>, <em>boundary</em>, <em>vacuum_permittivity</em>, <em>infinity_permittivity</em>, <em>vacuum_permeability</em>, <em>susceptibility</em>, <em>initial_susceptibility</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a single simulation. Field is initialized to all zeros.</p>
@@ -263,115 +258,6 @@
 </dd></dl>
 
 </div>
-<div class="section" id="sim-field">
-<h2>sim.Field<a class="headerlink" href="#sim-field" title="Permalink to this headline">¶</a></h2>
-<p>The field class can store both current field values as well as past field values as as Numpy array. The E-field array has the following structure</p>
-<a class="reference internal image-reference" href="_images/numpy_structure.png"><img alt="_images/numpy_structure.png" class="align-center" src="_images/numpy_structure.png" style="width: 480.0px; height: 360.0px;" /></a>
-<p>The H-field array has a corresponding structure. The user never directly interacts with the entire Numpy array. Rather they set a “current time <span class="math notranslate nohighlight">\(n\)</span>” which selects a row of the array. Any further operations are performed on that row. The <a class="reference internal" href="#sim.Field.export" title="sim.Field.export"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sim.Field.export()</span></code></a> function simply returns the Numpy field.</p>
-<dl class="class">
-<dt id="sim.Field">
-<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Field</code><span class="sig-paren">(</span><em>nlen</em>, <em>ilen</em>, <em>boundary='zero'</em>, <em>field=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents any field (i.e. electric, magnetic, current, susceptibility) using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space. Field dimensions are calculated via floor((i1-i0)/di) and floor((n1-n0)/dn).</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>nlen</strong> – The number of temporal cells in the field</li>
-<li><strong>ilen</strong> – The number of spatial cells in the field</li>
-<li><strong>boundary</strong> – The boundary type of the field, either ‘zero’, for fields bounded by zeros, ‘periodic’ for periodic boundary conditions, or ‘mirror’ for boundaries that reflect inner field values.</li>
-<li><strong>init</strong> – A Numpy array containing the field values to set</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="sim.Field.export">
-<code class="descname">export</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.export" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the Numpy array that contains the temporal (axis=0) and spatial values (axis=1) of the field.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A Numpy array</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Field.get_index">
-<code class="descname">get_index</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.get_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.get_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the value of the field at the current time index <span class="math notranslate nohighlight">\(n\)</span> and at the <span class="math notranslate nohighlight">\(i\)</span> th spatial index. If the requested index is out of the field bounds, the returned value is zero.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>i</strong> – The spatial index of the field to access</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The value of the field a the current time index <span class="math notranslate nohighlight">\(n\)</span> and spatial index <span class="math notranslate nohighlight">\(i\)</span></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Field.get_time_index">
-<code class="descname">get_time_index</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.get_time_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.get_time_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the current time index <span class="math notranslate nohighlight">\(n\)</span></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current time index <span class="math notranslate nohighlight">\(n\)</span></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Field.iterate">
-<code class="descname">iterate</code><span class="sig-paren">(</span><em>copy=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.iterate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.iterate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Copies the field at the current temporal location to the next temporal location, then iterates the temporal location.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Field.set_index">
-<code class="descname">set_index</code><span class="sig-paren">(</span><em>i</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.set_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.set_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the value of the field at the current time index <span class="math notranslate nohighlight">\(n\)</span> and at the <span class="math notranslate nohighlight">\(i\)</span> th spatial index.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>i</strong> – The spatial index of the field to set</li>
-<li><strong>value</strong> – The value to set at time index <span class="math notranslate nohighlight">\(n\)</span> and spatial index <span class="math notranslate nohighlight">\(i\)</span></li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="sim.Field.set_time_index">
-<code class="descname">set_time_index</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Field.set_time_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Field.set_time_index" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the current time index to <span class="math notranslate nohighlight">\(n\)</span></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>n</strong> – <span class="math notranslate nohighlight">\(n\)</span></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-</div>
 
 
            </div>
@@ -382,7 +268,7 @@
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="rcfdtd.html" class="btn btn-neutral" title="rcfdtd" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="Welcome to RCFDTD.py’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

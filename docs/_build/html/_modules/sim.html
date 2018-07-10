@@ -78,7 +78,6 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../rcfdtd.html">rcfdtd</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../sim.html">sim</a></li>
 </ul>
 
@@ -178,7 +177,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;di must be greater than zero.&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">dn</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dn must be greater than zero.&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">cfield</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Field</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">cfield</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;cfield must be of type Field.&quot;</span><span class="p">)</span>
         <span class="c1"># Save field dimensions and resolution</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_i0</span> <span class="o">=</span> <span class="n">i0</span>
@@ -187,11 +186,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_n0</span> <span class="o">=</span> <span class="n">n0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n1</span> <span class="o">=</span> <span class="n">n1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dn</span> <span class="o">=</span> <span class="n">dn</span>
+        <span class="c1"># Save boundary condition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bound</span> <span class="o">=</span> <span class="n">boundary</span>
         <span class="c1"># Determine the number of temporal and spatial cells in the field</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">=</span> <span class="n">Sim</span><span class="o">.</span><span class="n">calc_dims</span><span class="p">(</span><span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">)</span>
         <span class="c1"># Create each field</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="n">boundary</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="n">boundary</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
         <span class="c1"># Save the current field</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span> <span class="o">=</span> <span class="n">cfield</span>
         <span class="c1"># Save constants</span>
@@ -226,43 +227,23 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Executes the simulation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="o">.</span><span class="n">set_time_index</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Set the time index of the electric field to zero</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="o">.</span><span class="n">set_time_index</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Set the time index of the magnetic field to zero</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span><span class="o">.</span><span class="n">set_time_index</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Set the time index of the current field to zero</span>
         <span class="c1"># Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index</span>
         <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="o">-</span><span class="mi">1</span><span class="p">)):</span>
             <span class="c1"># Calculate the H and E fields</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_calc_hfield</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_calc_efield</span><span class="p">()</span>
-            <span class="c1"># Iterate the H and E, and current fields</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span><span class="o">.</span><span class="n">iterate</span><span class="p">()</span></div>
-            
-
-    <span class="k">def</span> <span class="nf">_calc_efield</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calcualtes the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n-\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`. Note that the prior electric field array is located half a time index away at :math:`n-1` and the prior magnetic field array is located half a time index away at :math:`n-1/2`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Compute the values along the field</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">):</span>
-            <span class="c1"># TODO Can this calculation be done via vectors? This will likely improve efficiency</span>
-            <span class="n">term1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coeffe0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">term2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coeffe1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_psi</span><span class="p">()</span>
-            <span class="n">term3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coeffe2</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">term4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coeffe3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">term1</span> <span class="o">+</span> <span class="n">term2</span> <span class="o">-</span> <span class="n">term3</span> <span class="o">-</span> <span class="n">term4</span>
-        
-    <span class="k">def</span> <span class="nf">_calc_hfield</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates the magnetic field according to :math:`H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]`. Note that the prior electric field array is located half a time index away at :math:`n-1/2` and the prior magnetic field array is located a whole time index away at :math:`n-1`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Compute the values along the field</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">):</span>
-            <span class="c1"># TODO Can this calculation be done via vectors? This will likely improve efficiency</span>
-            <span class="n">term1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">term2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coeffh1</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">term1</span> <span class="o">-</span> <span class="n">term2</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bound</span> <span class="o">==</span> <span class="s1">&#39;zero&#39;</span><span class="p">:</span> <span class="c1"># Zero boundary condition</span>
+                <span class="c1"># Compute E-field</span>
+                <span class="n">t1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coeffe0</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">t2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coeffe1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_psi</span><span class="p">()</span>
+                <span class="n">t3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coeffe2</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+                <span class="n">t4</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coeffe3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t1</span> <span class="o">+</span> <span class="n">t2</span> <span class="o">-</span> <span class="n">t3</span> <span class="o">-</span> <span class="n">t4</span>
+                <span class="c1"># Compute H-field</span>
+                <span class="n">t1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">t2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coeffh1</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">t1</span> <span class="o">-</span> <span class="n">t2</span>
+            <span class="c1"># Copy the H and E-field values to the next time step</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">n</span><span class="p">]</span></div>
 
     <span class="k">def</span> <span class="nf">_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -298,7 +279,7 @@
         <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="c1"># Return</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="o">.</span><span class="n">export</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="o">.</span><span class="n">export</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span><span class="o">.</span><span class="n">export</span><span class="p">())</span></div>
+        <span class="k">return</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hfield</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfield</span><span class="p">)</span></div>
         
 <div class="viewcode-block" id="Sim.calc_dims"><a class="viewcode-back" href="../sim.html#sim.Sim.calc_dims">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">calc_dims</span><span class="p">(</span><span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">):</span>
@@ -316,118 +297,6 @@
         <span class="n">nlen</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">n1</span><span class="o">-</span><span class="n">n0</span><span class="p">)</span><span class="o">/</span><span class="n">dn</span><span class="p">))</span>
         <span class="n">ilen</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">i1</span><span class="o">-</span><span class="n">i0</span><span class="p">)</span><span class="o">/</span><span class="n">di</span><span class="p">))</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">nlen</span><span class="p">,</span> <span class="n">ilen</span><span class="p">)</span></div></div>
-
-<div class="viewcode-block" id="Field"><a class="viewcode-back" href="../sim.html#sim.Field">[docs]</a><span class="k">class</span> <span class="nc">Field</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents any field (i.e. electric, magnetic, current, susceptibility) using a 2D Numpy array. The zeroth axis represents increments in time and the first axis represents increments in space. Field dimensions are calculated via floor((i1-i0)/di) and floor((n1-n0)/dn).</span>
-
-<span class="sd">    :param nlen: The number of temporal cells in the field</span>
-<span class="sd">    :param ilen: The number of spatial cells in the field</span>
-<span class="sd">    :param boundary: The boundary type of the field, either &#39;zero&#39;, for fields bounded by zeros, &#39;periodic&#39; for periodic boundary conditions, or &#39;mirror&#39; for boundaries that reflect inner field values.</span>
-<span class="sd">    :param init: A Numpy array containing the field values to set</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="s1">&#39;zero&#39;</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="c1"># Set the field time index to zero</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="c1"># Save the field dimensions</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span> <span class="o">=</span> <span class="n">nlen</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">=</span> <span class="n">ilen</span>
-        <span class="c1"># Save field boundary type</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_boundary</span> <span class="o">=</span> <span class="n">boundary</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="c1"># Check to see if an initial field was provided</span>
-        <span class="k">if</span> <span class="n">field</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Initialize zero-valued field</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_field</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Check that the given field has consistent dimensions</span>
-            <span class="n">nlen</span><span class="p">,</span> <span class="n">ilen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">field</span><span class="p">)</span>
-            <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span> <span class="o">!=</span> <span class="n">nlen</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">!=</span> <span class="n">ilen</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The init field should have the same dimensions as those provided&quot;</span><span class="p">)</span>
-            <span class="c1"># Initialize the given field</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_field</span> <span class="o">=</span> <span class="n">field</span>
-
-<div class="viewcode-block" id="Field.get_time_index"><a class="viewcode-back" href="../sim.html#sim.Field.get_time_index">[docs]</a>    <span class="k">def</span> <span class="nf">get_time_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets the current time index :math:`n`</span>
-
-<span class="sd">        :return: The current time index :math:`n`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n</span></div>
-
-<div class="viewcode-block" id="Field.set_time_index"><a class="viewcode-back" href="../sim.html#sim.Field.set_time_index">[docs]</a>    <span class="k">def</span> <span class="nf">set_time_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets the current time index to :math:`n`</span>
-
-<span class="sd">        :param n: :math:`n`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Check for that n is within the accepted range</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;The n argument is of out of bounds&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">=</span> <span class="n">n</span></div>
-
-    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Allows the [] operator to be used to get field values</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Field.get_index"><a class="viewcode-back" href="../sim.html#sim.Field.get_index">[docs]</a>    <span class="k">def</span> <span class="nf">get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets the value of the field at the current time index :math:`n` and at the :math:`i` th spatial index. If the requested index is out of the field bounds, the returned value is zero.</span>
-<span class="sd">        </span>
-<span class="sd">        :param i: The spatial index of the field to access</span>
-<span class="sd">        :return: The value of the field a the current time index :math:`n` and spatial index :math:`i`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Check to see if the requested index is out of bounds, if so return a value based on the boundary condition</span>
-        <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary</span> <span class="o">==</span> <span class="s1">&#39;zero&#39;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary</span> <span class="o">==</span> <span class="s1">&#39;periodic&#39;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span> <span class="n">i</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">]</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_boundary</span> <span class="o">==</span> <span class="s1">&#39;mirror&#39;</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
-        <span class="c1"># Return the requested field</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span></div>
-
-    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Allows the [] operator to be used to set field values</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Field.set_index"><a class="viewcode-back" href="../sim.html#sim.Field.set_index">[docs]</a>    <span class="k">def</span> <span class="nf">set_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets the value of the field at the current time index :math:`n` and at the :math:`i` th spatial index.</span>
-<span class="sd">        </span>
-<span class="sd">        :param i: The spatial index of the field to set</span>
-<span class="sd">        :param value: The value to set at time index :math:`n` and spatial index :math:`i`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="Field.iterate"><a class="viewcode-back" href="../sim.html#sim.Field.iterate">[docs]</a>    <span class="k">def</span> <span class="nf">iterate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Copies the field at the current temporal location to the next temporal location, then iterates the temporal location.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Check for that n is within the accepted range</span>
-        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s1">&#39;Cannot iterate as the end of the temporal index has been reached.&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
-            <span class="c1"># Copy the current field to the next temporal index</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_n</span><span class="p">]</span>
-        <span class="c1"># Iterate the temporal index</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_n</span> <span class="o">+=</span> <span class="mi">1</span></div>
-
-<div class="viewcode-block" id="Field.export"><a class="viewcode-back" href="../sim.html#sim.Field.export">[docs]</a>    <span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the Numpy array that contains the temporal (axis=0) and spatial values (axis=1) of the field.</span>
-
-<span class="sd">        :return: A Numpy array</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_field</span></div></div>
 </pre></div>
 
            </div>
