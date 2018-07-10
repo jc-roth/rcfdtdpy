@@ -13,7 +13,11 @@ Both the electric and magnetic fields are initialized to the same length, meanin
    :align: center
    :scale: 50
 
-The H-field and current arrays have corresponding structures.
+The H-field and current arrays have corresponding structures. :math:`\chi_{i,j}` is represented using the following three dimensional array
+
+.. image:: ../images/TEMP_chi_structure.jpg
+   :align: center
+   :scale: 50
 
 * Discuss the choice of :math:`\frac{\Delta t}{\Delta z}\approx c`
 * Discuss how to create a current object

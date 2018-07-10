@@ -150,7 +150,8 @@
 <a class="reference internal image-reference" href="_images/field_structure.png"><img alt="_images/field_structure.png" class="align-center" src="_images/field_structure.png" style="width: 367.5px; height: 212.5px;" /></a>
 <p>Both the electric and magnetic fields are initialized to the same length, meaning that they have a slight offset in starting and ending locations in the simulation. The E-field at each time is stored in a Numpy array with the following structure</p>
 <a class="reference internal image-reference" href="_images/numpy_structure.png"><img alt="_images/numpy_structure.png" class="align-center" src="_images/numpy_structure.png" style="width: 480.0px; height: 360.0px;" /></a>
-<p>The H-field and current arrays have corresponding structures.</p>
+<p>The H-field and current arrays have corresponding structures. <span class="math notranslate nohighlight">\(\chi_{i,j}\)</span> is represented using the following three dimensional array</p>
+<a class="reference internal image-reference" href="_images/TEMP_chi_structure.jpg"><img alt="_images/TEMP_chi_structure.jpg" class="align-center" src="_images/TEMP_chi_structure.jpg" style="width: 1146.5px; height: 768.5px;" /></a>
 <ul class="simple">
 <li>Discuss the choice of <span class="math notranslate nohighlight">\(\frac{\Delta t}{\Delta z}\approx c\)</span></li>
 <li>Discuss how to create a current object</li>
@@ -224,7 +225,7 @@
 <dl class="method">
 <dt id="sim.Sim.get_bound_res">
 <code class="descname">get_bound_res</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_bound_res"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_bound_res" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the boundaries and resolution of the simulation</p>
+<dd><p>Returns the boundaries and resolution of the simulation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -238,7 +239,7 @@
 <dl class="method">
 <dt id="sim.Sim.get_dims">
 <code class="descname">get_dims</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_dims" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the dimensions of the field in cells</p>
+<dd><p>Returns the dimensions of the field in cells.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
