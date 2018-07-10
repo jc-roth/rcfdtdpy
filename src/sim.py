@@ -86,21 +86,36 @@ class Sim:
         # Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index
         for n in tqdm(range(self._nlen-1)):
             # Calculate the H and E fields
-            if self._bound == 'zero':
-                # Compute E-field
-                t1 = self._coeffe0 * self._efield[n,2:-1]
-                t2 = self._coeffe1 * self._psi()
-                t3 = self._coeffe2 * (self._hfield[n,2:-1]-self._hfield[n,1:-2])
-                t4 = self._coeffe3 * self._cfield[n,2:-1]
-                self._efield[n,2:-1] = t1 + t2 - t3 - t4
-                # Compute H-field
-                t1 = self._hfield[n,1:-2]
-                t2 = self._coeffh1 * (self._efield[n,2:-1]-self._efield[n,1:-2])
-                self._hfield[n,1:-2] = t1 - t2
+            if self._bound == 'zero': # Zero boundary condition
+                self._zero(n)
+            if self._bound == 'periodic': # Periodic boundary condition
+                self._periodic(n)
             # Copy the H and E-field values to the next time step
             self._hfield[n+1] = self._hfield[n]
             self._efield[n+1] = self._efield[n]
 
+    def _periodic(self, n):
+        """
+        Computes the E-field and H-fields at time step n with periodic boundaries.
+        """
+        # The roll function moves every element in the array and pops the last to the first index
+        pass
+
+    def _zero(self, n):
+        """
+        Computes the E-field and H-fields at time step n with constant zero boundaries.
+        """
+        # Compute E-field
+        e_t1 = self._coeffe0 * self._efield[n,1:]
+        e_t2 = self._coeffe1 * self._psi()
+        e_t3 = self._coeffe2 * (self._hfield[n,1:]-self._hfield[n,:-1])
+        e_t4 = self._coeffe3 * self._cfield[n,1:]
+        self._efield[n,1:] = e_t1 + e_t2 - e_t3 - e_t4
+        # Compute H-field
+        h_t1 = self._hfield[n,:-1]
+        h_t2 = self._coeffh1 * (self._efield[n,1:]-self._efield[n,:-1])
+        self._hfield[n,:-1] = h_t1 - h_t2
+        
     def _psi(self):
         """
         Calculates psi according to :math:`\psi^n=\sum^{n-1}_{m=0}E^{i,n-m}\Delta\chi_e^m` at the current time :math:`n` and position :math:`i`. Currently not implemented, and will simply return zero.
@@ -151,5 +166,5 @@ class Sim:
         :return: A tuple (nlen, ilen) of the temporal and spatial dimensions
         """
         nlen = int(np.floor((n1-n0)/dn))
-        ilen = int(np.floor((i1-i0)/di))
+        ilen = int(np.floor((i1-i0)/di)+2) # Add two to account for boundary conditions
         return (nlen, ilen)
