@@ -13,7 +13,7 @@ class Sim:
     :param n0: The temporal value at which the field starts
     :param n1: The temporal value at which the field ends
     :param dn: The temporal step size
-    :param store: The fraction of temporal steps to store (any value between 0 (0%) and 1 (100%)), defaults to 1 (i.e. 100%)
+    :param nstore: The number of temporal steps to save
     :param cfield: The current field
     :param boundary: The boundary type of the field, either 'zero', for fields bounded by zeros, 'periodic' for periodic boundary conditions, or 'mirror' for boundaries that reflect inner field values.
     :param vacuum_permittivity: :math:`\epsilon_0`
@@ -31,9 +31,8 @@ class Sim:
     CHI_GAMMA = 2
     CHI_BETA = 3
     
-    def __init__(self, i0, i1, di, n0, n1, dn, store, cfield, boundary, vacuum_permittivity, infinity_permittivity, vacuum_permeability, susceptibility, initial_susceptibility, dtype=np.float):
-        # Save storage amount and data type
-        self._store = store
+    def __init__(self, i0, i1, di, n0, n1, dn, nstore, cfield, boundary, vacuum_permittivity, infinity_permittivity, vacuum_permeability, susceptibility, initial_susceptibility, dtype=np.float):
+        # Save data type
         self._dtype = dtype
         # Check that arguments have acceptable values
         if i0 > i1:
@@ -48,14 +47,13 @@ class Sim:
             raise TypeError("cfield must be of type Field.")
         # Determine the number of temporal and spatial cells in the field
         self._nlen, self._ilen = Sim.calc_dims(n0, n1, dn, i0, i1, di)
-        # Determine how often to save the field
-        self._n_step_btwn_store = int(1/store)
-        self._nlen_save = int(np.floor(self._nlen/self._n_step_btwn_store))
         # Raise further errors
         if (self._nlen, self._ilen) != np.shape(cfield):
             raise ValueError("Expected cfield to have dimensions " + str(self.get_dims()) + " but found " + str(np.shape(cfield)) + " instead")
         elif (4, self._ilen) != np.shape(susceptibility)[0:2] or 1 > np.shape(susceptibility)[2]:
             raise ValueError("Expected dimensions of susceptability to be (4, " + str(self._ilen) + ", ?) (where ? is any positive non-zero integer) but found " + str(np.shape(susceptibility)) + " instead")
+        elif (nstore > self._nlen):
+            raise ValueError("nstore=" + str(nstore) + ", cannot be greater than nlen=" + str(self._nlen))
         # Save field dimensions and resolution
         self._i0 = i0
         self._i1 = i1
@@ -74,9 +72,11 @@ class Sim:
         # Create each field
         self._efield = np.zeros(self._ilen, dtype=self._dtype)
         self._hfield = np.zeros(self._ilen, dtype=self._dtype)
-        # Create the save fields
-        self._efield_save = np.zeros((self._nlen_save, self._ilen), dtype=self._dtype)
-        self._hfield_save = np.zeros((self._nlen_save, self._ilen), dtype=self._dtype)
+        # Determine how often to save the field and create the save fields
+        self._nstore = nstore
+        self._n_step_btwn_store = int(self._nlen/self._nstore)
+        self._efield_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
+        self._hfield_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
         # Save the current field
         self._cfield = cfield
         # Save constants
@@ -129,7 +129,16 @@ class Sim:
         """
         Computes the E-field and H-fields at time step n with constant zero boundaries.
         """
-        pass
+        # Compute H-field and update
+        h_t1 = self._hfield[:-1]
+        h_t2 = self._coeffh1 * (self._efield[1:]-self._efield[:-1])
+        self._hfield[:-1] = h_t1 - h_t2
+        # Compute E-field and update
+        e_t1 = self._coeffe0 * self._efield[1:]
+        e_t2 = self._coeffe1 * self._calc_psi(n)
+        e_t3 = self._coeffe2 * (self._hfield[1:]-self._hfield[:-1])
+        e_t4 = self._coeffe3 * self._cfield[n,1:]
+        self._efield[1:] = e_t1 + e_t2 - e_t3 - e_t4
 
     def _zero(self, n):
         """
@@ -196,7 +205,7 @@ class Sim:
         :return: A tuple :code:`(n, i, e, h, c)` where :code:`n` is a Numpy array containing the spatial bounds of each field cell, :code:`i` is a Numpy array containing the temporal bounds of each field cell, :code:`e` is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), :code:`h` is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), and :code:`c` is a Numpy array containing the current field (axis=0 is time and axis=1 is space)
         """
         # Calcualte the n and i arrays
-        n = np.linspace(self._n0, self._n1, self._nlen_save, False)
+        n = np.linspace(self._n0, self._n1, self._nstore, False)
         i = np.linspace(self._i0, self._i1, self._ilen, False)
         # Return
         return (n, i, self._efield_save, self._hfield_save, self._cfield)
