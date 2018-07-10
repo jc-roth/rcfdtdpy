@@ -1,7 +1,6 @@
 """
 Used to visualize results from the sim module
 """
-from sim import Field
 from sim import Sim
 
 import numpy as np
