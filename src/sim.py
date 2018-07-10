@@ -33,7 +33,7 @@ class Sim:
             raise ValueError("di must be greater than zero.")
         elif dn <= 0:
             raise ValueError("dn must be greater than zero.")
-        elif type(cfield) is not Field:
+        elif type(cfield) is not np.ndarray:
             raise TypeError("cfield must be of type Field.")
         # Save field dimensions and resolution
         self._i0 = i0
@@ -42,11 +42,13 @@ class Sim:
         self._n0 = n0
         self._n1 = n1
         self._dn = dn
+        # Save boundary condition
+        self._bound = boundary
         # Determine the number of temporal and spatial cells in the field
         self._nlen, self._ilen = Sim.calc_dims(n0, n1, dn, i0, i1, di)
         # Create each field
-        self._efield = Field(self._nlen, self._ilen, boundary)
-        self._hfield = Field(self._nlen, self._ilen, boundary)
+        self._efield = np.zeros((self._nlen, self._ilen), dtype=np.float)
+        self._hfield = np.zeros((self._nlen, self._ilen), dtype=np.float)
         # Save the current field
         self._cfield = cfield
         # Save constants
@@ -81,43 +83,23 @@ class Sim:
         """
         Executes the simulation.
         """
-        self._efield.set_time_index(0) # Set the time index of the electric field to zero
-        self._hfield.set_time_index(0) # Set the time index of the magnetic field to zero
-        self._cfield.set_time_index(0) # Set the time index of the current field to zero
         # Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index
         for n in tqdm(range(self._nlen-1)):
             # Calculate the H and E fields
-            self._calc_hfield()
-            self._calc_efield()
-            # Iterate the H and E, and current fields
-            self._hfield.iterate(copy=True)
-            self._efield.iterate(copy=True)
-            self._cfield.iterate()
-            
-
-    def _calc_efield(self):
-        r"""
-        Calcualtes the electric field according to :math:`E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n-\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}`. Note that the prior electric field array is located half a time index away at :math:`n-1` and the prior magnetic field array is located half a time index away at :math:`n-1/2`.
-        """
-        # Compute the values along the field
-        for i in range(self._ilen):
-            # TODO Can this calculation be done via vectors? This will likely improve efficiency
-            term1 = self._coeffe0 * self._efield[i]
-            term2 = self._coeffe1 * self._psi()
-            term3 = self._coeffe2 * (self._hfield[i]-self._hfield[i-1])
-            term4 = self._coeffe3 * self._cfield[i]
-            self._efield[i] = term1 + term2 - term3 - term4
-        
-    def _calc_hfield(self):
-        r"""
-        Calculates the magnetic field according to :math:`H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]`. Note that the prior electric field array is located half a time index away at :math:`n-1/2` and the prior magnetic field array is located a whole time index away at :math:`n-1`.
-        """
-        # Compute the values along the field
-        for i in range(self._ilen):
-            # TODO Can this calculation be done via vectors? This will likely improve efficiency
-            term1 = self._hfield[i]
-            term2 = self._coeffh1 * (self._efield[i+1]-self._efield[i])
-            self._hfield[i] = term1 - term2
+            if self._bound == 'zero':
+                # Compute E-field
+                t1 = self._coeffe0 * self._efield[n,2:-1]
+                t2 = self._coeffe1 * self._psi()
+                t3 = self._coeffe2 * (self._hfield[n,2:-1]-self._hfield[n,1:-2])
+                t4 = self._coeffe3 * self._cfield[n,2:-1]
+                self._efield[n,2:-1] = t1 + t2 - t3 - t4
+                # Compute H-field
+                t1 = self._hfield[n,1:-2]
+                t2 = self._coeffh1 * (self._efield[n,2:-1]-self._efield[n,1:-2])
+                self._hfield[n,1:-2] = t1 - t2
+            # Copy the H and E-field values to the next time step
+            self._hfield[n+1] = self._hfield[n]
+            self._efield[n+1] = self._efield[n]
 
     def _psi(self):
         """
@@ -153,7 +135,7 @@ class Sim:
         n = np.linspace(self._n0, self._n1, self._nlen, False)
         i = np.linspace(self._i0, self._i1, self._ilen, False)
         # Return
-        return (n, i, self._efield.export(), self._hfield.export(), self._cfield.export())
+        return (n, i, self._efield, self._hfield, self._cfield)
         
     @staticmethod
     def calc_dims(n0, n1, dn, i0, i1, di):
