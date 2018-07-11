@@ -57,7 +57,7 @@ if __name__ == '__main__':
     chi[Sim.CHI_BETA, :] = 1
 
     # Create and start simulation
-    s = Sim(i0, i1, di, n0, n1, dn, int(nlen/2), c, 'zero', vacuum_permittivity, infinity_permittivity, vacuum_permeability, chi, initial_susceptibility)
+    s = Sim(i0, i1, di, n0, n1, dn, int(nlen/2), c, 'absorbing', vacuum_permittivity, infinity_permittivity, vacuum_permeability, chi, initial_susceptibility)
     s.simulate()
     # Visualize
     print(np.shape(s.export()[2]))

@@ -113,6 +113,8 @@ class Sim:
         """
         n_save = 0
         # Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index
+        self._hprev0 = np.float(0)
+        self._hprev1 = np.float(0)
         for n in tqdm(range(self._nlen), desc='Executing simulation'):
             # Calculate the H and E fields
             if self._bound == 'zero': # Zero boundary condition
@@ -127,12 +129,21 @@ class Sim:
 
     def _absorbing(self, n):
         """
-        Computes the E-field and H-fields at time step n with constant zero boundaries.
+        Computes the E-field and H-fields at time step n with absorbing boundaries
         """
         # Compute H-field and update
         h_t1 = self._hfield[:-1]
         h_t2 = self._coeffh1 * (self._efield[1:]-self._efield[:-1])
         self._hfield[:-1] = h_t1 - h_t2
+        # Set the field values at the boundary to the previous value one away from the boundary,
+        # this somehow results in absorption, I'm not really sure how... I think it has something
+        # to do with preventing any wave reflection, meaning that the field values just end up
+        # going to zero. It would be a good idea to ask Ben about this.
+        self._hfield[0] = self._hprev0
+        self._hfield[-1] = self._hprev1
+        # Save the field values one away from each boundary for use next iteration
+        self._hprev0 = self._hfield[1]
+        self._hprev1 = self._hfield[-2]
         # Compute E-field and update
         e_t1 = self._coeffe0 * self._efield[1:]
         e_t2 = self._coeffe1 * self._calc_psi(n)

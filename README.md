@@ -9,3 +9,4 @@ Todo
 * Add unit label to the pcolormesh levels
 * Create a 'builder' class which can be used to easily create current and susceptability matrices/tensors
 * Can the loops in :code:`_calc_dchi` be removed, with all calculations being done entirely on tensors?
+* Create reference fields like Ben has
