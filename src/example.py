@@ -50,13 +50,22 @@ if __name__ == '__main__':
     #plt.show()
 
     # Prepare material
-    mstart, mlen = Sim.calc_mat_dims(i0, i1, di, 0, di*10)
-    mata1 = np.zeros((1, 52), dtype=np.float)
-    mata2 = np.zeros((1, 52), dtype=np.float)
-    matg = np.zeros((1, 52), dtype=np.float)
-    matb = np.ones((1, 52), dtype=np.float)
+    a1 = np.complex64(100)
+    a2 = np.complex64(0)
+    gamma = np.complex64(1)
+    omega = np.complex64(0.005)
+
+    beta = np.sqrt(np.add(np.square(gamma), -np.square(omega)))
+    mat = np.ones((1, 200), dtype=np.complex64)
+    mata1 = mat * a1
+    mata2 = mat * a2
+    matg = mat * gamma
+    matb = mat * beta
+
+    print(beta)
+
     # Create and start simulation
-    s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, c, 'absorbing', 350, mata1, mata2, matg, matb, nstore=300)
+    s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, c, 'absorbing', 202, mata1, mata2, matg, matb, nstore=300)
     s.simulate()
     # Visualize
     vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m')

@@ -27,7 +27,7 @@ class Sim:
     :param nstore: The number of temporal steps to save, defaults to zero
     """
     
-    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, epsiloninf, mu0, cfield, boundary, mat0, mata1, mata2, matg, matb, dtype=np.float, nstore=0):
+    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, epsiloninf, mu0, cfield, boundary, mat0, mata1, mata2, matg, matb, dtype=np.complex64, nstore=0):
         # Check that arguments have acceptable values
         if i0 > i1:
             raise ValueError("i0 must be less than or equal to i1")
@@ -83,10 +83,10 @@ class Sim:
         # Setup boundary condition
         self._bound = boundary
         if self._bound == 'absorbing':
-            self._hprev0 = np.float(0)
-            self._hprev1 = np.float(0)
-            self._hrprev0 = np.float(0)
-            self._hrprev1 = np.float(0)
+            self._hprev0 = np.complex64(0)
+            self._hprev1 = np.complex64(0)
+            self._hrprev0 = np.complex64(0)
+            self._hrprev1 = np.complex64(0)
         # Create each field
         self._efield = np.zeros(self._ilen, dtype=self._dtype)
         self._hfield = np.zeros(self._ilen, dtype=self._dtype)
@@ -118,6 +118,11 @@ class Sim:
         self._coeffe2 = self._dn/(self._epsilon0 * self._di * (self._epsiloninf + self._chi0))
         self._coeffe3 = self._dn/(self._epsilon0 * (self._epsiloninf + self._chi0))
         self._coeffh1 = self._dn/(self._mu0 * self._di)
+        # Create simulation reference proportionality constants (the reference sees chi0=0 and epsiloninf=1)
+        self._coeffe0r = np.complex64(1)
+        self._coeffe2r = self._dn/(self._epsilon0 * self._di)
+        self._coeffe3r = self._dn/(self._epsilon0)
+        self._coeffh1r = self._dn/(self._mu0 * self._di)
 
     def __str__(self):
         """
@@ -216,16 +221,16 @@ class Sim:
         Updates the reference H-field to the values at the next iteration
         """
         h_t1 = self._hfieldr[:-1]
-        h_t2 = self._coeffh1 * (self._efieldr[1:]-self._efieldr[:-1])
+        h_t2 = self._coeffh1r * (self._efieldr[1:]-self._efieldr[:-1])
         self._hfieldr[:-1] = h_t1 - h_t2
 
     def _update_efieldr(self, n):
         """
         Updates the reference E-field to the values at the next iteration
         """
-        e_t1 = self._coeffe0[1:] * self._efieldr[1:]
-        e_t3 = self._coeffe2[1:] * (self._hfieldr[1:]-self._hfieldr[:-1])
-        e_t4 = self._coeffe3[1:] * self._cfield[n,1:]
+        e_t1 = self._coeffe0r * self._efieldr[1:]
+        e_t3 = self._coeffe2r * (self._hfieldr[1:]-self._hfieldr[:-1])
+        e_t4 = self._coeffe3r * self._cfield[n,1:]
         self._efieldr[1:] = e_t1 - e_t3 - e_t4
 
     def _compute_psi(self):
