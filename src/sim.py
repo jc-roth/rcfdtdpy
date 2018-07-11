@@ -18,7 +18,7 @@ class Sim:
     :param mu0: :math:`\mu_0`
     :param cfield: The current field
     :param boundary: The boundary type of the field, either 'zero', for fields bounded by zeros, 'periodic' for periodic boundary conditions, or 'mirror' for boundaries that reflect inner field values
-    :param mat0:
+    :param mat0: The starting index of the material
     :param mata1: A matrix representing :math:`A_1` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
     :param mata2: A matrix representing :math:`A_2` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
     :param matg: A matrix representing :math:`\gamma` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
@@ -27,7 +27,7 @@ class Sim:
     :param nstore: The number of temporal steps to save, defaults to zero
     """
     
-    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, epsiloninf, mu0, cfield, boundary, mat0, mat, dtype=np.float, nstore=0):
+    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, epsiloninf, mu0, cfield, boundary, mat0, mata1, mata2, matg, matb, dtype=np.float, nstore=0):
         # Check that arguments have acceptable values
         if i0 > i1:
             raise ValueError("i0 must be less than or equal to i1")
@@ -46,6 +46,8 @@ class Sim:
             raise ValueError("Expected cfield to have dimensions " + str(self.get_dims()) + " but found " + str(np.shape(cfield)) + " instead")
         elif nstore > self._nlen:
             raise ValueError("nstore=" + str(nstore) + ", cannot be greater than nlen=" + str(self._nlen))
+        elif np.shape(mata1) != np.shape(mata2) or np.shape(mata1) != np.shape(matg) or np.shape(mata1) != np.shape(matb):
+            raise ValueError("The dimensions of mata1, mata2, matg, and matb should be the same")
         # Save data type
         self._dtype = dtype
         # Save field dimensions and resolution
@@ -55,8 +57,29 @@ class Sim:
         self._n0 = n0
         self._n1 = n1
         self._dn = dn
-        # Save chi info
-        self._chi0 = 0
+        # Save material dimension info
+        self._mat0 = mat0
+        self._jlen = np.shape(mata1)[0]
+        self._matlen = np.shape(mata1)[1]
+        # Calculate susceptability beta and gamma sums and exponents
+        b_min_g = np.add(matb, -matg)
+        min_b_min_g = np.add(-matb, -matg)
+        self._exp_1 = np.exp(np.multiply(b_min_g, self._dn))
+        self._exp_2 = np.exp(np.multiply(min_b_min_g, self._dn))
+        # Calculate initial susceptability values
+        chi0_1 = np.multiply(np.divide(mata1, b_min_g), np.subtract(self._exp_1, 1))
+        chi0_2 = np.multiply(np.divide(mata2, min_b_min_g), np.subtract(self._exp_2, 1))
+        # Calclate first delta susceptabiility values
+        self._dchi0_1 = np.multiply(chi0_1, np.subtract(1, self._exp_1))
+        self._dchi0_2 = np.multiply(chi0_2, np.subtract(1, self._exp_2))
+        # Initialize psi values to zero
+        self._psi_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
+        self._psi_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
+        # Calculate chi0
+        chi0_j = np.add(chi0_1, chi0_2)
+        chi0 = np.sum(chi0_j, axis=0)
+        chi0_padded = np.pad(chi0, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
+        self._chi0 = chi0_padded
         # Setup boundary condition
         self._bound = boundary
         if self._bound == 'absorbing':
@@ -116,7 +139,7 @@ class Sim:
                 self._zero(n)
             if self._bound == 'absorbing': # Absorbing boundary condition
                 self._absorbing(n)
-            # Save the new fields if storing is on and at an appropriate step
+            # Save the new fields if storing is on (self._n_step_btwn_store != -1) and at an appropriate step
             if self._n_step_btwn_store != -1 and n % self._n_step_btwn_store == 0:
                 self._hfield_save[n_save] = self._hfield
                 self._efield_save[n_save] = self._efield
@@ -126,6 +149,8 @@ class Sim:
         """
         Computes the E-field and H-fields at time step n with absorbing boundaries
         """
+        # Update Psi
+        self._update_psi()
         # Compute H-field and update
         h_t1 = self._hfield[:-1]
         h_t2 = self._coeffh1 * (self._efield[1:]-self._efield[:-1])
@@ -140,34 +165,57 @@ class Sim:
         self._hprev0 = self._hfield[1]
         self._hprev1 = self._hfield[-2]
         # Compute E-field and update
-        e_t1 = self._coeffe0 * self._efield[1:]
-        e_t2 = self._coeffe1 * self._calc_psi(n)
-        e_t3 = self._coeffe2 * (self._hfield[1:]-self._hfield[:-1])
-        e_t4 = self._coeffe3 * self._cfield[n,1:]
+        e_t1 = self._coeffe0[1:] * self._efield[1:]
+        e_t2 = self._coeffe1[1:] * self._compute_psi()[1:]
+        e_t3 = self._coeffe2[1:] * (self._hfield[1:]-self._hfield[:-1])
+        e_t4 = self._coeffe3[1:] * self._cfield[n,1:]
         self._efield[1:] = e_t1 + e_t2 - e_t3 - e_t4
 
     def _zero(self, n):
         """
         Computes the E-field and H-fields at time step n with constant zero boundaries.
         """
+        # Update Psi
+        self._update_psi()
         # Compute H-field and update
         h_t1 = self._hfield[:-1]
         h_t2 = self._coeffh1 * (self._efield[1:]-self._efield[:-1])
         self._hfield[:-1] = h_t1 - h_t2
         # Compute E-field and update
-        e_t1 = self._coeffe0 * self._efield[1:]
-        e_t2 = self._coeffe1 * self._calc_psi(n)
-        e_t3 = self._coeffe2 * (self._hfield[1:]-self._hfield[:-1])
-        e_t4 = self._coeffe3 * self._cfield[n,1:]
+        e_t1 = self._coeffe0[1:] * self._efield[1:]
+        e_t2 = self._coeffe1[1:] * self._compute_psi()[1:]
+        e_t3 = self._coeffe2[1:] * (self._hfield[1:]-self._hfield[:-1])
+        e_t4 = self._coeffe3[1:] * self._cfield[n,1:]
         self._efield[1:] = e_t1 + e_t2 - e_t3 - e_t4
         
-    def _calc_psi(self, n):
+    def _compute_psi(self):
         """
-        Returns psi
+        Calculates psi at all points in the simulation using the current value of psi_1 and psi_2
+        """
+        # Find the psi matrix
+        psi_j = np.add(self._psi_1, self._psi_2)
+        # Sum the psi matrix along axis=0 to combine all oscillators
+        psi = np.sum(psi_j, axis=0)
+        # Pad the psi array so that it is of the correct dimensions
+        psi_padded = np.pad(psi, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
+        # Return
+        return psi_padded
 
-        :return: Zero
+    def _update_psi(self):
         """
-        return 0
+        Updates the value of psi_1 and psi_2
+        """
+        # Copy the efield so that instead of being a vector it is a matrix composed of horizontal efield vectors
+        efield = np.tile(self._efield[self._mat0:self._mat0 + self._matlen], (self._jlen, 1))
+        # Calculate first term
+        t1_1 = np.multiply(efield, self._dchi0_1)
+        t1_2 = np.multiply(efield, self._dchi0_2)
+        # Calculate second term
+        t2_1 = np.multiply(self._psi_1, self._exp_1)
+        t2_2 = np.multiply(self._psi_2, self._exp_2)
+        # Update next psi values
+        self._psi_1 = np.add(t1_1, t2_1)
+        self._psi_2 = np.add(t1_2, t2_2)
 
     def get_bound_res(self):
         """
@@ -239,12 +287,12 @@ class Sim:
         :param di: The spatial step size
         :param mat0: The spatial value at which the material starts
         :param mat1: The spatial value at which the material ends
-        :return: A tuple :code:`(matstart, matstop, matlen)` containing the index of the simulation at which the material starts, the index at which the material ends, and the number of indicies that the material spans
+        :return: A tuple :code:`(matstart, matlen)` containing the index of the simulation at which the material starts and the number of indicies that the material spans
         """
         ilen = Sim._calc_idim(i0, i1, di)
-         # Calculate the length of the material using the same math as the length of the simulation
+         # Calculate the length of the material
         matlen = Sim._calc_idim(mat0, mat1, di)
-         # Calculate the start point of the material using the same math as the length of the simulation
-        matstart = Sim._calc_idim(i0, mat0, di)
-        matstop = matstart+matlen
-        return (matstart, matstop, matlen)
+         # Calculate the start point of the material
+        matstart = int(np.floor((mat0-i0)/di))
+        # Return
+        return (matstart, matlen)

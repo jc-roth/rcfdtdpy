@@ -49,8 +49,14 @@ if __name__ == '__main__':
     #plt.plot(cfield.export()[:,loc_center])
     #plt.show()
 
+    # Prepare material
+    mstart, mlen = Sim.calc_mat_dims(i0, i1, di, 0, di*10)
+    mata1 = np.ones((1, mlen), dtype=np.float)
+    mata2 = np.zeros((1, mlen), dtype=np.float)
+    matg = np.zeros((1, mlen), dtype=np.float)
+    matb = np.ones((1, mlen), dtype=np.float)
     # Create and start simulation
-    s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, c, 'zero', nstore=100)
+    s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, c, 'absorbing', mstart, mata1, mata2, matg, matb, nstore=100)
     s.simulate()
     # Visualize
-    vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m')
+    #vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m')
