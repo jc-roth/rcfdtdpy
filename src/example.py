@@ -50,15 +50,14 @@ if __name__ == '__main__':
     #plt.show()
 
     # Prepare susceptability
-    chi = np.zeros((4, ilen, 1))
-    chi[Sim.CHI_A, int(ilen/2):] = 1
-    chi[Sim.CHI_B, int(ilen/2):] = 1
+    chi = np.zeros((4, 4, 1))
+    chi[Sim.CHI_A, int(ilen/2):] = 1e2
+    chi[Sim.CHI_B, int(ilen/2):] = 1e2
     chi[Sim.CHI_GAMMA, :] = 0
-    chi[Sim.CHI_BETA, :] = 1
+    chi[Sim.CHI_BETA, :] = 1e-1
 
     # Create and start simulation
-    s = Sim(i0, i1, di, n0, n1, dn, int(nlen/2), c, 'absorbing', vacuum_permittivity, infinity_permittivity, vacuum_permeability, chi, initial_susceptibility)
+    s = Sim(i0, i1, di, n0, n1, dn, int(nlen/2), c, chi, int(ilen/2), 'absorbing', vacuum_permittivity, infinity_permittivity, vacuum_permeability, initial_susceptibility)
     s.simulate()
     # Visualize
-    print(np.shape(s.export()[2]))
     vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m')

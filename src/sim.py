@@ -31,9 +31,7 @@ class Sim:
     CHI_GAMMA = 2
     CHI_BETA = 3
     
-    def __init__(self, i0, i1, di, n0, n1, dn, nstore, cfield, boundary, vacuum_permittivity, infinity_permittivity, vacuum_permeability, susceptibility, initial_susceptibility, dtype=np.float):
-        # Save data type
-        self._dtype = dtype
+    def __init__(self, i0, i1, di, n0, n1, dn, nstore, cfield, chi, chi_istart, boundary, vacuum_permittivity, infinity_permittivity, vacuum_permeability, initial_susceptibility, dtype=np.float):
         # Check that arguments have acceptable values
         if i0 > i1:
             raise ValueError("i0 must be less than or equal to i1.")
@@ -50,10 +48,12 @@ class Sim:
         # Raise further errors
         if (self._nlen, self._ilen) != np.shape(cfield):
             raise ValueError("Expected cfield to have dimensions " + str(self.get_dims()) + " but found " + str(np.shape(cfield)) + " instead")
-        elif (4, self._ilen) != np.shape(susceptibility)[0:2] or 1 > np.shape(susceptibility)[2]:
-            raise ValueError("Expected dimensions of susceptability to be (4, " + str(self._ilen) + ", ?) (where ? is any positive non-zero integer) but found " + str(np.shape(susceptibility)) + " instead")
-        elif (nstore > self._nlen):
+        elif nstore > self._nlen:
             raise ValueError("nstore=" + str(nstore) + ", cannot be greater than nlen=" + str(self._nlen))
+        elif chi_istart + np.shape(chi)[1] > self._ilen:
+            raise ValueError("Spatial dimension of chi must be less than ilen")
+        # Save data type
+        self._dtype = dtype
         # Save field dimensions and resolution
         self._i0 = i0
         self._i1 = i1
@@ -62,17 +62,20 @@ class Sim:
         self._n1 = n1
         self._dn = dn
         # Save chi info
-        self._chi = susceptibility
-        self._jlen = np.shape(self._chi)[2]
-        #self._calc_dchi()
-        # TODO Automatically calculate chi0
+        self._chi = chi
+        self._chi_istart = chi_istart
+        self._chi_ilen = np.shape(self._chi)[1]
+        self._chi_jlen = np.shape(self._chi)[2]
         self._chi0 = initial_susceptibility
-        # Save boundary condition
+        # Setup boundary condition
         self._bound = boundary
+        if self._bound == 'absorbing':
+            self._hprev0 = np.float(0)
+            self._hprev1 = np.float(0)
         # Create each field
         self._efield = np.zeros(self._ilen, dtype=self._dtype)
         self._hfield = np.zeros(self._ilen, dtype=self._dtype)
-        # Determine how often to save the field and create the save fields
+        # Determine how often to save the field and arrays to save to
         self._nstore = nstore
         self._n_step_btwn_store = int(self._nlen/self._nstore)
         self._efield_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
@@ -89,8 +92,6 @@ class Sim:
         self._coeffe2 = self._dn/(self._epsilon0 * self._di * (self._epsiloninf + self._chi0))
         self._coeffe3 = self._dn/(self._epsilon0 * (self._epsiloninf + self._chi0))
         self._coeffh1 = self._dn/(self._mu0 * self._di)
-        # Calculate dchi
-
 
     def __str__(self):
         """
@@ -113,8 +114,6 @@ class Sim:
         """
         n_save = 0
         # Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index
-        self._hprev0 = np.float(0)
-        self._hprev1 = np.float(0)
         for n in tqdm(range(self._nlen), desc='Executing simulation'):
             # Calculate the H and E fields
             if self._bound == 'zero': # Zero boundary condition
@@ -173,25 +172,6 @@ class Sim:
         :return: Zero
         """
         return 0
-
-    def _calc_dchi(self):
-        # Create an array to store the dchi values in
-        self._dchi = np.zeros((self._nlen, self._ilen), dtype=self._dtype)
-        for m in tqdm(range(self._nlen), desc='Calculating dchi'):
-            # Set dchi at the current m value to zero because no summing has occured yet
-            self._dchi[m] = 0
-            for j in range(self._jlen):
-                # Save constants to make things easier
-                A = self._chi[self.CHI_A,:,j]
-                B = self._chi[self.CHI_B,:,j]
-                gamma = self._chi[self.CHI_GAMMA,:,j]
-                beta = self._chi[self.CHI_BETA,:,j]
-                dt = self._dn
-                # Calculate dchi at M value
-                self._dchi[m] += (A/(beta-gamma)) * ( 2*np.exp((-gamma+beta)*dt) - 1 - np.exp(2*(-gamma+beta)*dt) ) * np.exp((-gamma+beta)*m*dt)
-                self._dchi[m] += (B/(-beta-gamma)) * ( 2*np.exp((-gamma-beta)*dt) - 1 - np.exp(2*(-gamma-beta)*dt) ) * np.exp((-gamma-beta)*m*dt)
-
-
 
     def get_bound_res(self):
         """
