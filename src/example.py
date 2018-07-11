@@ -49,15 +49,8 @@ if __name__ == '__main__':
     #plt.plot(cfield.export()[:,loc_center])
     #plt.show()
 
-    # Prepare susceptability
-    chi = np.zeros((4, 4, 1))
-    chi[Sim.CHI_A, int(ilen/2):] = 1e2
-    chi[Sim.CHI_B, int(ilen/2):] = 1e2
-    chi[Sim.CHI_GAMMA, :] = 0
-    chi[Sim.CHI_BETA, :] = 1e-1
-
     # Create and start simulation
-    s = Sim(i0, i1, di, n0, n1, dn, int(nlen/2), c, chi, int(ilen/2), 'absorbing', vacuum_permittivity, infinity_permittivity, vacuum_permeability, initial_susceptibility)
+    s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, c, 'zero', nstore=100)
     s.simulate()
     # Visualize
     vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m')

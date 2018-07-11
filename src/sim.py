@@ -13,25 +13,17 @@ class Sim:
     :param n0: The temporal value at which the field starts
     :param n1: The temporal value at which the field ends
     :param dn: The temporal step size
-    :param nstore: The number of temporal steps to save
     :param cfield: The current field
     :param boundary: The boundary type of the field, either 'zero', for fields bounded by zeros, 'periodic' for periodic boundary conditions, or 'mirror' for boundaries that reflect inner field values.
     :param vacuum_permittivity: :math:`\epsilon_0`
     :param infinity_permittivity: :math:`\epsilon_\infty`
     :param vacuum_permeability: :math:`\mu_0`
-    :param susceptibility: A susceptibility object
-    :param initial_susceptibility: The initial susceptability. Eventually will be included in the susceptibility object.
     :param current_field: A field object that represents the current
     :param dtype: The data type to store the field values in
+    :param nstore: The number of temporal steps to save, defaults to zero
     """
-
-    # Define constants
-    CHI_A = 0
-    CHI_B = 1
-    CHI_GAMMA = 2
-    CHI_BETA = 3
     
-    def __init__(self, i0, i1, di, n0, n1, dn, nstore, cfield, chi, chi_istart, boundary, vacuum_permittivity, infinity_permittivity, vacuum_permeability, initial_susceptibility, dtype=np.float):
+    def __init__(self, i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, cfield, boundary, dtype=np.float, nstore=0):
         # Check that arguments have acceptable values
         if i0 > i1:
             raise ValueError("i0 must be less than or equal to i1.")
@@ -50,8 +42,6 @@ class Sim:
             raise ValueError("Expected cfield to have dimensions " + str(self.get_dims()) + " but found " + str(np.shape(cfield)) + " instead")
         elif nstore > self._nlen:
             raise ValueError("nstore=" + str(nstore) + ", cannot be greater than nlen=" + str(self._nlen))
-        elif chi_istart + np.shape(chi)[1] > self._ilen:
-            raise ValueError("Spatial dimension of chi must be less than ilen")
         # Save data type
         self._dtype = dtype
         # Save field dimensions and resolution
@@ -62,11 +52,7 @@ class Sim:
         self._n1 = n1
         self._dn = dn
         # Save chi info
-        self._chi = chi
-        self._chi_istart = chi_istart
-        self._chi_ilen = np.shape(self._chi)[1]
-        self._chi_jlen = np.shape(self._chi)[2]
-        self._chi0 = initial_susceptibility
+        self._chi0 = 0
         # Setup boundary condition
         self._bound = boundary
         if self._bound == 'absorbing':
@@ -77,9 +63,15 @@ class Sim:
         self._hfield = np.zeros(self._ilen, dtype=self._dtype)
         # Determine how often to save the field and arrays to save to
         self._nstore = nstore
-        self._n_step_btwn_store = int(self._nlen/self._nstore)
-        self._efield_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
-        self._hfield_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
+        # Check to see if any stores are requested
+        if self._nstore == 0:
+            # Never store
+            self._n_step_btwn_store = -1
+        else:
+            # Store
+            self._n_step_btwn_store = int(np.ceil(self._nlen/self._nstore))
+            self._efield_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
+            self._hfield_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
         # Save the current field
         self._cfield = cfield
         # Save constants
@@ -120,8 +112,8 @@ class Sim:
                 self._zero(n)
             if self._bound == 'absorbing': # Absorbing boundary condition
                 self._absorbing(n)
-            # Save the new fields if at an appropriate step
-            if n % self._n_step_btwn_store == 0:
+            # Save the new fields if storing is on and at an appropriate step
+            if self._n_step_btwn_store != -1 and n % self._n_step_btwn_store == 0:
                 self._hfield_save[n_save] = self._hfield
                 self._efield_save[n_save] = self._efield
                 n_save += 1
@@ -198,6 +190,9 @@ class Sim:
         # Calcualte the n and i arrays
         n = np.linspace(self._n0, self._n1, self._nstore, False)
         i = np.linspace(self._i0, self._i1, self._ilen, False)
+        # Check to see what was stored
+        if self._nstore == 0:
+            return (n, i, None, None, self._cfield)
         # Return
         return (n, i, self._efield_save, self._hfield_save, self._cfield)
         
@@ -215,5 +210,37 @@ class Sim:
         :return: A tuple (nlen, ilen) of the temporal and spatial dimensions
         """
         nlen = int(np.floor((n1-n0)/dn))
-        ilen = int(np.floor((i1-i0)/di)+2) # Add two to account for boundary conditions
+        ilen = Sim._calc_idim(i0, i1, di)
         return (nlen, ilen)
+        
+    @staticmethod
+    def _calc_idim(i0, i1, di):
+        """
+        Calculates the dimensions of the simulation in cells.
+
+        :param i0: The spatial value at which the field starts
+        :param i1: The spatial value at which the field ends
+        :param di: The spatial step size
+        :return: The spatial dimension
+        """
+        return int(np.floor((i1-i0)/di)+2) # Add two to account for boundary conditions
+        
+    @staticmethod
+    def calc_mat_dims(i0, i1, di, mat0, mat1):
+        """
+        Calculates the dimensions of a material.
+
+        :param i0: The spatial value at which the simulation starts
+        :param i1: The spatial value at which the simulation ends
+        :param di: The spatial step size
+        :param mat0: The spatial value at which the material starts
+        :param mat1: The spatial value at which the material ends
+        :return: A tuple :code:`(matstart, matstop, matlen)` containing the index of the simulation at which the material starts, the index at which the material ends, and the number of indicies that the material spans
+        """
+        ilen = Sim._calc_idim(i0, i1, di)
+         # Calculate the length of the material using the same math as the length of the simulation
+        matlen = Sim._calc_idim(mat0, mat1, di)
+         # Calculate the start point of the material using the same math as the length of the simulation
+        matstart = Sim._calc_idim(i0, mat0, di)
+        matstop = matstart+matlen
+        return (matstart, matstop, matlen)
