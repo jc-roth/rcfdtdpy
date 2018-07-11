@@ -13,28 +13,32 @@ class Sim:
     :param n0: The temporal value at which the field starts
     :param n1: The temporal value at which the field ends
     :param dn: The temporal step size
+    :param epsilon0: :math:`\epsilon_0`
+    :param epsiloninf: :math:`\epsilon_\infty`
+    :param mu0: :math:`\mu_0`
     :param cfield: The current field
-    :param boundary: The boundary type of the field, either 'zero', for fields bounded by zeros, 'periodic' for periodic boundary conditions, or 'mirror' for boundaries that reflect inner field values.
-    :param vacuum_permittivity: :math:`\epsilon_0`
-    :param infinity_permittivity: :math:`\epsilon_\infty`
-    :param vacuum_permeability: :math:`\mu_0`
-    :param current_field: A field object that represents the current
+    :param boundary: The boundary type of the field, either 'zero', for fields bounded by zeros, 'periodic' for periodic boundary conditions, or 'mirror' for boundaries that reflect inner field values
+    :param mat0:
+    :param mata1: A matrix representing :math:`A_1` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
+    :param mata2: A matrix representing :math:`A_2` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
+    :param matg: A matrix representing :math:`\gamma` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
+    :param matb: A matrix representing :math:`\\beta` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
     :param dtype: The data type to store the field values in
     :param nstore: The number of temporal steps to save, defaults to zero
     """
     
-    def __init__(self, i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, cfield, boundary, dtype=np.float, nstore=0):
+    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, epsiloninf, mu0, cfield, boundary, mat0, mat, dtype=np.float, nstore=0):
         # Check that arguments have acceptable values
         if i0 > i1:
-            raise ValueError("i0 must be less than or equal to i1.")
+            raise ValueError("i0 must be less than or equal to i1")
         elif n0 > n1:
-            raise ValueError("n0 must be less than or equal to n1.")
+            raise ValueError("n0 must be less than or equal to n1")
         elif di <= 0:
-            raise ValueError("di must be greater than zero.")
+            raise ValueError("di must be greater than zero")
         elif dn <= 0:
-            raise ValueError("dn must be greater than zero.")
+            raise ValueError("dn must be greater than zero")
         elif type(cfield) is not np.ndarray:
-            raise TypeError("cfield must be of type Field.")
+            raise TypeError("cfield must be of type numpy.ndarray")
         # Determine the number of temporal and spatial cells in the field
         self._nlen, self._ilen = Sim.calc_dims(n0, n1, dn, i0, i1, di)
         # Raise further errors
@@ -75,9 +79,9 @@ class Sim:
         # Save the current field
         self._cfield = cfield
         # Save constants
-        self._epsilon0 = vacuum_permittivity
-        self._epsiloninf = infinity_permittivity
-        self._mu0 = vacuum_permeability
+        self._epsilon0 = epsilon0
+        self._epsiloninf = epsiloninf
+        self._mu0 = mu0
         # Calculate simulation proportionality constants
         self._coeffe0 = self._epsiloninf/(self._epsiloninf + self._chi0)
         self._coeffe1 = 1.0/(self._epsiloninf + self._chi0)

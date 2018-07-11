@@ -158,7 +158,7 @@
 </ul>
 <span class="target" id="module-sim"></span><dl class="class">
 <dt id="sim.Sim">
-<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em>, <em>cfield</em>, <em>boundary</em>, <em>vacuum_permittivity</em>, <em>infinity_permittivity</em>, <em>vacuum_permeability</em>, <em>susceptibility</em>, <em>initial_susceptibility</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em>, <em>epsilon0</em>, <em>epsiloninf</em>, <em>mu0</em>, <em>cfield</em>, <em>boundary</em>, <em>mat0</em>, <em>mat</em>, <em>dtype=&lt;class 'float'&gt;</em>, <em>nstore=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a single simulation. Field is initialized to all zeros.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -171,13 +171,18 @@
 <li><strong>n0</strong> – The temporal value at which the field starts</li>
 <li><strong>n1</strong> – The temporal value at which the field ends</li>
 <li><strong>dn</strong> – The temporal step size</li>
-<li><strong>boundary</strong> – The boundary type of the field, either ‘zero’, for fields bounded by zeros, ‘periodic’ for periodic boundary conditions, or ‘mirror’ for boundaries that reflect inner field values.</li>
-<li><strong>vacuum_permittivity</strong> – <span class="math notranslate nohighlight">\(\epsilon_0\)</span></li>
-<li><strong>infinity_permittivity</strong> – <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span></li>
-<li><strong>vacuum_permeability</strong> – <span class="math notranslate nohighlight">\(\mu_0\)</span></li>
-<li><strong>susceptibility</strong> – A susceptibility object</li>
-<li><strong>initial_susceptibility</strong> – The initial susceptability. Eventually will be included in the susceptibility object.</li>
-<li><strong>current_field</strong> – A field object that represents the current</li>
+<li><strong>epsilon0</strong> – <span class="math notranslate nohighlight">\(\epsilon_0\)</span></li>
+<li><strong>epsiloninf</strong> – <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span></li>
+<li><strong>mu0</strong> – <span class="math notranslate nohighlight">\(\mu_0\)</span></li>
+<li><strong>cfield</strong> – The current field</li>
+<li><strong>boundary</strong> – The boundary type of the field, either ‘zero’, for fields bounded by zeros, ‘periodic’ for periodic boundary conditions, or ‘mirror’ for boundaries that reflect inner field values</li>
+<li><strong>mat0</strong> – </li>
+<li><strong>mata1</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_1\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>mata2</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_2\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>matg</strong> – A matrix representing <span class="math notranslate nohighlight">\(\gamma\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>matb</strong> – A matrix representing <span class="math notranslate nohighlight">\(\beta\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>dtype</strong> – The data type to store the field values in</li>
+<li><strong>nstore</strong> – The number of temporal steps to save, defaults to zero</li>
 </ul>
 </td>
 </tr>
@@ -202,6 +207,30 @@
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple (nlen, ilen) of the temporal and spatial dimensions</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="sim.Sim.calc_mat_dims">
+<em class="property">static </em><code class="descname">calc_mat_dims</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>mat0</em>, <em>mat1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.calc_mat_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.calc_mat_dims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the dimensions of a material.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>i0</strong> – The spatial value at which the simulation starts</li>
+<li><strong>i1</strong> – The spatial value at which the simulation ends</li>
+<li><strong>di</strong> – The spatial step size</li>
+<li><strong>mat0</strong> – The spatial value at which the material starts</li>
+<li><strong>mat1</strong> – The spatial value at which the material ends</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple <code class="code docutils literal notranslate"><span class="pre">(matstart,</span> <span class="pre">matstop,</span> <span class="pre">matlen)</span></code> containing the index of the simulation at which the material starts, the index at which the material ends, and the number of indicies that the material spans</p>
 </td>
 </tr>
 </tbody>
