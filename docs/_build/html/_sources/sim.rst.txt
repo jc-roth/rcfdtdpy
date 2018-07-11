@@ -13,11 +13,13 @@ Both the electric and magnetic fields are initialized to the same length, meanin
    :align: center
    :scale: 50
 
-The H-field and current arrays have corresponding structures. :math:`\chi_{i,j}` is represented using the following three dimensional array
+The H-field and current arrays have corresponding structures. The variables :math:`A_1`, :math:`A_2`, :math:`\gamma`, and :math:`\beta` are represented using the following two dimensional array
 
-.. image:: ../images/TEMP_chi_structure.jpg
+.. image:: ../images/material_numpy_structure.png
    :align: center
    :scale: 50
+
+where :math:`m_0` is the starting index of the material. Increments along the vertical axis represent increments in the oscillator index :math:`j`, and increments along the horizontal axis represent increments in space.
 
 * Discuss the choice of :math:`\frac{\Delta t}{\Delta z}\approx c`
 * Discuss how to create a current object

@@ -150,8 +150,9 @@
 <a class="reference internal image-reference" href="_images/field_structure.png"><img alt="_images/field_structure.png" class="align-center" src="_images/field_structure.png" style="width: 367.5px; height: 212.5px;" /></a>
 <p>Both the electric and magnetic fields are initialized to the same length, meaning that they have a slight offset in starting and ending locations in the simulation. The E-field at each time is stored in a Numpy array with the following structure</p>
 <a class="reference internal image-reference" href="_images/numpy_structure.png"><img alt="_images/numpy_structure.png" class="align-center" src="_images/numpy_structure.png" style="width: 480.0px; height: 360.0px;" /></a>
-<p>The H-field and current arrays have corresponding structures. <span class="math notranslate nohighlight">\(\chi_{i,j}\)</span> is represented using the following three dimensional array</p>
-<a class="reference internal image-reference" href="_images/TEMP_chi_structure.jpg"><img alt="_images/TEMP_chi_structure.jpg" class="align-center" src="_images/TEMP_chi_structure.jpg" style="width: 1146.5px; height: 768.5px;" /></a>
+<p>The H-field and current arrays have corresponding structures. The variables <span class="math notranslate nohighlight">\(A_1\)</span>, <span class="math notranslate nohighlight">\(A_2\)</span>, <span class="math notranslate nohighlight">\(\gamma\)</span>, and <span class="math notranslate nohighlight">\(\beta\)</span> are represented using the following two dimensional array</p>
+<a class="reference internal image-reference" href="_images/material_numpy_structure.png"><img alt="_images/material_numpy_structure.png" class="align-center" src="_images/material_numpy_structure.png" style="width: 480.0px; height: 360.0px;" /></a>
+<p>where <span class="math notranslate nohighlight">\(m_0\)</span> is the starting index of the material. Increments along the vertical axis represent increments in the oscillator index <span class="math notranslate nohighlight">\(j\)</span>, and increments along the horizontal axis represent increments in space.</p>
 <ul class="simple">
 <li>Discuss the choice of <span class="math notranslate nohighlight">\(\frac{\Delta t}{\Delta z}\approx c\)</span></li>
 <li>Discuss how to create a current object</li>
