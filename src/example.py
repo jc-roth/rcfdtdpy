@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
     dn = di / c0 # (0.005 um) / (300 um/ps)
     n0 = 0*dn
-    n1 = 1500*dn
+    n1 = 750*dn
 
     vacuum_permittivity = 1
     vacuum_permeability = 1
@@ -41,22 +41,22 @@ if __name__ == '__main__':
     nlen, ilen = Sim.calc_dims(n0, n1, dn, i0, i1, di)
     c = np.zeros((nlen, ilen))
     t = np.multiply(np.arange(0, nlen, 1), dn) # Create a time stream
-    t_center = t[int(nlen/16)]
+    t_center = t[int(nlen/10)]
     loc_center = int(ilen/4)
     c[:, loc_center] = np.append(np.diff(np.diff(np.exp(-((t-t_center)**2)))), [0,0]) # Generate a Gaussian pulse
 
     # Plot current in time before proceeding
-    #plt.plot(cfield.export()[:,loc_center])
-    #plt.show()
+    plt.plot(c[:,loc_center])
+    plt.show()
 
     # Prepare material
     mstart, mlen = Sim.calc_mat_dims(i0, i1, di, 0, di*10)
-    mata1 = np.ones((1, mlen), dtype=np.float)
-    mata2 = np.zeros((1, mlen), dtype=np.float)
-    matg = np.zeros((1, mlen), dtype=np.float)
-    matb = np.ones((1, mlen), dtype=np.float)
+    mata1 = np.zeros((1, 52), dtype=np.float)
+    mata2 = np.zeros((1, 52), dtype=np.float)
+    matg = np.zeros((1, 52), dtype=np.float)
+    matb = np.ones((1, 52), dtype=np.float)
     # Create and start simulation
-    s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, c, 'absorbing', mstart, mata1, mata2, matg, matb, nstore=100)
+    s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, c, 'absorbing', 350, mata1, mata2, matg, matb, nstore=300)
     s.simulate()
     # Visualize
-    #vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m')
+    vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m')

@@ -152,9 +152,7 @@ class Sim:
         # Update Psi
         self._update_psi()
         # Compute H-field and update
-        h_t1 = self._hfield[:-1]
-        h_t2 = self._coeffh1 * (self._efield[1:]-self._efield[:-1])
-        self._hfield[:-1] = h_t1 - h_t2
+        self._update_hfield(n)
         # Set the field values at the boundary to the previous value one away from the boundary,
         # this somehow results in absorption, I'm not really sure how... I think it has something
         # to do with preventing any wave reflection, meaning that the field values just end up
@@ -165,11 +163,7 @@ class Sim:
         self._hprev0 = self._hfield[1]
         self._hprev1 = self._hfield[-2]
         # Compute E-field and update
-        e_t1 = self._coeffe0[1:] * self._efield[1:]
-        e_t2 = self._coeffe1[1:] * self._compute_psi()[1:]
-        e_t3 = self._coeffe2[1:] * (self._hfield[1:]-self._hfield[:-1])
-        e_t4 = self._coeffe3[1:] * self._cfield[n,1:]
-        self._efield[1:] = e_t1 + e_t2 - e_t3 - e_t4
+        self._update_efield(n)
 
     def _zero(self, n):
         """
@@ -178,16 +172,28 @@ class Sim:
         # Update Psi
         self._update_psi()
         # Compute H-field and update
+        self._update_hfield(n)
+        # Compute E-field and update
+        self._update_efield(n)
+        
+    def _update_hfield(self, n):
+        """
+        Updates the H-field to the values at the next iteration
+        """
         h_t1 = self._hfield[:-1]
         h_t2 = self._coeffh1 * (self._efield[1:]-self._efield[:-1])
         self._hfield[:-1] = h_t1 - h_t2
-        # Compute E-field and update
+
+    def _update_efield(self, n):
+        """
+        Updates the E-field to the values at the next iteration
+        """
         e_t1 = self._coeffe0[1:] * self._efield[1:]
         e_t2 = self._coeffe1[1:] * self._compute_psi()[1:]
         e_t3 = self._coeffe2[1:] * (self._hfield[1:]-self._hfield[:-1])
         e_t4 = self._coeffe3[1:] * self._cfield[n,1:]
         self._efield[1:] = e_t1 + e_t2 - e_t3 - e_t4
-        
+
     def _compute_psi(self):
         """
         Calculates psi at all points in the simulation using the current value of psi_1 and psi_2
