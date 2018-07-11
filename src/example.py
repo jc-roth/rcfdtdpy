@@ -62,10 +62,8 @@ if __name__ == '__main__':
     matg = mat * gamma
     matb = mat * beta
 
-    print(beta)
-
     # Create and start simulation
     s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, c, 'absorbing', 202, mata1, mata2, matg, matb, nstore=300)
     s.simulate()
     # Visualize
-    vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m')
+    vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m', fname='../temp/material_demo.mp4')

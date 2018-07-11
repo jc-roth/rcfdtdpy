@@ -80,6 +80,11 @@ def timeseries(sim, fname=None, interval=10, iscale=1, escale=1, hscale=1, iunit
     """
     # Export variables from the simulation
     n, i, e, h, er, hr, c = sim.export()
+    # Take real parts
+    e = np.real(e)
+    h = np.real(h)
+    er = np.real(er)
+    hr = np.real(hr)
     # Apply scale factors
     i *= iscale
     e *= escale
