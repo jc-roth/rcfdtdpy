@@ -46,8 +46,8 @@ if __name__ == '__main__':
     c[:, loc_center] = np.append(np.diff(np.diff(np.exp(-((t-t_center)**2)))), [0,0]) # Generate a Gaussian pulse
 
     # Plot current in time before proceeding
-    plt.plot(c[:,loc_center])
-    plt.show()
+    #plt.plot(c[:,loc_center])
+    #plt.show()
 
     # Prepare material
     mstart, mlen = Sim.calc_mat_dims(i0, i1, di, 0, di*10)

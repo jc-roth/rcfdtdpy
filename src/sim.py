@@ -85,9 +85,14 @@ class Sim:
         if self._bound == 'absorbing':
             self._hprev0 = np.float(0)
             self._hprev1 = np.float(0)
+            self._hrprev0 = np.float(0)
+            self._hrprev1 = np.float(0)
         # Create each field
         self._efield = np.zeros(self._ilen, dtype=self._dtype)
         self._hfield = np.zeros(self._ilen, dtype=self._dtype)
+        # Create each reference field
+        self._efieldr = np.zeros(self._ilen, dtype=self._dtype)
+        self._hfieldr = np.zeros(self._ilen, dtype=self._dtype)
         # Determine how often to save the field and arrays to save to
         self._nstore = nstore
         # Check to see if any stores are requested
@@ -99,6 +104,8 @@ class Sim:
             self._n_step_btwn_store = int(np.ceil(self._nlen/self._nstore))
             self._efield_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
             self._hfield_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
+            self._efieldr_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
+            self._hfieldr_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
         # Save the current field
         self._cfield = cfield
         # Save constants
@@ -143,6 +150,8 @@ class Sim:
             if self._n_step_btwn_store != -1 and n % self._n_step_btwn_store == 0:
                 self._hfield_save[n_save] = self._hfield
                 self._efield_save[n_save] = self._efield
+                self._hfieldr_save[n_save] = self._hfieldr
+                self._efieldr_save[n_save] = self._efieldr
                 n_save += 1
 
     def _absorbing(self, n):
@@ -153,17 +162,23 @@ class Sim:
         self._update_psi()
         # Compute H-field and update
         self._update_hfield(n)
+        self._update_hfieldr(n)
         # Set the field values at the boundary to the previous value one away from the boundary,
         # this somehow results in absorption, I'm not really sure how... I think it has something
         # to do with preventing any wave reflection, meaning that the field values just end up
         # going to zero. It would be a good idea to ask Ben about this.
         self._hfield[0] = self._hprev0
         self._hfield[-1] = self._hprev1
+        self._hfieldr[0] = self._hrprev0
+        self._hfieldr[-1] = self._hrprev1
         # Save the field values one away from each boundary for use next iteration
         self._hprev0 = self._hfield[1]
         self._hprev1 = self._hfield[-2]
+        self._hrprev0 = self._hfieldr[1]
+        self._hrprev1 = self._hfieldr[-2]
         # Compute E-field and update
         self._update_efield(n)
+        self._update_efieldr(n)
 
     def _zero(self, n):
         """
@@ -173,8 +188,10 @@ class Sim:
         self._update_psi()
         # Compute H-field and update
         self._update_hfield(n)
+        self._update_hfieldr(n)
         # Compute E-field and update
         self._update_efield(n)
+        self._update_efieldr(n)
         
     def _update_hfield(self, n):
         """
@@ -193,6 +210,23 @@ class Sim:
         e_t3 = self._coeffe2[1:] * (self._hfield[1:]-self._hfield[:-1])
         e_t4 = self._coeffe3[1:] * self._cfield[n,1:]
         self._efield[1:] = e_t1 + e_t2 - e_t3 - e_t4
+        
+    def _update_hfieldr(self, n):
+        """
+        Updates the reference H-field to the values at the next iteration
+        """
+        h_t1 = self._hfieldr[:-1]
+        h_t2 = self._coeffh1 * (self._efieldr[1:]-self._efieldr[:-1])
+        self._hfieldr[:-1] = h_t1 - h_t2
+
+    def _update_efieldr(self, n):
+        """
+        Updates the reference E-field to the values at the next iteration
+        """
+        e_t1 = self._coeffe0[1:] * self._efieldr[1:]
+        e_t3 = self._coeffe2[1:] * (self._hfieldr[1:]-self._hfieldr[:-1])
+        e_t4 = self._coeffe3[1:] * self._cfield[n,1:]
+        self._efieldr[1:] = e_t1 - e_t3 - e_t4
 
     def _compute_psi(self):
         """
@@ -243,16 +277,16 @@ class Sim:
         """
         Exports all field values along with the spatial and temporal bounds of each field cell
 
-        :return: A tuple :code:`(n, i, e, h, c)` where :code:`n` is a Numpy array containing the spatial bounds of each field cell, :code:`i` is a Numpy array containing the temporal bounds of each field cell, :code:`e` is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), :code:`h` is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), and :code:`c` is a Numpy array containing the current field (axis=0 is time and axis=1 is space)
+        :return: A tuple :code:`(n, i, e, h, er, hr, c)` where :code:`n` is a Numpy array containing the spatial bounds of each field cell, :code:`i` is a Numpy array containing the temporal bounds of each field cell, :code:`e` is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), :code:`h` is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), :code:`er` is a Numpy array containing the reference E-field (axis=0 is time and axis=1 is space), :code:`hr` is a Numpy array containing the reference H-field (axis=0 is time and axis=1 is space), and :code:`c` is a Numpy array containing the current field (axis=0 is time and axis=1 is space)
         """
         # Calcualte the n and i arrays
         n = np.linspace(self._n0, self._n1, self._nstore, False)
         i = np.linspace(self._i0, self._i1, self._ilen, False)
         # Check to see what was stored
         if self._nstore == 0:
-            return (n, i, None, None, self._cfield)
+            return (n, i, None, None, None, None, self._cfield)
         # Return
-        return (n, i, self._efield_save, self._hfield_save, self._cfield)
+        return (n, i, self._efield_save, self._hfield_save, self._efieldr_save, self._hfieldr_save, self._cfield)
         
     @staticmethod
     def calc_dims(n0, n1, dn, i0, i1, di):
