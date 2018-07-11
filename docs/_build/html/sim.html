@@ -158,7 +158,7 @@
 </ul>
 <span class="target" id="module-sim"></span><dl class="class">
 <dt id="sim.Sim">
-<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em>, <em>epsilon0</em>, <em>epsiloninf</em>, <em>mu0</em>, <em>cfield</em>, <em>boundary</em>, <em>mat0</em>, <em>mat</em>, <em>dtype=&lt;class 'float'&gt;</em>, <em>nstore=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em>, <em>epsilon0</em>, <em>epsiloninf</em>, <em>mu0</em>, <em>cfield</em>, <em>boundary</em>, <em>mat0</em>, <em>mata1</em>, <em>mata2</em>, <em>matg</em>, <em>matb</em>, <em>dtype=&lt;class 'float'&gt;</em>, <em>nstore=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a single simulation. Field is initialized to all zeros.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -176,7 +176,7 @@
 <li><strong>mu0</strong> – <span class="math notranslate nohighlight">\(\mu_0\)</span></li>
 <li><strong>cfield</strong> – The current field</li>
 <li><strong>boundary</strong> – The boundary type of the field, either ‘zero’, for fields bounded by zeros, ‘periodic’ for periodic boundary conditions, or ‘mirror’ for boundaries that reflect inner field values</li>
-<li><strong>mat0</strong> – </li>
+<li><strong>mat0</strong> – The starting index of the material</li>
 <li><strong>mata1</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_1\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
 <li><strong>mata2</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_2\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
 <li><strong>matg</strong> – A matrix representing <span class="math notranslate nohighlight">\(\gamma\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
@@ -230,7 +230,7 @@
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple <code class="code docutils literal notranslate"><span class="pre">(matstart,</span> <span class="pre">matstop,</span> <span class="pre">matlen)</span></code> containing the index of the simulation at which the material starts, the index at which the material ends, and the number of indicies that the material spans</p>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple <code class="code docutils literal notranslate"><span class="pre">(matstart,</span> <span class="pre">matlen)</span></code> containing the index of the simulation at which the material starts and the number of indicies that the material spans</p>
 </td>
 </tr>
 </tbody>
