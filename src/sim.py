@@ -25,9 +25,10 @@ class Sim:
     :param matb: A matrix representing :math:`\\beta` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
     :param dtype: The data type to store the field values in
     :param nstore: The number of temporal steps to save, defaults to zero
+    :param storelocs: A list of locations to save field values of at each step in time
     """
     
-    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, epsiloninf, mu0, cfield, boundary, mat0, mata1, mata2, matg, matb, dtype=np.complex64, nstore=0):
+    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, epsiloninf, mu0, cfield, boundary, mat0, mata1, mata2, matg, matb, dtype=np.complex64, nstore=0, storelocs = []):
         # Check that arguments have acceptable values
         if i0 > i1:
             raise ValueError("i0 must be less than or equal to i1")
@@ -106,6 +107,18 @@ class Sim:
             self._hfield_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
             self._efieldr_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
             self._hfieldr_save = np.zeros((self._nstore, self._ilen), dtype=self._dtype)
+        # Save storeloc info
+        self._storelocs = storelocs
+        self._nlocs = len(self._storelocs)
+        self._storeind = list(range(self._nlocs))
+        # Check to see if any storelocs are requested
+        if self._nlocs != 0:
+            # Create arrays to store the field values in each location
+            self._nlocs = len(storelocs)
+            self._efield_locs = np.zeros((self._nlen, self._nlocs), dtype=self._dtype)
+            self._hfield_locs = np.zeros((self._nlen, self._nlocs), dtype=self._dtype)
+            self._efieldr_locs = np.zeros((self._nlen, self._nlocs), dtype=self._dtype)
+            self._hfieldr_locs = np.zeros((self._nlen, self._nlocs), dtype=self._dtype)
         # Save the current field
         self._cfield = cfield
         # Save constants
@@ -158,6 +171,13 @@ class Sim:
                 self._hfieldr_save[n_save] = self._hfieldr
                 self._efieldr_save[n_save] = self._efieldr
                 n_save += 1
+            # Save specific field locations if storing has been requested
+            if self._nlocs != 0:
+                # Store each location
+                self._efield_locs[n, self._storeind] = self._efield[self._storelocs]
+                self._efieldr_locs[n, self._storeind] = self._efieldr[self._storelocs]
+                self._hfield_locs[n, self._storeind] = self._hfield[self._storelocs]
+                self._hfieldr_locs[n, self._storeind] = self._hfieldr[self._storelocs]
 
     def _absorbing(self, n):
         """
@@ -282,16 +302,24 @@ class Sim:
         """
         Exports all field values along with the spatial and temporal bounds of each field cell
 
-        :return: A tuple :code:`(n, i, e, h, er, hr, c)` where :code:`n` is a Numpy array containing the spatial bounds of each field cell, :code:`i` is a Numpy array containing the temporal bounds of each field cell, :code:`e` is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), :code:`h` is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), :code:`er` is a Numpy array containing the reference E-field (axis=0 is time and axis=1 is space), :code:`hr` is a Numpy array containing the reference H-field (axis=0 is time and axis=1 is space), and :code:`c` is a Numpy array containing the current field (axis=0 is time and axis=1 is space)
+        :return: A tuple :code:`(n, i, e, h, er, hr, ls, els, erls, hls, hrls, c)` where :code:`n` is a Numpy array containing the spatial bounds of each field cell, :code:`i` is a Numpy array containing the temporal bounds of each field cell, :code:`e` is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), :code:`h` is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), :code:`er` is a Numpy array containing the reference E-field (axis=0 is time and axis=1 is space), :code:`hr` is a Numpy array containing the reference H-field (axis=0 is time and axis=1 is space), :code:`ls` is the list :code:`storelocs` (the same :code:`storelocs` that is passed to the Sim class during instantiation), :code:`els` is a Numpy array containing the E-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), :code:`erls` is a Numpy array containing the reference E-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), :code:`hls` is a Numpy array containing the H-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), :code:`hrls` is a Numpy array containing the reference H-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), and :code:`c` is a Numpy array containing the current field (axis=0 is time and axis=1 is space)
         """
         # Calcualte the n and i arrays
-        n = np.linspace(self._n0, self._n1, self._nstore, False)
+        n = np.linspace(self._n0, self._n1, self._nlen, False)
         i = np.linspace(self._i0, self._i1, self._ilen, False)
         # Check to see what was stored
         if self._nstore == 0:
-            return (n, i, None, None, None, None, self._cfield)
+            self._efield_save = None
+            self._hfield_save = None
+            self._efieldr_save = None
+            self._hfieldr_save = None
+        if self._nlocs == 0:
+            self._efield_locs = None
+            self._efieldr_locs = None
+            self._hfield_locs = None
+            self._hfieldr_locs = None
         # Return
-        return (n, i, self._efield_save, self._hfield_save, self._efieldr_save, self._hfieldr_save, self._cfield)
+        return (n, i, self._efield_save, self._hfield_save, self._efieldr_save, self._hfieldr_save, self._storelocs,  self._efield_locs, self._efieldr_locs, self._hfield_locs, self._hfieldr_locs, self._cfield)
         
     @staticmethod
     def calc_dims(n0, n1, dn, i0, i1, di):

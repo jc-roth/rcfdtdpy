@@ -50,7 +50,7 @@ if __name__ == '__main__':
     #plt.show()
 
     # Prepare material
-    a1 = np.complex64(100)
+    a1 = np.complex64(2.5)
     a2 = np.complex64(0)
     gamma = np.complex64(1)
     omega = np.complex64(0.005)
@@ -63,7 +63,8 @@ if __name__ == '__main__':
     matb = mat * beta
 
     # Create and start simulation
-    s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, c, 'absorbing', 202, mata1, mata2, matg, matb, nstore=300)
+    s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, c, 'absorbing', 202, mata1, mata2, matg, matb, nstore=300, storelocs=[1,ilen-1])
     s.simulate()
     # Visualize
-    vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m', fname='../temp/material_demo.mp4')
+    #vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m')
+    vis.plot_loc(s)
