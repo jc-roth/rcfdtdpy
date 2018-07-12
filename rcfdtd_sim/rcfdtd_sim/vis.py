@@ -1,7 +1,7 @@
 """
 Used to visualize results from the sim module
 """
-from sim import Sim
+from .sim import Sim
 
 import numpy as np
 from matplotlib import pyplot as plt
