@@ -137,11 +137,11 @@ class Sim:
         # Sum the epsiloninf values of each material to get the final epsiloninf array (note there is no material overlap)
         self._epsiloninf = np.zeros(self._ilen, dtype=self._dtype)
         for m in mat:
-            self._epsiloninf = np.add(self._epsiloninf, m.get_epsiloninf())
+            self._epsiloninf = np.add(self._epsiloninf, m._get_epsiloninf())
         # Sum the chi0 values of each material to get the final epsiloninf array (note there is no material overlap)
         self._chi0 = np.zeros(self._ilen, dtype=self._dtype)
         for m in mat:
-            self._chi0 = np.add(self._chi0, m.get_chi0())
+            self._chi0 = np.add(self._chi0, m._get_chi0())
         # Calculate simulation proportionality constants
         self._coeffe0 = self._epsiloninf/(self._epsiloninf + self._chi0)
         self._coeffe1 = 1.0/(self._epsiloninf + self._chi0)
@@ -274,7 +274,7 @@ class Sim:
         # Create an array to hold psi
         psi = np.zeros(self._ilen)
         for m in self._mats:
-            psi = np.add(psi, m.compute_psi())
+            psi = np.add(psi, m._compute_psi())
         # Return
         return psi
 
@@ -284,7 +284,7 @@ class Sim:
         """
         # Iterate through all materials and update each
         for m in self._mats:
-            m.update_psi(self._efield)
+            m._update_psi(self._efield)
 
     def get_bound_res(self):
         """
@@ -370,26 +370,6 @@ class Sim:
         :return: The spatial dimension
         """
         return int(np.floor((i1-i0)/di)+2) # Add two to account for boundary conditions
-        
-    @staticmethod
-    def calc_mat_dims(i0, i1, di, mat0, mat1):
-        """
-        Calculates the dimensions of a material.
-
-        :param i0: The spatial value at which the simulation starts
-        :param i1: The spatial value at which the simulation ends
-        :param di: The spatial step size
-        :param mat0: The spatial value at which the material starts
-        :param mat1: The spatial value at which the material ends
-        :return: A tuple :code:`(matstart, matlen)` containing the index of the simulation at which the material starts and the number of indicies that the material spans
-        """
-        ilen = Sim._calc_idim(i0, i1, di)
-         # Calculate the length of the material
-        matlen = Sim._calc_idim(mat0, mat1, di)
-         # Calculate the start point of the material
-        matstart = int(np.floor((mat0-i0)/di))
-        # Return
-        return (matstart, matlen)
 
 class Mat:
     r"""
@@ -477,7 +457,7 @@ class Mat:
         """
         return np.pad(np.repeat(1, self._matlen), (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
 
-    def get_epsiloninf(self):
+    def _get_epsiloninf(self):
         r"""
         Returns the high frequency susceptability of the material :math:`\epsilon_\infty`.
 
@@ -485,7 +465,7 @@ class Mat:
         """
         return self._epsiloninf
 
-    def get_chi0(self):
+    def _get_chi0(self):
         r"""
         Returns the initial susceptibility of the material :math:`\chi_0`.
 
@@ -493,7 +473,7 @@ class Mat:
         """
         return self._chi0
 
-    def compute_psi(self):
+    def _compute_psi(self):
         """
         Calculates psi at all points in the simulation using the current value of psi_1 and psi_2
         """
@@ -506,7 +486,7 @@ class Mat:
         # Return
         return psi_padded
 
-    def update_psi(self, efield):
+    def _update_psi(self, efield):
         """
         Updates the value of psi_1 and psi_2.
 
