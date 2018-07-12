@@ -81,7 +81,7 @@ def plot(sim, n, fname=None, iscale=1, escale=1, hscale=1, iunit='NA', eunit='NA
     Displays the E and H-fields at a given index in time.
 
     :param sim: The simulation to visualize
-    :param n: The temporal index :math:`n` to display
+    :param n: The index of the stored field values (determined by the :code:`nstore` parameter of the simulation) to display
     :param fname: The filename to export to, does not export if blank
     :param iscale: The scalar factor that the x-axis is scaled by
     :param escale: The scalar factor that the y-axis of the E-field is scaled by
@@ -91,7 +91,7 @@ def plot(sim, n, fname=None, iscale=1, escale=1, hscale=1, iunit='NA', eunit='NA
     :param hunit: The units given to the y-label for the H-field axis
     """
     # Export variables from the simulation
-    n, i, e, h, er, hr, ls, els, erls, hls, hrls, c = sim.export()
+    n0, i, e, h, er, hr, ls, els, erls, hls, hrls, c = sim.export()
     # Apply scale factors
     i *= iscale
     e *= escale
