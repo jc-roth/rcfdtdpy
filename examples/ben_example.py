@@ -63,5 +63,5 @@ if __name__ == '__main__':
     s.simulate()
     # Visualize
     vis.timeseries(s, iscale=1, interval=10, iunit=r'$\mu$m', eunit='?', hunit='?')
-    #vis.timeseries(s, iscale=1, interval=10, iunit=r'$\mu$m', eunit='?', hunit='?', fname='../temp/sim1.mp4')
-    #vis.plot_loc(s, nunit='ps', fname='../temp/sim1.png')
+    #vis.timeseries(s, iscale=1, interval=10, iunit=r'$\mu$m', eunit='?', hunit='?', fname='../temp/sim2.mp4')
+    vis.plot_loc(s, nunit='ps')
