@@ -1,7 +1,5 @@
-from sim import Sim, Mat
-import vis
+from rcfdtd_sim import Sim, Mat, timeseries, plot_loc
 import numpy as np
-from matplotlib import pyplot as plt
 """
 A module that shows how to use the sim module to prepare and run RC-FDTD simulations.
 """
@@ -62,6 +60,6 @@ if __name__ == '__main__':
     s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, vacuum_permeability, c, 'absorbing', m, nstore=int(nlen/4), storelocs=[1,ilen-1])
     s.simulate()
     # Visualize
-    vis.timeseries(s, iscale=1, interval=10, iunit=r'$\mu$m', eunit='?', hunit='?')
-    #vis.timeseries(s, iscale=1, interval=10, iunit=r'$\mu$m', eunit='?', hunit='?', fname='../temp/sim2.mp4')
-    vis.plot_loc(s, nunit='ps')
+    timeseries(s, iscale=1, interval=10, iunit=r'$\mu$m', eunit='?', hunit='?')
+    #timeseries(s, iscale=1, interval=10, iunit=r'$\mu$m', eunit='?', hunit='?', fname='../temp/sim2.mp4')
+    plot_loc(s, nunit='ps')
