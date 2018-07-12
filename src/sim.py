@@ -302,14 +302,14 @@ class Sim:
         """
         return (self._nlen, self._ilen)
 
-    def export(self):
+    def export_fields(self):
         """
-        Exports all field values along with the spatial and temporal bounds of each field cell
+        Exports all stored field values (the number of which is determined by :code:`nstore` at initialization) along with the spatial and temporal bounds of each field cell.
 
-        :return: A tuple :code:`(n, i, e, h, er, hr, ls, els, erls, hls, hrls, c)` where :code:`n` is a Numpy array containing the spatial bounds of each field cell, :code:`i` is a Numpy array containing the temporal bounds of each field cell, :code:`e` is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), :code:`h` is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), :code:`er` is a Numpy array containing the reference E-field (axis=0 is time and axis=1 is space), :code:`hr` is a Numpy array containing the reference H-field (axis=0 is time and axis=1 is space), :code:`ls` is the list :code:`storelocs` (the same :code:`storelocs` that is passed to the Sim class during instantiation), :code:`els` is a Numpy array containing the E-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), :code:`erls` is a Numpy array containing the reference E-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), :code:`hls` is a Numpy array containing the H-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), :code:`hrls` is a Numpy array containing the reference H-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), and :code:`c` is a Numpy array containing the current field (axis=0 is time and axis=1 is space)
+        :return: A tuple :code:`(n, i, e, h, er, hr)` where :code:`n` is a Numpy array containing the spatial bounds of each field cell, :code:`i` is a Numpy array containing the temporal bounds of each field cell, :code:`e` is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), :code:`h` is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), :code:`er` is a Numpy array containing the reference E-field (axis=0 is time and axis=1 is space), :code:`hr` is a Numpy array containing the reference H-field (axis=0 is time and axis=1 is space)
         """
         # Calcualte the n and i arrays
-        n = np.linspace(self._n0, self._n1, self._nlen, False)
+        n = np.linspace(self._n0, self._n1, self._nstore, False)
         i = np.linspace(self._i0, self._i1, self._ilen, False)
         # Check to see what was stored
         if self._nstore == 0:
@@ -323,8 +323,25 @@ class Sim:
             self._hfield_locs = None
             self._hfieldr_locs = None
         # Return
-        return (n, i, self._efield_save, self._hfield_save, self._efieldr_save, self._hfieldr_save, self._storelocs,  self._efield_locs, self._efieldr_locs, self._hfield_locs, self._hfieldr_locs, self._cfield)
-        
+        return (n, i, self._efield_save, self._hfield_save, self._efieldr_save, self._hfieldr_save)
+
+    def export_locs(self):
+        """
+        Exports the value of each field at a specific location(s) (specified with :code:`storelocs` at initialization) at each point in time.
+
+        :return: A tuple :code:`(n, ls, els, erls, hls, hrls)` where :code:`n` is a Numpy array containing the spatial bounds of each field cell, :code:`ls` is the list :code:`storelocs` (the same :code:`storelocs` that is passed to the Sim class during instantiation), :code:`els` is a Numpy array containing the E-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), :code:`erls` is a Numpy array containing the reference E-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), :code:`hls` is a Numpy array containing the H-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), and :code:`hrls` is a Numpy array containing the reference H-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location)
+        """
+        # Calcualte the n array
+        n = np.linspace(self._n0, self._n1, self._nlen, False)
+        # Check to see if the value of each field at a specific location was saved over time
+        if self._nlocs == 0:
+            self._efield_locs = None
+            self._efieldr_locs = None
+            self._hfield_locs = None
+            self._hfieldr_locs = None
+        # Return
+        return (n, self._storelocs,  self._efield_locs, self._efieldr_locs, self._hfield_locs, self._hfieldr_locs)
+
     @staticmethod
     def calc_dims(n0, n1, dn, i0, i1, di):
         """

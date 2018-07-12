@@ -25,7 +25,7 @@ def plot_loc(sim, fname=None, nscale=1, escale=1, hscale=1, nunit='NA', eunit='N
     :param hunit: The units given to the y-label for the H-field axis
     """
     # Export variables from the simulation
-    n, i, e, h, er, hr, ls, els, erls, hls, hrls, c = sim.export()
+    n, ls, els, erls, hls, hrls = sim.export_locs()
     # Populate loc if no lines are specified
     nlocs = np.shape(els)[1]
     # Apply scale factors and take real parts
@@ -91,7 +91,7 @@ def plot(sim, n, fname=None, iscale=1, escale=1, hscale=1, iunit='NA', eunit='NA
     :param hunit: The units given to the y-label for the H-field axis
     """
     # Export variables from the simulation
-    n0, i, e, h, er, hr, ls, els, erls, hls, hrls, c = sim.export()
+    n0, i, e, h, er, hr = Sim.export_fields()
     # Apply scale factors
     i *= iscale
     e *= escale
@@ -144,7 +144,7 @@ def timeseries(sim, fname=None, interval=10, iscale=1, escale=1, hscale=1, iunit
     :param hunit: The units given to the y-label for the H-field axis
     """
     # Export variables from the simulation
-    n, i, e, h, er, hr, ls, els, erls, hls, hrls, c = sim.export()
+    n, i, e, h, er, hr = sim.export_fields()
     # Take real parts
     e = np.real(e)
     h = np.real(h)
