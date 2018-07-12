@@ -8,19 +8,6 @@ A module that shows how to use the sim module to prepare and run RC-FDTD simulat
 
 if __name__ == '__main__':
 
-    """ Ben's constants
-    # Prepare constants
-    c0 = 1 # 300 um/ps (speed of light)
-
-    di = 0.004 # 0.004 um
-    i0 = di * -250 # 0.004 um * -250 = -1 um
-    i1 = di * 500 # 0.004 um * 500 = 2 um
-
-    dn = di / c0 # (0.004 um) / (300 um/ps)
-    n0 = 0/dn
-    n1 = 20/dn
-    """
-
     # Prepare constants
     c0 = 1 # 300 um/ps (speed of light)
 
@@ -35,7 +22,6 @@ if __name__ == '__main__':
     vacuum_permittivity = 1
     vacuum_permeability = 1
     infinity_permittivity = 1
-    initial_susceptibility = 0
 
     # Prepare current field
     nlen, ilen = Sim.calc_dims(n0, n1, dn, i0, i1, di)
@@ -63,8 +49,9 @@ if __name__ == '__main__':
     matb = mat * beta
 
     # Create and start simulation
-    s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, c, 'absorbing', 202, mata1, mata2, matg, matb, nstore=300, storelocs=[1,ilen-1])
+    s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, vacuum_permeability, c, 'absorbing', 202, infinity_permittivity, mata1, mata2, matg, matb, nstore=300, storelocs=[1,ilen-1])
     s.simulate()
     # Visualize
     vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m')
+    #vis.plot(s, 50, iscale=1, iunit='$\mu$m', eunit='N/c', hunit='A/m')
     #vis.plot_loc(s)
