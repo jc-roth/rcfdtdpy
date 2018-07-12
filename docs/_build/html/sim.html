@@ -158,8 +158,46 @@
 <li>Discuss how to create a current object</li>
 </ul>
 <span class="target" id="module-sim"></span><dl class="class">
+<dt id="sim.Mat">
+<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Mat</code><span class="sig-paren">(</span><em>dn</em>, <em>ilen</em>, <em>mat0</em>, <em>epsiloninf</em>, <em>mata1</em>, <em>mata2</em>, <em>matg</em>, <em>matb</em>, <em>dtype=&lt;class 'numpy.complex64'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Mat" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Mat class is used to represent a material present in a simulation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dn</strong> – The temporal step size</li>
+<li><strong>ilen</strong> – The number of temporal indicies in the simulation</li>
+<li><strong>mat0</strong> – The starting index of the material</li>
+<li><strong>epsiloninf</strong> – <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span> inside the material</li>
+<li><strong>mata1</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_1\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>mata2</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_2\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>matg</strong> – A matrix representing <span class="math notranslate nohighlight">\(\gamma\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>matb</strong> – A matrix representing <span class="math notranslate nohighlight">\(\beta\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="sim.Mat.get_pos">
+<code class="descname">get_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Mat.get_pos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Mat.get_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Numpy array of value 0 outside of the material and 1 inside of the material.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A Numpy array of value 0 outside of the material and 1 inside of the material</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="sim.Sim">
-<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em>, <em>epsilon0</em>, <em>epsiloninf</em>, <em>mu0</em>, <em>cfield</em>, <em>boundary</em>, <em>mat0</em>, <em>mata1</em>, <em>mata2</em>, <em>matg</em>, <em>matb</em>, <em>dtype=&lt;class 'numpy.complex64'&gt;</em>, <em>nstore=0</em>, <em>storelocs=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em>, <em>epsilon0</em>, <em>mu0</em>, <em>cfield</em>, <em>boundary</em>, <em>mat=[]</em>, <em>nstore=0</em>, <em>storelocs=[]</em>, <em>dtype=&lt;class 'numpy.complex64'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a single simulation. Field is initialized to all zeros.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -173,15 +211,10 @@
 <li><strong>n1</strong> – The temporal value at which the field ends</li>
 <li><strong>dn</strong> – The temporal step size</li>
 <li><strong>epsilon0</strong> – <span class="math notranslate nohighlight">\(\epsilon_0\)</span></li>
-<li><strong>epsiloninf</strong> – <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span></li>
 <li><strong>mu0</strong> – <span class="math notranslate nohighlight">\(\mu_0\)</span></li>
 <li><strong>cfield</strong> – The current field</li>
 <li><strong>boundary</strong> – The boundary type of the field, either ‘zero’, for fields bounded by zeros, ‘periodic’ for periodic boundary conditions, or ‘mirror’ for boundaries that reflect inner field values</li>
-<li><strong>mat0</strong> – The starting index of the material</li>
-<li><strong>mata1</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_1\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
-<li><strong>mata2</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_2\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
-<li><strong>matg</strong> – A matrix representing <span class="math notranslate nohighlight">\(\gamma\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
-<li><strong>matb</strong> – A matrix representing <span class="math notranslate nohighlight">\(\beta\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>mat</strong> – A Mat object or a list of Mat objects that represent the materials present in the simulation, defaults to none</li>
 <li><strong>dtype</strong> – The data type to store the field values in</li>
 <li><strong>nstore</strong> – The number of temporal steps to save, defaults to zero</li>
 <li><strong>storelocs</strong> – A list of locations to save field values of at each step in time</li>
@@ -215,39 +248,29 @@
 </table>
 </dd></dl>
 
-<dl class="staticmethod">
-<dt id="sim.Sim.calc_mat_dims">
-<em class="property">static </em><code class="descname">calc_mat_dims</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>mat0</em>, <em>mat1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.calc_mat_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.calc_mat_dims" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates the dimensions of a material.</p>
+<dl class="method">
+<dt id="sim.Sim.export_fields">
+<code class="descname">export_fields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.export_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.export_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports all stored field values (the number of which is determined by <code class="code docutils literal notranslate"><span class="pre">nstore</span></code> at initialization) along with the spatial and temporal bounds of each field cell.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>i0</strong> – The spatial value at which the simulation starts</li>
-<li><strong>i1</strong> – The spatial value at which the simulation ends</li>
-<li><strong>di</strong> – The spatial step size</li>
-<li><strong>mat0</strong> – The spatial value at which the material starts</li>
-<li><strong>mat1</strong> – The spatial value at which the material ends</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">A tuple <code class="code docutils literal notranslate"><span class="pre">(matstart,</span> <span class="pre">matlen)</span></code> containing the index of the simulation at which the material starts and the number of indicies that the material spans</p>
-</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A tuple <code class="code docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">i,</span> <span class="pre">e,</span> <span class="pre">h,</span> <span class="pre">er,</span> <span class="pre">hr)</span></code> where <code class="code docutils literal notranslate"><span class="pre">n</span></code> is a Numpy array containing the spatial bounds of each field cell, <code class="code docutils literal notranslate"><span class="pre">i</span></code> is a Numpy array containing the temporal bounds of each field cell, <code class="code docutils literal notranslate"><span class="pre">e</span></code> is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), <code class="code docutils literal notranslate"><span class="pre">h</span></code> is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), <code class="code docutils literal notranslate"><span class="pre">er</span></code> is a Numpy array containing the reference E-field (axis=0 is time and axis=1 is space), <code class="code docutils literal notranslate"><span class="pre">hr</span></code> is a Numpy array containing the reference H-field (axis=0 is time and axis=1 is space)</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="sim.Sim.export">
-<code class="descname">export</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.export" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exports all field values along with the spatial and temporal bounds of each field cell</p>
+<dt id="sim.Sim.export_locs">
+<code class="descname">export_locs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.export_locs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.export_locs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports the value of each field at a specific location(s) (specified with <code class="code docutils literal notranslate"><span class="pre">storelocs</span></code> at initialization) at each point in time.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A tuple <code class="code docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">i,</span> <span class="pre">e,</span> <span class="pre">h,</span> <span class="pre">er,</span> <span class="pre">hr,</span> <span class="pre">ls,</span> <span class="pre">els,</span> <span class="pre">erls,</span> <span class="pre">hls,</span> <span class="pre">hrls,</span> <span class="pre">c)</span></code> where <code class="code docutils literal notranslate"><span class="pre">n</span></code> is a Numpy array containing the spatial bounds of each field cell, <code class="code docutils literal notranslate"><span class="pre">i</span></code> is a Numpy array containing the temporal bounds of each field cell, <code class="code docutils literal notranslate"><span class="pre">e</span></code> is a Numpy array containing the E-field (axis=0 is time and axis=1 is space), <code class="code docutils literal notranslate"><span class="pre">h</span></code> is a Numpy array containing the H-field (axis=0 is time and axis=1 is space), <code class="code docutils literal notranslate"><span class="pre">er</span></code> is a Numpy array containing the reference E-field (axis=0 is time and axis=1 is space), <code class="code docutils literal notranslate"><span class="pre">hr</span></code> is a Numpy array containing the reference H-field (axis=0 is time and axis=1 is space), <code class="code docutils literal notranslate"><span class="pre">ls</span></code> is the list <code class="code docutils literal notranslate"><span class="pre">storelocs</span></code> (the same <code class="code docutils literal notranslate"><span class="pre">storelocs</span></code> that is passed to the Sim class during instantiation), <code class="code docutils literal notranslate"><span class="pre">els</span></code> is a Numpy array containing the E-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), <code class="code docutils literal notranslate"><span class="pre">erls</span></code> is a Numpy array containing the reference E-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), <code class="code docutils literal notranslate"><span class="pre">hls</span></code> is a Numpy array containing the H-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), <code class="code docutils literal notranslate"><span class="pre">hrls</span></code> is a Numpy array containing the reference H-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), and <code class="code docutils literal notranslate"><span class="pre">c</span></code> is a Numpy array containing the current field (axis=0 is time and axis=1 is space)</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A tuple <code class="code docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">ls,</span> <span class="pre">els,</span> <span class="pre">erls,</span> <span class="pre">hls,</span> <span class="pre">hrls)</span></code> where <code class="code docutils literal notranslate"><span class="pre">n</span></code> is a Numpy array containing the spatial bounds of each field cell, <code class="code docutils literal notranslate"><span class="pre">ls</span></code> is the list <code class="code docutils literal notranslate"><span class="pre">storelocs</span></code> (the same <code class="code docutils literal notranslate"><span class="pre">storelocs</span></code> that is passed to the Sim class during instantiation), <code class="code docutils literal notranslate"><span class="pre">els</span></code> is a Numpy array containing the E-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), <code class="code docutils literal notranslate"><span class="pre">erls</span></code> is a Numpy array containing the reference E-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), <code class="code docutils literal notranslate"><span class="pre">hls</span></code> is a Numpy array containing the H-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location), and <code class="code docutils literal notranslate"><span class="pre">hrls</span></code> is a Numpy array containing the reference H-field at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location)</td>
 </tr>
 </tbody>
 </table>
