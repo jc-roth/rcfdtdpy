@@ -55,11 +55,13 @@ if __name__ == '__main__':
     matb = mat * beta
 
     m = Mat(dn, ilen, mstart, mat_infinity_permittivity, mata1, mata2, matg, matb)
+    del m
+    m = []
 
     # Create and start simulation
     s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, vacuum_permeability, c, 'absorbing', m, nstore=int(nlen/4), storelocs=[1,ilen-1])
     s.simulate()
     # Visualize
-    #vis.timeseries(s, iscale=1, interval=10, iunit=r'$\mu$m', eunit='?', hunit='?')
-    vis.timeseries(s, iscale=1, interval=10, iunit=r'$\mu$m', eunit='?', hunit='?', fname='../temp/sim1.mp4')
-    vis.plot_loc(s, nunit='ps', fname='../temp/sim1.png')
+    vis.timeseries(s, iscale=1, interval=10, iunit=r'$\mu$m', eunit='?', hunit='?')
+    #vis.timeseries(s, iscale=1, interval=10, iunit=r'$\mu$m', eunit='?', hunit='?', fname='../temp/sim1.mp4')
+    #vis.plot_loc(s, nunit='ps', fname='../temp/sim1.png')

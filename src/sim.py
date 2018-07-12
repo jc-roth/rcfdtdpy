@@ -17,13 +17,13 @@ class Sim:
     :param mu0: :math:`\mu_0`
     :param cfield: The current field
     :param boundary: The boundary type of the field, either 'zero', for fields bounded by zeros, 'periodic' for periodic boundary conditions, or 'mirror' for boundaries that reflect inner field values
-    :param mat: A Mat object or a list of Mat objects that represent the materials present in the simulation
+    :param mat: A Mat object or a list of Mat objects that represent the materials present in the simulation, defaults to none
     :param dtype: The data type to store the field values in
     :param nstore: The number of temporal steps to save, defaults to zero
     :param storelocs: A list of locations to save field values of at each step in time
     """
     
-    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, mu0, cfield, boundary, mat, dtype=np.complex64, nstore=0, storelocs = []):
+    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, mu0, cfield, boundary, mat=[], nstore=0, storelocs = [], dtype=np.complex64):
         # -------------
         # INITIAL SETUP
         # -------------
@@ -38,7 +38,7 @@ class Sim:
             raise ValueError("dn must be greater than zero")
         elif type(cfield) is not np.ndarray:
             raise TypeError("cfield must be of type numpy.ndarray")
-        elif type(mat) != Mat or (type(mat) is list and type(mat[0]) != Mat):
+        elif (not ((type(mat) == Mat) or (type(mat) is list))) or ((type(mat) is list) and (len(mat) != 0) and (type(mat[0]) != Mat)):
             raise TypeError("mat must be either a Mat object or a list of Mat objects")
         # Determine the number of temporal and spatial cells in the field
         self._nlen, self._ilen = Sim.calc_dims(n0, n1, dn, i0, i1, di)
@@ -62,6 +62,11 @@ class Sim:
         # Put the mat variable into a list if it isn't already
         if type(mat) == Mat:
             mat = [mat]
+        # List already exits, create an uninteracting material
+        elif len(mat) == 0:
+            # Create an empty material
+            m = np.ones((1, 1))
+            mat.append(Mat(self._dn, self._ilen, 0, 1, m*0, m*0, m, m))
         # Save the material
         self._mats = mat
         # Check to see if there is any material overlap
