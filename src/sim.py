@@ -75,12 +75,17 @@ class Sim:
         self._exp_2 = np.exp(np.multiply(min_b_min_g, self._dn))
         # Calculate initial susceptability values
         chi0_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype) # Set chi0_1=0 initially
+        chi0_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype) # Set chi0_2=0 initially
         for j in range(self._jlen):
             for mi in range(self._matlen):
-                # If beta-gamma is not small (i.e. if omega!=0), then calculate chi0_1, otherwise do not calculate as divide by zero error will be thrown
                 if np.abs(b_min_g[j, mi]) > 1e-8:
+                    # If beta-gamma is not small (i.e. if omega!=0), then calculate chi0_1, otherwise do not calculate as divide by zero error will be thrown
                     chi0_1[j, mi] = np.multiply(np.divide(mata1[j, mi], b_min_g[j, mi]), np.subtract(self._exp_1[j, mi], 1))
-        chi0_2 = np.multiply(np.divide(mata2, min_b_min_g), np.subtract(self._exp_2, 1))
+                    # Calculate chi0_2 normally
+                    chi0_2[j, mi] = np.multiply(np.divide(mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
+                else:
+                    # If beta-gamma is small, multiply chi0_2 by negative one, not sure why, just taking from Ben
+                    chi0_2[j, mi] = np.multiply(np.divide(-mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
         # Calclate first delta susceptabiility values
         self._dchi0_1 = np.multiply(chi0_1, np.subtract(1, self._exp_1))
         self._dchi0_2 = np.multiply(chi0_2, np.subtract(1, self._exp_2))
