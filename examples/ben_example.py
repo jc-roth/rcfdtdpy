@@ -44,8 +44,10 @@ if __name__ == '__main__':
     a2 = np.complex64(-160/(2*beta))
 
     # Create material matrix
-    mstart, mlen = Sim.calc_mat_dims(i0, i1, di, mat0, mat1)
-    mstart += 1
+    mstart = np.argmin(np.abs(np.subtract(z, mat0)))
+    mend = np.argmin(np.abs(np.subtract(z, mat1)))
+    mlen = mend - mstart
+    print(ilen, mstart, mend)
     mat = np.ones((1, mlen), dtype=np.complex64)
     mata1 = mat * a1
     mata2 = mat * a2
