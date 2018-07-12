@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>sim &mdash; RCFDTD.py  documentation</title>
+  <title>rcfdtd_sim.sim &mdash; RCFDTD.py  documentation</title>
   
 
   
@@ -24,13 +24,13 @@
 
   
 
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" /> 
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
 
   
-  <script src="../_static/js/modernizr.min.js"></script>
+  <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -46,7 +46,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> RCFDTD.py
+            <a href="../../index.html" class="icon icon-home"> RCFDTD.py
           
 
           
@@ -59,7 +59,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -78,8 +78,8 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../sim.html">sim</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../vis.html">vis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sim.html">sim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../vis.html">vis</a></li>
 </ul>
 
             
@@ -94,7 +94,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">RCFDTD.py</a>
+          <a href="../../index.html">RCFDTD.py</a>
         
       </nav>
 
@@ -123,11 +123,11 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="index.html">Module code</a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>sim</li>
+      <li>rcfdtd_sim.sim</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -142,14 +142,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for sim</h1><div class="highlight"><pre>
+  <h1>Source code for rcfdtd_sim.sim</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Contains the classes used to represent a simulation</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Sim"><a class="viewcode-back" href="../sim.html#sim.Sim">[docs]</a><span class="k">class</span> <span class="nc">Sim</span><span class="p">:</span>
+<div class="viewcode-block" id="Sim"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Sim">[docs]</a><span class="k">class</span> <span class="nc">Sim</span><span class="p">:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Represents a single simulation. Field is initialized to all zeros.</span>
 
 <span class="sd">    :param i0: The spatial value at which the field starts</span>
@@ -314,7 +314,7 @@
         <span class="n">to_return</span> <span class="o">+=</span> <span class="s1">&#39;( n x i ): ( &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; x &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; )&#39;</span>
         <span class="k">return</span> <span class="n">to_return</span>
         
-<div class="viewcode-block" id="Sim.simulate"><a class="viewcode-back" href="../sim.html#sim.Sim.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Sim.simulate"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Sim.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Executes the simulation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -431,7 +431,7 @@
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mats</span><span class="p">:</span>
             <span class="n">m</span><span class="o">.</span><span class="n">_update_psi</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Sim.get_bound_res"><a class="viewcode-back" href="../sim.html#sim.Sim.get_bound_res">[docs]</a>    <span class="k">def</span> <span class="nf">get_bound_res</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Sim.get_bound_res"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Sim.get_bound_res">[docs]</a>    <span class="k">def</span> <span class="nf">get_bound_res</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the boundaries and resolution of the simulation.</span>
 
@@ -439,7 +439,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_n0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_di</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Sim.get_dims"><a class="viewcode-back" href="../sim.html#sim.Sim.get_dims">[docs]</a>    <span class="k">def</span> <span class="nf">get_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Sim.get_dims"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Sim.get_dims">[docs]</a>    <span class="k">def</span> <span class="nf">get_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the dimensions of the field in cells.</span>
 
@@ -447,7 +447,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Sim.export_fields"><a class="viewcode-back" href="../sim.html#sim.Sim.export_fields">[docs]</a>    <span class="k">def</span> <span class="nf">export_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Sim.export_fields"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Sim.export_fields">[docs]</a>    <span class="k">def</span> <span class="nf">export_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exports all stored field values (the number of which is determined by :code:`nstore` at initialization) along with the spatial and temporal bounds of each field cell.</span>
 
@@ -470,7 +470,7 @@
         <span class="c1"># Return</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield_save</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hfield_save</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efieldr_save</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hfieldr_save</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Sim.export_locs"><a class="viewcode-back" href="../sim.html#sim.Sim.export_locs">[docs]</a>    <span class="k">def</span> <span class="nf">export_locs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Sim.export_locs"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Sim.export_locs">[docs]</a>    <span class="k">def</span> <span class="nf">export_locs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exports the value of each field at a specific location(s) (specified with :code:`storelocs` at initialization) at each point in time.</span>
 
@@ -487,7 +487,7 @@
         <span class="c1"># Return</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storelocs</span><span class="p">,</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_efield_locs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efieldr_locs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hfield_locs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hfieldr_locs</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Sim.calc_dims"><a class="viewcode-back" href="../sim.html#sim.Sim.calc_dims">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Sim.calc_dims"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Sim.calc_dims">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">calc_dims</span><span class="p">(</span><span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the dimensions of the simulation in cells.</span>
@@ -516,7 +516,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">i1</span><span class="o">-</span><span class="n">i0</span><span class="p">)</span><span class="o">/</span><span class="n">di</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># Add two to account for boundary conditions</span></div>
 
-<div class="viewcode-block" id="Mat"><a class="viewcode-back" href="../sim.html#sim.Mat">[docs]</a><span class="k">class</span> <span class="nc">Mat</span><span class="p">:</span>
+<div class="viewcode-block" id="Mat"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Mat">[docs]</a><span class="k">class</span> <span class="nc">Mat</span><span class="p">:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Mat class is used to represent a material present in a simulation</span>
 
@@ -594,7 +594,7 @@
         <span class="n">chi0_padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">chi0</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">)),</span> <span class="s1">&#39;constant&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_chi0</span> <span class="o">=</span> <span class="n">chi0_padded</span>
 
-<div class="viewcode-block" id="Mat.get_pos"><a class="viewcode-back" href="../sim.html#sim.Mat.get_pos">[docs]</a>    <span class="k">def</span> <span class="nf">get_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Mat.get_pos"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Mat.get_pos">[docs]</a>    <span class="k">def</span> <span class="nf">get_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a Numpy array of value 0 outside of the material and 1 inside of the material.</span>
 
@@ -681,7 +681,7 @@
 
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
+            URL_ROOT:'../../',
             VERSION:'',
             LANGUAGE:'None',
             COLLAPSE_INDEX:false,
@@ -690,14 +690,14 @@
             SOURCELINK_SUFFIX: '.txt'
         };
     </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {

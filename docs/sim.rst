@@ -24,5 +24,5 @@ where :math:`m_0` is the starting index of the material. Increments along the ve
 * Discuss the choice of :math:`\frac{\Delta t}{\Delta z}\approx c`
 * Discuss how to create a current object
 
-.. automodule:: sim
+.. automodule:: rcfdtd_sim.sim
    :members:

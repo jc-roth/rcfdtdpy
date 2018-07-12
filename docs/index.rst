@@ -11,6 +11,7 @@ Welcome to RCFDTD.py's documentation!
    :caption: Contents:
 
    sim
+   vis
 
 Simulation Details
 ------------------

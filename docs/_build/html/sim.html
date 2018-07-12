@@ -28,6 +28,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="vis" href="vis.html" />
     <link rel="prev" title="Welcome to RCFDTD.py’s documentation!" href="index.html" /> 
 
   
@@ -80,6 +81,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">sim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vis.html">vis</a></li>
 </ul>
 
             
@@ -157,9 +159,9 @@
 <li>Discuss the choice of <span class="math notranslate nohighlight">\(\frac{\Delta t}{\Delta z}\approx c\)</span></li>
 <li>Discuss how to create a current object</li>
 </ul>
-<span class="target" id="module-sim"></span><dl class="class">
-<dt id="sim.Mat">
-<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Mat</code><span class="sig-paren">(</span><em>dn</em>, <em>ilen</em>, <em>mat0</em>, <em>epsiloninf</em>, <em>mata1</em>, <em>mata2</em>, <em>matg</em>, <em>matb</em>, <em>dtype=&lt;class 'numpy.complex64'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Mat" title="Permalink to this definition">¶</a></dt>
+<span class="target" id="module-rcfdtd_sim.sim"></span><dl class="class">
+<dt id="rcfdtd_sim.sim.Mat">
+<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">Mat</code><span class="sig-paren">(</span><em>dn</em>, <em>ilen</em>, <em>mat0</em>, <em>epsiloninf</em>, <em>mata1</em>, <em>mata2</em>, <em>matg</em>, <em>matb</em>, <em>dtype=&lt;class 'numpy.complex64'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Mat" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Mat class is used to represent a material present in a simulation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -180,8 +182,8 @@
 </tbody>
 </table>
 <dl class="method">
-<dt id="sim.Mat.get_pos">
-<code class="descname">get_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Mat.get_pos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Mat.get_pos" title="Permalink to this definition">¶</a></dt>
+<dt id="rcfdtd_sim.sim.Mat.get_pos">
+<code class="descname">get_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Mat.get_pos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Mat.get_pos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Numpy array of value 0 outside of the material and 1 inside of the material.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -196,8 +198,8 @@
 </dd></dl>
 
 <dl class="class">
-<dt id="sim.Sim">
-<em class="property">class </em><code class="descclassname">sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em>, <em>epsilon0</em>, <em>mu0</em>, <em>cfield</em>, <em>boundary</em>, <em>mat=[]</em>, <em>nstore=0</em>, <em>storelocs=[]</em>, <em>dtype=&lt;class 'numpy.complex64'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim" title="Permalink to this definition">¶</a></dt>
+<dt id="rcfdtd_sim.sim.Sim">
+<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">Sim</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em>, <em>epsilon0</em>, <em>mu0</em>, <em>cfield</em>, <em>boundary</em>, <em>mat=[]</em>, <em>nstore=0</em>, <em>storelocs=[]</em>, <em>dtype=&lt;class 'numpy.complex64'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Sim"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a single simulation. Field is initialized to all zeros.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -224,8 +226,8 @@
 </tbody>
 </table>
 <dl class="staticmethod">
-<dt id="sim.Sim.calc_dims">
-<em class="property">static </em><code class="descname">calc_dims</code><span class="sig-paren">(</span><em>n0</em>, <em>n1</em>, <em>dn</em>, <em>i0</em>, <em>i1</em>, <em>di</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.calc_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.calc_dims" title="Permalink to this definition">¶</a></dt>
+<dt id="rcfdtd_sim.sim.Sim.calc_dims">
+<em class="property">static </em><code class="descname">calc_dims</code><span class="sig-paren">(</span><em>n0</em>, <em>n1</em>, <em>dn</em>, <em>i0</em>, <em>i1</em>, <em>di</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Sim.calc_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Sim.calc_dims" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates the dimensions of the simulation in cells.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -249,8 +251,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="sim.Sim.export_fields">
-<code class="descname">export_fields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.export_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.export_fields" title="Permalink to this definition">¶</a></dt>
+<dt id="rcfdtd_sim.sim.Sim.export_fields">
+<code class="descname">export_fields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Sim.export_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Sim.export_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exports all stored field values (the number of which is determined by <code class="code docutils literal notranslate"><span class="pre">nstore</span></code> at initialization) along with the spatial and temporal bounds of each field cell.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -263,8 +265,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="sim.Sim.export_locs">
-<code class="descname">export_locs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.export_locs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.export_locs" title="Permalink to this definition">¶</a></dt>
+<dt id="rcfdtd_sim.sim.Sim.export_locs">
+<code class="descname">export_locs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Sim.export_locs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Sim.export_locs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Exports the value of each field at a specific location(s) (specified with <code class="code docutils literal notranslate"><span class="pre">storelocs</span></code> at initialization) at each point in time.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -277,8 +279,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="sim.Sim.get_bound_res">
-<code class="descname">get_bound_res</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_bound_res"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_bound_res" title="Permalink to this definition">¶</a></dt>
+<dt id="rcfdtd_sim.sim.Sim.get_bound_res">
+<code class="descname">get_bound_res</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Sim.get_bound_res"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Sim.get_bound_res" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the boundaries and resolution of the simulation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -291,8 +293,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="sim.Sim.get_dims">
-<code class="descname">get_dims</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.get_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.get_dims" title="Permalink to this definition">¶</a></dt>
+<dt id="rcfdtd_sim.sim.Sim.get_dims">
+<code class="descname">get_dims</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Sim.get_dims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Sim.get_dims" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the dimensions of the field in cells.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -305,8 +307,8 @@
 </dd></dl>
 
 <dl class="method">
-<dt id="sim.Sim.simulate">
-<code class="descname">simulate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/sim.html#Sim.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#sim.Sim.simulate" title="Permalink to this definition">¶</a></dt>
+<dt id="rcfdtd_sim.sim.Sim.simulate">
+<code class="descname">simulate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Sim.simulate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Sim.simulate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Executes the simulation.</p>
 </dd></dl>
 
@@ -321,6 +323,8 @@
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="vis.html" class="btn btn-neutral float-right" title="vis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="Welcome to RCFDTD.py’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
