@@ -66,5 +66,5 @@ if __name__ == '__main__':
     s = Sim(i0, i1, di, n0, n1, dn, vacuum_permittivity, infinity_permittivity, vacuum_permeability, c, 'absorbing', 202, mata1, mata2, matg, matb, nstore=300, storelocs=[1,ilen-1])
     s.simulate()
     # Visualize
-    #vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m')
-    vis.plot_loc(s)
+    vis.timeseries(s, iscale=1, interval=20, iunit='$\mu$m', eunit='N/c', hunit='A/m')
+    #vis.plot_loc(s)

@@ -195,7 +195,7 @@ def timeseries(sim, fname=None, interval=10, iscale=1, escale=1, hscale=1, iunit
         lhr.set_data(i+np.diff(i[0:2]), hr[n]) # Note the np.diff() function is used to offset the H-field plot as required by the Yee cell
         return (le,ler,lh,lhr)
     # Run animation
-    anim = animation.FuncAnimation(fig, update, frames=len(n), interval=interval, init_func=init, blit=True)
+    anim = animation.FuncAnimation(fig, update, frames=np.shape(e)[0], interval=interval, init_func=init, blit=True)
     # Display or save
     if fname is None:
         plt.show()
