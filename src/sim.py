@@ -14,11 +14,11 @@ class Sim:
     :param n1: The temporal value at which the field ends
     :param dn: The temporal step size
     :param epsilon0: :math:`\epsilon_0`
-    :param epsiloninf: :math:`\epsilon_\infty`
     :param mu0: :math:`\mu_0`
     :param cfield: The current field
     :param boundary: The boundary type of the field, either 'zero', for fields bounded by zeros, 'periodic' for periodic boundary conditions, or 'mirror' for boundaries that reflect inner field values
     :param mat0: The starting index of the material
+    :param epsiloninf: :math:`\epsilon_\infty` inside the material
     :param mata1: A matrix representing :math:`A_1` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
     :param mata2: A matrix representing :math:`A_2` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
     :param matg: A matrix representing :math:`\gamma` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
@@ -28,7 +28,10 @@ class Sim:
     :param storelocs: A list of locations to save field values of at each step in time
     """
     
-    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, epsiloninf, mu0, cfield, boundary, mat0, mata1, mata2, matg, matb, dtype=np.complex64, nstore=0, storelocs = []):
+    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, mu0, cfield, boundary, mat0, epsiloninf, mata1, mata2, matg, matb, dtype=np.complex64, nstore=0, storelocs = []):
+        # -------------
+        # INITIAL SETUP
+        # -------------
         # Check that arguments have acceptable values
         if i0 > i1:
             raise ValueError("i0 must be less than or equal to i1")
@@ -58,6 +61,9 @@ class Sim:
         self._n0 = n0
         self._n1 = n1
         self._dn = dn
+        # --------------
+        # MATERIAL SETUP
+        # --------------
         # Save material dimension info
         self._mat0 = mat0
         self._jlen = np.shape(mata1)[0]
@@ -68,7 +74,12 @@ class Sim:
         self._exp_1 = np.exp(np.multiply(b_min_g, self._dn))
         self._exp_2 = np.exp(np.multiply(min_b_min_g, self._dn))
         # Calculate initial susceptability values
-        chi0_1 = np.multiply(np.divide(mata1, b_min_g), np.subtract(self._exp_1, 1))
+        chi0_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype) # Set chi0_1=0 initially
+        for j in range(self._jlen):
+            for mi in range(self._matlen):
+                # If beta-gamma is not small (i.e. if omega!=0), then calculate chi0_1, otherwise do not calculate as divide by zero error will be thrown
+                if np.abs(b_min_g[j, mi]) > 1e-8:
+                    chi0_1[j, mi] = np.multiply(np.divide(mata1[j, mi], b_min_g[j, mi]), np.subtract(self._exp_1[j, mi], 1))
         chi0_2 = np.multiply(np.divide(mata2, min_b_min_g), np.subtract(self._exp_2, 1))
         # Calclate first delta susceptabiility values
         self._dchi0_1 = np.multiply(chi0_1, np.subtract(1, self._exp_1))
@@ -81,19 +92,28 @@ class Sim:
         chi0 = np.sum(chi0_j, axis=0)
         chi0_padded = np.pad(chi0, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
         self._chi0 = chi0_padded
+        # --------------
+        # BOUNDARY SETUP
+        # --------------
         # Setup boundary condition
         self._bound = boundary
         if self._bound == 'absorbing':
-            self._hprev0 = np.complex64(0)
-            self._hprev1 = np.complex64(0)
-            self._hrprev0 = np.complex64(0)
-            self._hrprev1 = np.complex64(0)
+            self._eprev0 = np.complex64(0)
+            self._eprev1 = np.complex64(0)
+            self._erprev0 = np.complex64(0)
+            self._erprev1 = np.complex64(0)
+        # -----------
+        # FIELD SETUP
+        # -----------
         # Create each field
         self._efield = np.zeros(self._ilen, dtype=self._dtype)
         self._hfield = np.zeros(self._ilen, dtype=self._dtype)
         # Create each reference field
         self._efieldr = np.zeros(self._ilen, dtype=self._dtype)
         self._hfieldr = np.zeros(self._ilen, dtype=self._dtype)
+        # -------------------
+        # STORED VALUES SETUP
+        # -------------------
         # Determine how often to save the field and arrays to save to
         self._nstore = nstore
         # Check to see if any stores are requested
@@ -119,12 +139,20 @@ class Sim:
             self._hfield_locs = np.zeros((self._nlen, self._nlocs), dtype=self._dtype)
             self._efieldr_locs = np.zeros((self._nlen, self._nlocs), dtype=self._dtype)
             self._hfieldr_locs = np.zeros((self._nlen, self._nlocs), dtype=self._dtype)
+        # -------------
+        # CURRENT SETUP
+        # -------------
         # Save the current field
         self._cfield = cfield
+        # ---------------
+        # CONSTANTS SETUP
+        # ---------------
         # Save constants
         self._epsilon0 = epsilon0
-        self._epsiloninf = epsiloninf
         self._mu0 = mu0
+        # Epsilon_infinity is equal to one in vacuum, so only set self._epsiloninf equal to epsiloninf in the material
+        epsiloninf_repeat = np.repeat(epsiloninf, self._matlen)
+        self._epsiloninf = np.pad(epsiloninf_repeat, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant', constant_values=1)
         # Calculate simulation proportionality constants
         self._coeffe0 = self._epsiloninf/(self._epsiloninf + self._chi0)
         self._coeffe1 = 1.0/(self._epsiloninf + self._chi0)
@@ -188,22 +216,19 @@ class Sim:
         # Compute H-field and update
         self._update_hfield(n)
         self._update_hfieldr(n)
-        # Set the field values at the boundary to the previous value one away from the boundary,
-        # this somehow results in absorption, I'm not really sure how... I think it has something
-        # to do with preventing any wave reflection, meaning that the field values just end up
-        # going to zero. It would be a good idea to ask Ben about this.
-        self._hfield[0] = self._hprev0
-        self._hfield[-1] = self._hprev1
-        self._hfieldr[0] = self._hrprev0
-        self._hfieldr[-1] = self._hrprev1
-        # Save the field values one away from each boundary for use next iteration
-        self._hprev0 = self._hfield[1]
-        self._hprev1 = self._hfield[-2]
-        self._hrprev0 = self._hfieldr[1]
-        self._hrprev1 = self._hfieldr[-2]
         # Compute E-field and update
         self._update_efield(n)
         self._update_efieldr(n)
+        # Set the field values at the boundary to the previous value one away from the boundary, this somehow results in absorption, I'm not really sure how... I think it has something to do with preventing any wave reflection, meaning that the field values just end up going to zero. It would be a good idea to ask Ben about this.
+        self._efield[0] = self._eprev0
+        self._efield[-1] = self._eprev1
+        self._efieldr[0] = self._erprev0
+        self._efieldr[-1] = self._erprev1
+        # Save the field values one away from each boundary for use next iteration
+        self._eprev0 = self._efield[1]
+        self._eprev1 = self._efield[-2]
+        self._erprev0 = self._efieldr[1]
+        self._erprev1 = self._efieldr[-2]
 
     def _zero(self, n):
         """
