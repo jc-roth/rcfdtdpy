@@ -15,15 +15,15 @@ class Sim:
     :param dn: The temporal step size
     :param epsilon0: :math:`\epsilon_0`
     :param mu0: :math:`\mu_0`
-    :param cfield: The current field
     :param boundary: The boundary type of the field, either 'zero', for fields bounded by zeros, 'periodic' for periodic boundary conditions, or 'mirror' for boundaries that reflect inner field values
+    :param current: A Current object or a list of Current objects that represent the crrents present in the simulation, defaults to none
     :param mat: A Mat object or a list of Mat objects that represent the materials present in the simulation, defaults to none
-    :param dtype: The data type to store the field values in
     :param nstore: The number of temporal steps to save, defaults to zero
     :param storelocs: A list of locations to save field values of at each step in time
+    :param dtype: The data type to store the field values in
     """
     
-    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, mu0, cfield, boundary, mat=[], nstore=0, storelocs = [], dtype=np.complex64):
+    def __init__(self, i0, i1, di, n0, n1, dn, epsilon0, mu0, boundary, current=[], mat=[], nstore=0, storelocs = [], dtype=np.complex64):
         # -------------
         # INITIAL SETUP
         # -------------
@@ -36,16 +36,14 @@ class Sim:
             raise ValueError("di must be greater than zero")
         elif dn <= 0:
             raise ValueError("dn must be greater than zero")
-        elif type(cfield) is not np.ndarray:
-            raise TypeError("cfield must be of type numpy.ndarray")
         elif (not ((type(mat) == Mat) or (type(mat) is list))) or ((type(mat) is list) and (len(mat) != 0) and (type(mat[0]) != Mat)):
             raise TypeError("mat must be either a Mat object or a list of Mat objects")
+        elif (not ((type(current) == Current) or (type(current) is list))) or ((type(current) is list) and (len(current) != 0) and (type(current[0]) != Current)):
+            raise TypeError("current must be either a Current object or a list of Current objects")
         # Determine the number of temporal and spatial cells in the field
         self._nlen, self._ilen = Sim.calc_dims(n0, n1, dn, i0, i1, di)
         # Raise further errors
-        if (self._nlen, self._ilen) != np.shape(cfield):
-            raise ValueError("Expected cfield to have dimensions " + str(self.get_dims()) + " but found " + str(np.shape(cfield)) + " instead")
-        elif nstore > self._nlen:
+        if nstore > self._nlen:
             raise ValueError("nstore=" + str(nstore) + ", cannot be greater than nlen=" + str(self._nlen))
         # Save data type
         self._dtype = dtype
@@ -56,6 +54,19 @@ class Sim:
         self._n0 = n0
         self._n1 = n1
         self._dn = dn
+        # -------------
+        # CURRENT SETUP
+        # -------------
+        # Put the current variable into a list if it isn't already
+        if type(current) == Current:
+            current = [current]
+        # List already exits, create an empty current
+        elif len(current) == 0:
+            # Create an empty current
+            c = np.zeros((1, 1))
+            current.append(Current(self._nlen, self._ilen, 0, 0, c, dtype=self._dtype))
+        # Save the currents
+        self._currents = current
         # --------------
         # MATERIAL SETUP
         # --------------
@@ -71,7 +82,7 @@ class Sim:
         self._mats = mat
         # Check to see if there is any material overlap
         self._matpos = np.zeros(self._ilen)
-        for m in mat:
+        for m in self._mats:
             self._matpos = np.add(self._matpos, m.get_pos())
         # Raise error if there is overlap
         if np.max(self._matpos) > 1:
@@ -123,11 +134,6 @@ class Sim:
             self._hfield_locs = np.zeros((self._nlen, self._nlocs), dtype=self._dtype)
             self._efieldr_locs = np.zeros((self._nlen, self._nlocs), dtype=self._dtype)
             self._hfieldr_locs = np.zeros((self._nlen, self._nlocs), dtype=self._dtype)
-        # -------------
-        # CURRENT SETUP
-        # -------------
-        # Save the current field
-        self._cfield = cfield
         # ---------------
         # CONSTANTS SETUP
         # ---------------
@@ -247,7 +253,7 @@ class Sim:
         e_t1 = self._coeffe0[1:] * self._efield[1:]
         e_t2 = self._coeffe1[1:] * self._compute_psi()[1:]
         e_t3 = self._coeffe2[1:] * (self._hfield[1:]-self._hfield[:-1])
-        e_t4 = self._coeffe3[1:] * self._cfield[n,1:]
+        e_t4 = self._coeffe3[1:] * self._get_current(n)[1:]
         self._efield[1:] = e_t1 + e_t2 - e_t3 - e_t4
         
     def _update_hfieldr(self, n):
@@ -264,8 +270,21 @@ class Sim:
         """
         e_t1 = self._coeffe0r * self._efieldr[1:]
         e_t3 = self._coeffe2r * (self._hfieldr[1:]-self._hfieldr[:-1])
-        e_t4 = self._coeffe3r * self._cfield[n,1:]
+        e_t4 = self._coeffe3r * self._get_current(n)[1:]
         self._efieldr[1:] = e_t1 - e_t3 - e_t4
+
+    def _get_current(self, n):
+        """
+        Calculates the current at all points in the simulation using all the currents in the simulation
+
+        :param n: The temporal index :math:`n` to calculate the current at
+        """
+        # Create an array to hold the current
+        current = np.zeros(self._ilen)
+        for c in self._currents:
+            current = np.add(current, c._get_current(n))
+        # Return
+        return current
 
     def _compute_psi(self):
         """
@@ -356,20 +375,60 @@ class Sim:
         :return: A tuple (nlen, ilen) of the temporal and spatial dimensions
         """
         nlen = int(np.floor((n1-n0)/dn))
-        ilen = Sim._calc_idim(i0, i1, di)
+        ilen = int(np.floor((i1-i0)/di)+2) # Add two to account for boundary conditions
         return (nlen, ilen)
-        
-    @staticmethod
-    def _calc_idim(i0, i1, di):
-        """
-        Calculates the dimensions of the simulation in cells.
 
-        :param i0: The spatial value at which the field starts
-        :param i1: The spatial value at which the field ends
-        :param di: The spatial step size
-        :return: The spatial dimension
+
+class Current:
+    r"""
+    The Current class is used to represent a current in the simulation.
+
+    :param nlen: The number of temporal indicies in the simulation
+    :param ilen: The number of spatial indicies in the simulation
+    :param n0: The starting temporal index of the current
+    :param i0: The starting spatial index of the current
+    :param current: A matrix representing the current, where axis=0 represents locations in time :math:`n` and axis=1 represents locations in space :math:`i`
+    :param dtype: The data type to store the field values in
+    """
+
+    def __init__(self, nlen, ilen, n0, i0, current, dtype=np.complex64):
+        # -------------
+        # INITIAL SETUP
+        # -------------
+        # Save arguments
+        self._nlen = nlen
+        self._ilen = ilen
+        self._n0 = n0
+        self._i0 = i0
+        self._dtype = dtype
+        # Get and save material dimension info
+        if len(np.shape(current)) > 1:
+            self._cnlen = np.shape(current)[0]
+            self._cilen = np.shape(current)[1]
+        else:
+            self._cnlen = np.shape(current)[0]
+            self._cilen = 1
+        # Check for error
+        if self._n0 < 0 or self._n0 + self._cnlen > self._nlen:
+            raise ValueError("Current cannot start at n=" + str(self._n0) + " and end at n=" + str(self._n0 + self._cnlen) + " as this exceeds the dimensions of the simulation.")
+        elif self._i0 < 0 or self._i0 + self._cilen > self._ilen:
+            raise ValueError("Current cannot start at i=" + str(self._i0) + " and end at i=" + str(self._i0 + self._cilen) + " as this exceeds the dimensions of the simulation.")
+        # Reshape the current array so that it can be indexed correctly
+        self._current = np.reshape(current, (self._cnlen, self._cilen))
+
+    def _get_current(self, n):
         """
-        return int(np.floor((i1-i0)/di)+2) # Add two to account for boundary conditions
+        Returns the current at time index :math:`n` as an array the length of the simulation
+        """
+        # Determine if n is within the bounds of the current array
+        if n < self._n0 or (self._n0 + self._cnlen) <= n:
+            # Not in bounds, return zero-valued array
+            return np.zeros(self._cilen, dtype=self._dtype)
+        # Pad the current array so that it spans the length of the simulation, note index n-self._n0 is accessed instead of just n
+        current_padded = np.pad(self._current[n-self._n0], (self._i0, self._ilen - (self._i0 + self._cilen)), 'constant')
+        # Return
+        return current_padded
+
 
 class Mat:
     r"""
@@ -383,6 +442,7 @@ class Mat:
     :param mata2: A matrix representing :math:`A_2` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
     :param matg: A matrix representing :math:`\gamma` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
     :param matb: A matrix representing :math:`\beta` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
+    :param dtype: The data type to store the field values in
     """
 
     def __init__(self, dn, ilen, mat0, epsiloninf, mata1, mata2, matg, matb, dtype=np.complex64):
