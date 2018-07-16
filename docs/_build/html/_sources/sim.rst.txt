@@ -22,7 +22,6 @@ The H-field and current arrays have corresponding structures. The variables :mat
 where :math:`m_0` is the starting index of the material. Increments along the vertical axis represent increments in the oscillator index :math:`j`, and increments along the horizontal axis represent increments in space.
 
 * Discuss the choice of :math:`\frac{\Delta t}{\Delta z}\approx c`
-* Discuss how to create a current object
 
 .. automodule:: rcfdtd_sim.sim
    :members:
