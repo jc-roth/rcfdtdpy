@@ -169,21 +169,6 @@
 <li class="toctree-l1"><a class="reference internal" href="vis.html">vis</a></li>
 </ul>
 </div>
-<div class="section" id="simulation-details">
-<h2>Simulation Details<a class="headerlink" href="#simulation-details" title="Permalink to this headline">¶</a></h2>
-<p>Calculates the magnetic field according to <span class="math notranslate nohighlight">\(H^{i+1/2,n+1/2}=H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]\)</span>. Note that the prior electric field array is located half a time index away at <span class="math notranslate nohighlight">\(n-1/2\)</span> and the prior magnetic field array is located a whole time index away at <span class="math notranslate nohighlight">\(n-1\)</span>.</p>
-<p>Calcualtes the electric field according to <span class="math notranslate nohighlight">\(E^{i,n+1}=\frac{\epsilon_\infty}{\epsilon_\infty+\chi_e^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi_e^0}\psi^n-\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi_e^0\right]}\)</span>. Note that the prior electric field array is located half a time index away at <span class="math notranslate nohighlight">\(n-1\)</span> and the prior magnetic field array is located half a time index away at <span class="math notranslate nohighlight">\(n-1/2\)</span>.</p>
-<p>Calculates psi according to <span class="math notranslate nohighlight">\(\psi^n=\sum^{n-1}_{m=0}E^{i,n-m}\Delta\chi_e^m\)</span> at the current time <span class="math notranslate nohighlight">\(n\)</span> and position <span class="math notranslate nohighlight">\(i\)</span>. Currently not implemented, and will simply return zero.</p>
-</div>
-<div class="section" id="ideas">
-<h2>Ideas<a class="headerlink" href="#ideas" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li>Parallelize the calculations in time (i.e. calculate each index simultaneously) to speed up.</li>
-<li>Replace the Numpy arrays with h5py datasets, which can store much larger files locally.</li>
-<li>Visualization - Use matplotlib to export heat map of field intensity in space</li>
-<li>Create a VectorField class that can be used for non-plane wave simulations</li>
-</ul>
-</div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
