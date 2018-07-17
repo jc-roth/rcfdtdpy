@@ -1,0 +1,524 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Fourier Analysis Tutorial &mdash; RCFDTD.py  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="sim" href="sim.html" />
+    <link rel="prev" title="Beginner Tutorial" href="beg_tutorial.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> RCFDTD.py
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="beg_tutorial.html">Beginner Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fourier Analysis Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setup-simulation">Setup Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup-current">Setup Current</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setup-material">Setup Material</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-simulation">Running the Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#finding-the-transmission-and-reflection-coefficients">Finding the Transmission and Reflection Coefficients</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sim.html">sim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vis.html">vis</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RCFDTD.py</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Fourier Analysis Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/fourier_tutorial.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="fourier-analysis-tutorial">
+<h1>Fourier Analysis Tutorial<a class="headerlink" href="#fourier-analysis-tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="setup-simulation">
+<h2>Setup Simulation<a class="headerlink" href="#setup-simulation" title="Permalink to this headline">¶</a></h2>
+<p>Import needed libraries and define constants</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports</span>
+<span class="kn">from</span> <span class="nn">rcfdtd_sim</span> <span class="k">import</span> <span class="n">Sim</span><span class="p">,</span> <span class="n">Current</span><span class="p">,</span> <span class="n">Mat</span><span class="p">,</span> <span class="n">vis</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.fftpack</span> <span class="k">import</span> <span class="n">fft</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="c1"># Determine file save name</span>
+<span class="n">fsave</span> <span class="o">=</span> <span class="s1">&#39;dat1_1ps.npz&#39;</span>
+<span class="c1"># Constants</span>
+<span class="n">c0</span> <span class="o">=</span> <span class="mi">300</span> <span class="c1"># um/ps</span>
+<span class="n">di</span> <span class="o">=</span> <span class="mf">0.003</span> <span class="c1"># 0.003 um</span>
+<span class="n">dn</span> <span class="o">=</span> <span class="n">di</span><span class="o">/</span><span class="n">c0</span> <span class="c1"># (0.003 um) / (300 um/ps) = 0.00001 ps = 0.01 fs</span>
+<span class="n">epsilon0</span> <span class="o">=</span> <span class="mf">8.85419e18</span> <span class="c1"># (A^2 ps^4)/(kg um^3)</span>
+<span class="n">mu0</span> <span class="o">=</span> <span class="mf">1.25664e-24</span> <span class="c1"># (kg um)/(A^2 ps^2)</span>
+</pre></div>
+</div>
+<p>Define simulation bounds and calculate length in indicies</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define bounds</span>
+<span class="n">i0</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span> <span class="c1"># -3um</span>
+<span class="n">i1</span> <span class="o">=</span> <span class="mi">6</span> <span class="c1"># 6 um</span>
+<span class="n">n0</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e-2</span> <span class="c1"># -1e-3 ps = -10 fs</span>
+<span class="n">n1</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># 1 ps = 1000 fs</span>
+<span class="c1"># Calculate dimensions</span>
+<span class="n">nlen</span><span class="p">,</span> <span class="n">ilen</span> <span class="o">=</span> <span class="n">Sim</span><span class="o">.</span><span class="n">calc_dims</span><span class="p">(</span><span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Create our time and space arrays to help construct our material and
+current pulse</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a arrays that hold the value of the center of each cell</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">n0</span><span class="o">+</span><span class="n">dn</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">n1</span><span class="o">+</span><span class="n">dn</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">i0</span><span class="o">+</span><span class="n">di</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">i1</span><span class="o">+</span><span class="n">di</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setup-current">
+<h2>Setup Current<a class="headerlink" href="#setup-current" title="Permalink to this headline">¶</a></h2>
+<p>Specify the location of our current pulse in time and space</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cp_loc_val</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+<span class="n">cp_time_val</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>Determine the simulation indicies that correspond to these locations</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find indicies</span>
+<span class="n">cp_loc_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cp_loc_val</span><span class="p">)))</span>
+<span class="n">cp_time_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">cp_time_val</span><span class="p">)))</span>
+<span class="c1"># Find start and end indicies in time</span>
+<span class="n">cp_time_s</span> <span class="o">=</span> <span class="n">cp_time_ind</span> <span class="o">-</span> <span class="mi">350</span>
+<span class="n">cp_time_e</span> <span class="o">=</span> <span class="n">cp_time_ind</span> <span class="o">+</span> <span class="mi">350</span>
+</pre></div>
+</div>
+<p>Create the current pulse</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make pulse</span>
+<span class="n">cpulse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">t</span><span class="p">[</span><span class="n">cp_time_s</span><span class="p">:</span><span class="n">cp_time_e</span><span class="p">]</span><span class="o">-</span><span class="n">cp_time_val</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">)))),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="c1"># Plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mf">1e3</span><span class="o">*</span><span class="n">t</span><span class="p">[</span><span class="n">cp_time_s</span><span class="p">:</span><span class="n">cp_time_e</span><span class="p">],</span> <span class="mf">1e-3</span><span class="o">*</span><span class="n">cpulse</span><span class="p">)</span> <span class="c1"># 1e3 scale factor converts from ps -&gt; fs, and 1e-3 scale factor converts from A -&gt; mA</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time [fs]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;current [mA]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="c1"># Create Current object</span>
+<span class="n">current</span> <span class="o">=</span> <span class="n">Current</span><span class="p">(</span><span class="n">nlen</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">cp_time_s</span><span class="p">,</span> <span class="n">cp_loc_ind</span><span class="p">,</span> <span class="n">cpulse</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/fa0.png" src="_images/fa0.png" />
+</div>
+<div class="section" id="setup-material">
+<h2>Setup Material<a class="headerlink" href="#setup-material" title="Permalink to this headline">¶</a></h2>
+<p>Specify the location of our material (which will be <span class="math notranslate nohighlight">\(4\)</span>um in
+length)</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set material length</span>
+<span class="n">m_len</span> <span class="o">=</span> <span class="mi">4</span> <span class="c1"># 4 um</span>
+<span class="c1"># Set locations</span>
+<span class="n">m_s_val</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">m_e_val</span> <span class="o">=</span> <span class="n">m_s_val</span> <span class="o">+</span> <span class="n">m_len</span>
+</pre></div>
+</div>
+<p>Calculate the starting and ending indicies of our material</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">m_s_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">m_s_val</span><span class="p">)))</span>
+<span class="n">m_e_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">m_e_val</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>Setup material behavior</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set constants</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">(</span><span class="mf">0.01</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">a1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># Calculate beta</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">gamma</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">omega</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>Create our material behavior matrices</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Determine matrix length</span>
+<span class="n">mlen</span> <span class="o">=</span> <span class="n">m_e_ind</span> <span class="o">-</span> <span class="n">m_s_ind</span>
+<span class="c1"># Create matrices</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">mlen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
+<span class="n">mgamma</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">gamma</span>
+<span class="n">mbeta</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">beta</span>
+<span class="n">ma1</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">a1</span>
+<span class="n">ma2</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">a2</span>
+</pre></div>
+</div>
+<p>Create our material object</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">inf_perm</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">material</span> <span class="o">=</span> <span class="n">Mat</span><span class="p">(</span><span class="n">dn</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">m_s_ind</span><span class="p">,</span> <span class="n">inf_perm</span><span class="p">,</span> <span class="n">ma1</span><span class="p">,</span> <span class="n">ma2</span><span class="p">,</span> <span class="n">mgamma</span><span class="p">,</span> <span class="n">mbeta</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="running-the-simulation">
+<h2>Running the Simulation<a class="headerlink" href="#running-the-simulation" title="Permalink to this headline">¶</a></h2>
+<p>Create and run our simulation (or load simulation if one already exists)</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create Sim object</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">Sim</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">epsilon0</span><span class="p">,</span> <span class="n">mu0</span><span class="p">,</span> <span class="s1">&#39;absorbing&#39;</span><span class="p">,</span> <span class="n">current</span><span class="p">,</span> <span class="n">material</span><span class="p">,</span> <span class="n">nstore</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">nlen</span><span class="o">/</span><span class="mi">20</span><span class="p">),</span> <span class="n">storelocs</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">ilen</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+<span class="c1"># Run simulation if simulation save doesn&#39;t exist</span>
+<span class="n">sim_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">fsave</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">sim_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+    <span class="c1"># Load results</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fsave</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span>
+    <span class="n">ls</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="s1">&#39;ls&#39;</span><span class="p">]</span>
+    <span class="n">els</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="s1">&#39;els&#39;</span><span class="p">]</span>
+    <span class="n">erls</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="s1">&#39;erls&#39;</span><span class="p">]</span>
+    <span class="n">hls</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="s1">&#39;hls&#39;</span><span class="p">]</span>
+    <span class="n">hrls</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="s1">&#39;hrls&#39;</span><span class="p">]</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="c1"># Run simulation</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
+    <span class="c1"># Export and save arrays</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">ls</span><span class="p">,</span> <span class="n">els</span><span class="p">,</span> <span class="n">erls</span><span class="p">,</span> <span class="n">hls</span><span class="p">,</span> <span class="n">hrls</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">export_locs</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">savez</span><span class="p">(</span><span class="n">fsave</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="n">ls</span><span class="p">,</span> <span class="n">els</span><span class="o">=</span><span class="n">els</span><span class="p">,</span> <span class="n">erls</span><span class="o">=</span><span class="n">erls</span><span class="p">,</span> <span class="n">hls</span><span class="o">=</span><span class="n">hls</span><span class="p">,</span> <span class="n">hrls</span><span class="o">=</span><span class="n">hrls</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="finding-the-transmission-and-reflection-coefficients">
+<h2>Finding the Transmission and Reflection Coefficients<a class="headerlink" href="#finding-the-transmission-and-reflection-coefficients" title="Permalink to this headline">¶</a></h2>
+<p>We ultimately wish to calculate the reflection and transmission
+coefficients</p>
+<div class="math notranslate nohighlight">
+\[R(\omega)=\frac{E_r(\omega)}{E_i(\omega)} \qquad T(\omega)=\frac{E_t(\omega)}{E_i(\omega)}\]</div>
+<p>which means that we need to extract our incident E-field <span class="math notranslate nohighlight">\(E_i\)</span>, reflected E-field <span class="math notranslate nohighlight">\(E_r\)</span>, and transmitted E-field <span class="math notranslate nohighlight">\(E_t\)</span> from our E-field and reference E-field passing through <span class="math notranslate nohighlight">\(i=1\)</span> and <span class="math notranslate nohighlight">\(i=\text{ilen}-2\)</span> (these fields are contained in <code class="docutils literal notranslate"><span class="pre">els</span></code> and <code class="docutils literal notranslate"><span class="pre">erls</span></code>). The incident E-field <span class="math notranslate nohighlight">\(E_i\)</span> should be equal to the reference E-field passing through <span class="math notranslate nohighlight">\(i=\text{ilen}-2\)</span>. Since the current is only non-zero from <span class="math notranslate nohighlight">\(-3\)</span>fs to <span class="math notranslate nohighlight">\(3\)</span>fs and since it will take light propegating at <span class="math notranslate nohighlight">\(300\)</span>um/ps <span class="math notranslate nohighlight">\(26.6\)</span>fs to reach the end of the simulation at <span class="math notranslate nohighlight">\(6\)</span>um from <span class="math notranslate nohighlight">\(-2\)</span>um, we plot the reference E-field from <span class="math notranslate nohighlight">\(23.6\)</span>fs to <span class="math notranslate nohighlight">\(29.6\)</span>fs below</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot the E-field passing through i=ilen-2</span>
+<span class="n">inc</span> <span class="o">=</span> <span class="n">erls</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># Extract the transmitted reference E-field as the incident field</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mf">1e3</span><span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">inc</span><span class="p">))</span> <span class="c1"># 1e3 scale factor converts from ps -&gt; fs</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;current [?]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time [fs]&#39;</span><span class="p">)</span>
+<span class="c1"># Lets zoom in on the x-axis as described above</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mf">23.6</span><span class="p">,</span><span class="mf">29.6</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fa1.png" src="_images/fa1.png" />
+<p>The pulse is (roughly) centered as expected. We can extract
+<span class="math notranslate nohighlight">\(E_i(\omega)\)</span> from <span class="math notranslate nohighlight">\(E^{i=\text{ilen}-2}_\text{ref}(t)\)</span> via</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{F}\left\{E^{i=\text{ilen}-2}_\text{ref}(t)\right\}=E_i(\omega)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{F}\left\{A(t)\right\}=A(\omega)\)</span> denotes a
+Fourier Transform on <span class="math notranslate nohighlight">\(A\)</span></p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Perform FFT</span>
+<span class="n">incf</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">inc</span><span class="p">)</span>
+<span class="c1"># Discard negative frequencies (at nlen/2 and above), keep DC (at 0)</span>
+<span class="n">incf</span> <span class="o">=</span> <span class="n">incf</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">nlen</span><span class="o">/</span><span class="mi">2</span><span class="p">)]</span>
+<span class="c1"># Determine the frequency that each value in eef corresponds to</span>
+<span class="n">nf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">dn</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">nlen</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax0</span><span class="p">,</span> <span class="n">ax1</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">incf</span><span class="p">))</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;magnitude [?]&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">incf</span><span class="p">))</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;phase [rad]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;frequency [THz]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span> <span class="c1"># Truncate at 1THz</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fa2.png" src="_images/fa2.png" />
+<p>We can determine the transmitted E-field <span class="math notranslate nohighlight">\(E_t\)</span> from the E-field
+passing through <span class="math notranslate nohighlight">\(i=\text{ilen}-2\)</span>. We plot this field below</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot the E-field passing through i=ilen-2</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">els</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># Extract the E-field as the transmitted field</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mf">1e3</span><span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">trans</span><span class="p">))</span> <span class="c1"># 1e3 scale factor converts from ps -&gt; fs</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;real magnitude [?]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time [fs]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fa3.png" src="_images/fa3.png" />
+<p>Since there will be an infinite number of reflections inside of the
+material, we will never capture the entire transmitted E-field. However,
+if we run the simulation for a long enough time the E-field remaining in
+the material will become negligable. We extract <span class="math notranslate nohighlight">\(E_t(\omega)\)</span> via</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{F}\left\{E^{i=\text{ilen}-2}(t)\right\}=E_t(\omega)\]</div>
+<p>where again <span class="math notranslate nohighlight">\(\mathcal{F}\left\{A(t)\right\}=A(\omega)\)</span> denotes a
+Fourier Transform on <span class="math notranslate nohighlight">\(A\)</span></p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Perform FFT</span>
+<span class="n">transf</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">trans</span><span class="p">)</span>
+<span class="c1"># Discard negative frequencies (at nlen/2 and above), keep DC (at 0)</span>
+<span class="n">transf</span> <span class="o">=</span> <span class="n">transf</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">nlen</span><span class="o">/</span><span class="mi">2</span><span class="p">)]</span>
+</pre></div>
+</div>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax0</span><span class="p">,</span> <span class="n">ax1</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">transf</span><span class="p">))</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;magnitude [?]&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">transf</span><span class="p">))</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;phase [rad]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;frequency [THz]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span> <span class="c1"># Truncate at 1THz</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fa4.png" src="_images/fa4.png" />
+<p>Now all that remains is to determine the reflected E-field
+<span class="math notranslate nohighlight">\(E_r(\omega)\)</span>. This field is slightly harder to calculate than
+<span class="math notranslate nohighlight">\(E_i\)</span> and <span class="math notranslate nohighlight">\(E_t\)</span> as the current pulse that generates the EM
+pulse in the simulation actually produces two EM pulses, one traveling
+towards each end of the simulation. The forward propegating pulse is our
+incident pulse (we used this to calculate <span class="math notranslate nohighlight">\(E_i(\omega)\)</span>
+previously), while the backward propegating pulse is unwanted. Since the
+reference field never interacts with a material,
+<span class="math notranslate nohighlight">\(E^{i=1}_\text{ref}(t)\)</span> will only contain the backward propegating
+pulse. As such, we can determine the reflected field <span class="math notranslate nohighlight">\(E_r(t)\)</span> from</p>
+<div class="math notranslate nohighlight">
+\[E_r(t)=E^{i=1}(t)-E^{i=1}_\text{ref}(t)\]</div>
+<p>As in the case of determining the transmitted field <span class="math notranslate nohighlight">\(E_t\)</span> we can
+never capture the entire transmitted E-field as there will be an
+infinite number of reflections inside the material. However, as before,
+if we run the simulation for a long enough time the E-field remaining in
+the material will become negligable.</p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot the reflected E-field passing through i=1</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">els</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Extract the transmitted E-field</span>
+<span class="n">rref</span> <span class="o">=</span> <span class="n">erls</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">refl</span> <span class="o">=</span> <span class="n">r</span> <span class="o">-</span> <span class="n">rref</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="mf">1e3</span><span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">refl</span><span class="p">))</span> <span class="c1"># 1e3 scale factor converts from ps -&gt; fs</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time [fs]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fa6.png" src="_images/fa6.png" />
+<p>We extract <span class="math notranslate nohighlight">\(E_t(\omega)\)</span> via a Fourier transform as usual</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{F}\left\{E_r(t)\right\}=E_r(\omega)\]</div>
+<p>where again <span class="math notranslate nohighlight">\(\mathcal{F}\left\{A(t)\right\}=A(\omega)\)</span> denotes a
+Fourier Transform on <span class="math notranslate nohighlight">\(A\)</span></p>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Perform FFT</span>
+<span class="n">reflf</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">refl</span><span class="p">)</span>
+<span class="c1"># Discard negative frequencies (at nlen/2 and above), keep DC (at 0)</span>
+<span class="n">reflf</span> <span class="o">=</span> <span class="n">reflf</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">nlen</span><span class="o">/</span><span class="mi">2</span><span class="p">)]</span>
+</pre></div>
+</div>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax0</span><span class="p">,</span> <span class="n">ax1</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">reflf</span><span class="p">))</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;magnitude [?]&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">reflf</span><span class="p">))</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;phase [rad]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;frequency [THz]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span> <span class="c1"># Truncate at 1THz</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fa7.png" src="_images/fa7.png" />
+<p>We can now finally calculate</p>
+<div class="math notranslate nohighlight">
+\[R(\omega)=\frac{E_r(\omega)}{E_i(\omega)} \qquad T(\omega)=\frac{E_t(\omega)}{E_i(\omega)}\]</div>
+<div class="code ipython3 highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate coefficients</span>
+<span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">reflf</span><span class="p">,</span> <span class="n">incf</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">transf</span><span class="p">,</span> <span class="n">incf</span><span class="p">)</span>
+<span class="c1"># Plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax0</span><span class="p">,</span> <span class="n">ax1</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;R&#39;</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">R</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;R+T&#39;</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;coefficient&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;R&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">nf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">R</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;R+T&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;phase [rad]&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;frequency [THz]&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span> <span class="c1"># Truncate at 1THz</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img alt="_images/fa8.png" src="_images/fa8.png" />
+<p>There is a clear Fabry-Perot effect present in the material
+transmission. Notably <span class="math notranslate nohighlight">\(R(\omega)+T(\omega)\neq1\)</span>, which suggests
+values are being incorrectly normalized somewhere in the simulation.
+Hopefully further investigation will determine the cause of this issue.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sim.html" class="btn btn-neutral float-right" title="sim" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="beg_tutorial.html" class="btn btn-neutral" title="Beginner Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Jack Roth.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

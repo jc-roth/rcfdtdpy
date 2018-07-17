@@ -10,7 +10,8 @@ Welcome to RCFDTD.py's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   tutorial
+   beg_tutorial
+   fourier_tutorial
    sim
    vis
 
