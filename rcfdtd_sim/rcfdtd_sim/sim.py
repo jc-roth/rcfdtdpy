@@ -125,7 +125,6 @@ class Sim:
         # Save storeloc info
         self._storelocs = storelocs
         self._nlocs = len(self._storelocs)
-        self._storeind = list(range(self._nlocs))
         # Check to see if any storelocs are requested
         if self._nlocs != 0:
             # Create arrays to store the field values in each location
@@ -197,17 +196,17 @@ class Sim:
             # Save specific field locations if storing has been requested
             if self._nlocs != 0:
                 # Store each location
-                self._efield_locs[n, self._storeind] = self._efield[self._storelocs]
-                self._efieldr_locs[n, self._storeind] = self._efieldr[self._storelocs]
-                self._hfield_locs[n, self._storeind] = self._hfield[self._storelocs]
-                self._hfieldr_locs[n, self._storeind] = self._hfieldr[self._storelocs]
+                self._efield_locs[n,:] = self._efield[self._storelocs]
+                self._efieldr_locs[n,:] = self._efieldr[self._storelocs]
+                self._hfield_locs[n,:] = self._hfield[self._storelocs]
+                self._hfieldr_locs[n,:] = self._hfieldr[self._storelocs]
 
     def _absorbing(self, n):
         """
-        Computes the E-field and H-fields at time step n with absorbing boundaries
+        Computes the E-field and H-fields at time step n with absorbing boundaries.
         """
         # Update Psi
-        self._update_psi()
+        self._update_mat(n)
         # Compute H-field and update
         self._update_hfield(n)
         self._update_hfieldr(n)
@@ -230,7 +229,7 @@ class Sim:
         Computes the E-field and H-fields at time step n with constant zero boundaries.
         """
         # Update Psi
-        self._update_psi()
+        self._update_mat(n)
         # Compute H-field and update
         self._update_hfield(n)
         self._update_hfieldr(n)
@@ -240,7 +239,7 @@ class Sim:
         
     def _update_hfield(self, n):
         """
-        Updates the H-field to the values at the next iteration
+        Updates the H-field to the values at the next iteration. Should be called once per simulation step.
         """
         h_t1 = self._hfield[:-1]
         h_t2 = self._coeffh1 * (self._efield[1:]-self._efield[:-1])
@@ -248,7 +247,7 @@ class Sim:
 
     def _update_efield(self, n):
         """
-        Updates the E-field to the values at the next iteration
+        Updates the E-field to the values at the next iteration. Should be called once per simulation step.
         """
         e_t1 = self._coeffe0[1:] * self._efield[1:]
         e_t2 = self._coeffe1[1:] * self._compute_psi()[1:]
@@ -258,7 +257,7 @@ class Sim:
         
     def _update_hfieldr(self, n):
         """
-        Updates the reference H-field to the values at the next iteration
+        Updates the reference H-field to the values at the next iteration. Should be called once per simulation step.
         """
         h_t1 = self._hfieldr[:-1]
         h_t2 = self._coeffh1r * (self._efieldr[1:]-self._efieldr[:-1])
@@ -266,7 +265,7 @@ class Sim:
 
     def _update_efieldr(self, n):
         """
-        Updates the reference E-field to the values at the next iteration
+        Updates the reference E-field to the values at the next iteration. Should be called once per simulation step.
         """
         e_t1 = self._coeffe0r * self._efieldr[1:]
         e_t3 = self._coeffe2r * (self._hfieldr[1:]-self._hfieldr[:-1])
@@ -288,7 +287,7 @@ class Sim:
 
     def _compute_psi(self):
         """
-        Calculates psi at all points in the simulation using all materials in the simulation
+        Calculates psi at all points in the simulation using all materials in the simulation.
         """
         # Create an array to hold psi
         psi = np.zeros(self._ilen)
@@ -297,13 +296,13 @@ class Sim:
         # Return
         return psi
 
-    def _update_psi(self):
+    def _update_mat(self, n):
         """
-        Updates the value of psi_1 and psi_2 in each material in the simulation
+        Updates the each material in the simulation using the `_update_mat` function. Should be called once per simulation step.
         """
         # Iterate through all materials and update each
         for m in self._mats:
-            m._update_psi(self._efield)
+            m._update_mat(n, self._efield)
 
     def get_bound_res(self):
         """
@@ -321,6 +320,14 @@ class Sim:
         """
         return (self._nlen, self._ilen)
 
+    def get_mats(self):
+        """
+        Returns the list of Mat objects present in the simulation.
+
+        :returns: A list of Mat objects
+        """
+        return self._mats
+
     def export_fields(self):
         """
         Exports all stored field values (the number of which is determined by :code:`nstore` at initialization) along with the spatial and temporal bounds of each field cell.
@@ -336,11 +343,6 @@ class Sim:
             self._hfield_save = None
             self._efieldr_save = None
             self._hfieldr_save = None
-        if self._nlocs == 0:
-            self._efield_locs = None
-            self._efieldr_locs = None
-            self._hfield_locs = None
-            self._hfieldr_locs = None
         # Return
         return (n, i, self._efield_save, self._hfield_save, self._efieldr_save, self._hfieldr_save)
 
@@ -442,10 +444,11 @@ class Mat:
     :param mata2: A matrix representing :math:`A_2` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
     :param matg: A matrix representing :math:`\gamma` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
     :param matb: A matrix representing :math:`\beta` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
+    :param storelocs: A list of locations to save chi at during each step in time, indexed from 0 to the material length
     :param dtype: The data type to store the field values in
     """
 
-    def __init__(self, dn, ilen, mat0, epsiloninf, mata1, mata2, matg, matb, dtype=np.complex64):
+    def __init__(self, dn, ilen, nlen, mat0, epsiloninf, mata1, mata2, matg, matb, storelocs=[], dtype=np.complex64):
         # -------------
         # INITIAL SETUP
         # -------------
@@ -455,6 +458,7 @@ class Mat:
         # Save arguments
         self._dn = dn
         self._ilen = ilen
+        self._nlen = nlen
         self._mat0 = mat0
         self._dtype = dtype
         # Get and save material dimension info
@@ -508,6 +512,22 @@ class Mat:
         # Pad chi0 so that it spans the length of the simulation
         chi0_padded = np.pad(chi0, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
         self._chi0 = chi0_padded
+        # -------------------
+        # STORED VALUES SETUP
+        # -------------------
+        # Save storeloc info
+        self._storelocs = storelocs
+        self._nlocs = len(self._storelocs)
+        # Check to see if any storelocs are requested
+        if self._nlocs != 0:
+            # Create arrays to store the field values in each location
+            self._locs = np.zeros((self._nlen, self._nlocs), dtype=self._dtype)
+        # ---------------------
+        # CHI CALCULATION SETUP
+        # ---------------------
+        # Save the chi0 values from chi0_1 and chi0_2 from the indicies we wish to store at all j values
+        self._prev_chi_1 = chi0_1[:,self._storelocs]
+        self._prev_chi_2 = chi0_2[:,self._storelocs]
 
     def get_pos(self):
         r"""
@@ -516,6 +536,39 @@ class Mat:
         :return: A Numpy array of value 0 outside of the material and 1 inside of the material
         """
         return np.pad(np.repeat(1, self._matlen), (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
+
+    def _update_chi(self):
+        r"""
+        Updates chi_1 and chi_2 (i.e. :math:`\chi_1` and :math:`\chi_2`) using the update equations :math:`\chi^{m+1}_{1,j}=\chi^m_{1,j}e^{\Delta t\left(-\gamma_j+\beta_j\right)}` and :math:`\chi^{m+1}_{2,j}=\chi^m_{2,j}e^{\Delta t\left(-\gamma_j-\beta_j\right)}`. Should be called once per simulation step.
+        """
+        # Extract the exponents at the j-values we are interested in updating
+        exp_1 = self._exp_1[:,self._storelocs]
+        exp_2 = self._exp_2[:,self._storelocs]
+        # Calculate the updated chi_1 and chi_2
+        update_chi_1 = np.multiply(self._prev_chi_1, exp_1)
+        update_chi_2 = np.multiply(self._prev_chi_2, exp_2)
+        # Save the update_chi_1 and update_chi_2 into the prev_chi_1 and prev_chi_2 values
+        self._prev_chi_1 = update_chi_1
+        self._prev_chi_2 = update_chi_2
+
+    def _compute_chi(self):
+        r"""
+        Computes chi at the points specified in the simulation by the `storelocs` parameter via :math:`\chi^n=\Re\left[\chi^n_1e^{\Delta t(-\gamma_j+\beta_j)} + \chi^n_2e^{\Delta t(-\gamma_j-\beta_j)}\right]`.
+
+        :return: :math:`\chi^n` where :math:`n` is the :math:`n` th call to the function `_update_chi`
+        """
+        # Extract the exponents at the j-values we wish to store
+        exp_1 = self._exp_1[:,self._storelocs]
+        exp_2 = self._exp_2[:,self._storelocs]
+        # Compute chi_1 and chi_2
+        t1 = np.multiply(self._prev_chi_1, exp_2)
+        t2 = np.multiply(self._prev_chi_2, exp_2)
+        # Add chi_1 and chi_2 to yield chi for each oscillator
+        chi_j = np.add(t1, t2)
+        # Sum across all oscillators to determine chi at each location specified by storelocs
+        chi = np.sum(chi_j, axis=0)
+        # Return
+        return chi
 
     def _get_epsiloninf(self):
         r"""
@@ -548,7 +601,7 @@ class Mat:
 
     def _update_psi(self, efield):
         """
-        Updates the value of psi_1 and psi_2.
+        Updates the value of psi_1 and psi_2. Should be called once per simulation step.
 
         :param efield: The efield to use in update calculations
         """
@@ -563,3 +616,30 @@ class Mat:
         # Update next psi values
         self._psi_1 = np.add(t1_1, t2_1)
         self._psi_2 = np.add(t1_2, t2_2)
+
+    def _update_mat(self, n, efield):
+        """
+        Updates the value of psi_1, psi_2, chi_1, and chi_2. Saves the values of chi requested via the `storelocs` parameter.
+
+        :param n: The iteration index :math:`n`
+        :param efield: The efield to use in update calculations
+        """
+        # Update psi and chi
+        self._update_psi(efield)
+        self._update_chi()
+        # Save specific field locations if storing has been requested
+        if self._nlocs != 0:
+            # Store each location
+            self._locs[n,:] = self._compute_chi()
+
+    def export_locs(self):
+        """
+        Exports the value of chi at a specific location(s) (specified with :code:`storelocs` at initialization) at each point in time.
+
+        :return: A tuple :code:`(ls, locs)` where :code:`ls` is the list :code:`storelocs` (the same :code:`storelocs` that is passed to the Sim class during instantiation), :code:`locs` is a Numpy array containing chi at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location)
+        """
+        # Check to see if the value of each field at a specific location was saved over time
+        if self._nlocs == 0:
+            self._locs = None
+        # Return
+        return (self._storelocs, self._locs)
