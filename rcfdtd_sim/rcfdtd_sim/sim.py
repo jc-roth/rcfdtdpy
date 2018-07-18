@@ -178,6 +178,9 @@ class Sim:
         """
         Executes the simulation.
         """
+        # Iterate through all materials and reset each
+        for m in self._mats:
+            m._reset_mat()
         n_save = 0
         # Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index
         for n in tqdm(range(self._nlen), desc='Executing simulation'):
@@ -488,26 +491,24 @@ class Mat:
         self._exp_1 = np.exp(np.multiply(b_min_g, self._dn))
         self._exp_2 = np.exp(np.multiply(min_b_min_g, self._dn))
         # Calculate initial susceptability values
-        chi0_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype) # Set chi0_1=0 initially
-        chi0_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype) # Set chi0_2=0 initially
+        self._chi0_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype) # Set chi0_1=0 initially
+        self._chi0_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype) # Set chi0_2=0 initially
         for j in range(self._jlen):
             for mi in range(self._matlen):
-                if np.abs(b_min_g[j, mi]) > 1e-8:
+                if np.abs(b_min_g[j, mi]) > 1e-5:
                     # If beta-gamma is not small (i.e. if omega!=0), then calculate chi0_1, otherwise do not calculate as divide by zero error will be thrown
-                    chi0_1[j, mi] = np.multiply(np.divide(mata1[j, mi], b_min_g[j, mi]), np.subtract(self._exp_1[j, mi], 1))
+                    self._chi0_1[j, mi] = np.multiply(np.divide(mata1[j, mi], b_min_g[j, mi]), np.subtract(self._exp_1[j, mi], 1))
+                if np.abs(min_b_min_g[j, mi]) > 1e-5:
                     # Calculate chi0_2 normally
-                    chi0_2[j, mi] = np.multiply(np.divide(mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
-                else:
-                    # If beta-gamma is small, multiply chi0_2 by negative one, not sure why, just taking from Ben
-                    chi0_2[j, mi] = np.multiply(np.divide(-mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
+                    self._chi0_2[j, mi] = np.multiply(np.divide(mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
         # Calclate first delta susceptabiility values
-        self._dchi0_1 = np.multiply(chi0_1, np.subtract(1, self._exp_1))
-        self._dchi0_2 = np.multiply(chi0_2, np.subtract(1, self._exp_2))
+        self._dchi0_1 = np.multiply(self._chi0_1, np.subtract(1, self._exp_1))
+        self._dchi0_2 = np.multiply(self._chi0_2, np.subtract(1, self._exp_2))
         # Initialize psi values to zero
         self._psi_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
         self._psi_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
         # Calculate chi0
-        chi0_j = np.add(chi0_1, chi0_2)
+        chi0_j = np.add(self._chi0_1, self._chi0_2)
         chi0 = np.sum(chi0_j, axis=0)
         # Pad chi0 so that it spans the length of the simulation
         chi0_padded = np.pad(chi0, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
@@ -526,8 +527,8 @@ class Mat:
         # CHI CALCULATION SETUP
         # ---------------------
         # Save the chi0 values from chi0_1 and chi0_2 from the indicies we wish to store at all j values
-        self._prev_chi_1 = chi0_1[:,self._storelocs]
-        self._prev_chi_2 = chi0_2[:,self._storelocs]
+        self._prev_chi_1 = self._chi0_1[:,self._storelocs]
+        self._prev_chi_2 = self._chi0_2[:,self._storelocs]
 
     def get_pos(self):
         r"""
@@ -584,7 +585,8 @@ class Mat:
 
         :return: A Numpy array of length :code:`ilen` of value 0 outside of the material and :math:`\chi_0` inside of the material
         """
-        return self._chi0
+        # Return the real part as specified in Beard
+        return np.real(self._chi0)
 
     def _compute_psi(self):
         """
@@ -596,8 +598,8 @@ class Mat:
         psi = np.sum(psi_j, axis=0)
         # Pad the psi array so that it spans the length of the simulation
         psi_padded = np.pad(psi, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
-        # Return
-        return psi_padded
+        # Return the real part as specified in Beard
+        return np.real(psi_padded)
 
     def _update_psi(self, efield):
         """
@@ -631,6 +633,15 @@ class Mat:
         if self._nlocs != 0:
             # Store each location
             self._locs[n,:] = self._compute_chi()
+
+    def _reset_mat(self):
+        # Reset psi calculation
+        self._psi_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
+        self._psi_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
+        # Reset previous chi values to chi0
+        self._prev_chi_1 = self._chi0_1[:,self._storelocs]
+        self._prev_chi_2 = self._chi0_2[:,self._storelocs]
+
 
     def export_locs(self):
         """
