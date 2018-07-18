@@ -11,3 +11,8 @@ Todo
 * Update docs so that Mat and Sim have separate pages on the documentation
 * Add a tips section
     * One tip: if the field lines look very thick, move forward your current pulse in time. It is also helpful for current pulses to be smooth (i.e. no step or delta functions), as these discontinuous functions seem to mess up simulation math
+DONE # ~500fs pulse width
+DONE # Make chi in time like Ben simulation
+DONE # Plot transmitted, reflected, and incident fields in time
+DONE # Make material thicker
+Check results against Ben's results
