@@ -178,7 +178,7 @@ class Sim:
         """
         Executes the simulation.
         """
-        # Iterate through all materials and reset each
+        # Iterate through all materials and reset each so that prior simulation information isn't held in the material. Resets ensure that consecutive simulations on the same Mat object are independent of each other.
         for m in self._mats:
             m._reset_mat()
         n_save = 0
@@ -498,9 +498,8 @@ class Mat:
                 if np.abs(b_min_g[j, mi]) > 1e-5:
                     # If beta-gamma is not small (i.e. if omega!=0), then calculate chi0_1, otherwise do not calculate as divide by zero error will be thrown
                     self._chi0_1[j, mi] = np.multiply(np.divide(mata1[j, mi], b_min_g[j, mi]), np.subtract(self._exp_1[j, mi], 1))
-                if np.abs(min_b_min_g[j, mi]) > 1e-5:
-                    # Calculate chi0_2 normally
-                    self._chi0_2[j, mi] = np.multiply(np.divide(mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
+                # Calculate chi0_2 normally
+                self._chi0_2[j, mi] = np.multiply(np.divide(mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
         # Calclate first delta susceptabiility values
         self._dchi0_1 = np.multiply(self._chi0_1, np.subtract(1, self._exp_1))
         self._dchi0_2 = np.multiply(self._chi0_2, np.subtract(1, self._exp_2))
@@ -529,6 +528,12 @@ class Mat:
         # Save the chi0 values from chi0_1 and chi0_2 from the indicies we wish to store at all j values
         self._prev_chi_1 = self._chi0_1[:,self._storelocs]
         self._prev_chi_2 = self._chi0_2[:,self._storelocs]
+
+    def __str__(self):
+        """
+        Returns a descriptive string of the Mat object
+        """
+        return 'exp1:\n' + str(self._exp_1) + '\nexp2:\n' + str(self._exp_2) + '\nchi0:\n' + str(self._chi0) + '\ndchi1:\n' + str(self._dchi0_1) + '\ndchi2:\n' + str(self._dchi0_2)
 
     def get_pos(self):
         r"""
@@ -635,6 +640,9 @@ class Mat:
             self._locs[n,:] = self._compute_chi()
 
     def _reset_mat(self):
+        """
+        Resets previously stored values of psi_1, psi_2, chi_1, and chi_2 to their initial values. Resets ensure that consecutive simulations on the same Mat object are independent of each other.
+        """
         # Reset psi calculation
         self._psi_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
         self._psi_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
