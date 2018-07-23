@@ -45,7 +45,7 @@ z_int_1 = np.argwhere(z_pos==z1)[0][0]
 z_int_2 = np.int(np.round(z_int_1+L/dz));               # Finding the far edge of the sample
 
 z_end = np.size(z_pos);                                 # Finding the size of the overall simulation box
-z_source = np.round(z_int_1 + np.min(z_pos)/(5*dz));    # Setting the location of the source to be 0.5 um from the sample
+z_source = np.argmin(np.abs(z_pos-(-3)));    # Setting the location of the source to be at -3 um
 
 #%% Next, define the source of the THz 
 FWHM_THz = 0.6;                                     # (ps) FWHM of the envelope of the THz pulse
