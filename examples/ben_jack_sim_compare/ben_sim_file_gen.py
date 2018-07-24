@@ -172,7 +172,7 @@ for t_val in tqdm(np.arange(1/R,np.size(t)-1)):
     Ref_trc[t_i] = E_z_ref[z_int_2+50];
 
     # Jack's additions in the two lines below
-    Sig_back_trc[t_i] = E_z_ref[z_int_1-50];
+    Sig_back_trc[t_i] = E_z[z_int_1-50];
     Ref_back_trc[t_i] = E_z_ref[z_int_1-50];
     
     if plot_on:
