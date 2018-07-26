@@ -567,7 +567,7 @@ class Mat:
         exp_1 = self._exp_1[:,self._storelocs]
         exp_2 = self._exp_2[:,self._storelocs]
         # Compute chi_1 and chi_2
-        t1 = np.multiply(self._prev_chi_1, exp_2)
+        t1 = np.multiply(self._prev_chi_1, exp_1)
         t2 = np.multiply(self._prev_chi_2, exp_2)
         # Add chi_1 and chi_2 to yield chi for each oscillator
         chi_j = np.add(t1, t2)
@@ -649,7 +649,6 @@ class Mat:
         # Reset previous chi values to chi0
         self._prev_chi_1 = self._chi0_1[:,self._storelocs]
         self._prev_chi_2 = self._chi0_2[:,self._storelocs]
-
 
     def export_locs(self):
         """

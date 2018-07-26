@@ -80,7 +80,6 @@ spread = int(250 / 0.01) # (250 fs) / (0.01 fs/step) = 25,000 steps
 cp_time_s = cp_time_ind - spread
 cp_time_e = cp_time_ind + spread
 
-
 # Create the current pulse
 
 # In[ ]:
