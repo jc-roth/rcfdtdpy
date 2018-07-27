@@ -15,7 +15,7 @@ R = 1/1;
 eps_air = 1;                                        # dielectric costant of air
 eps_mat = 16;                                       # high frequency dielectric constant of material
 
-L = 0.01;                                           # (um) thickness of sample
+L = 1;                                           # (um) thickness of sample
 nu_j = 0;                                           # (THz) resonant frequency of oscillator
 gamma = 0.01;                                       # (THz) linewidth
 gamma_j = gamma * 2 * np.pi;
@@ -29,14 +29,13 @@ dz = 0.004;                                             # (um) size discretizati
 dt = R*dz/c0;                                           # (ps) timestep
 
 t = np.arange(-2,10,dt);                                # (ps) simulation time window 
-z_pos = np.arange(c0/R*-1,c0/R*2,dz);                   # (um) spatial box size
+z_pos = np.arange(c0/R*-1,2*c0/R,dz);                   # (um) spatial box size
 
 # N = np.size(t);
 N = 2**16;
 
 z1 = np.min(np.abs(z_pos));                             # finding zero for setting the position of the sample
 z_int_1 = np.argwhere(z_pos==z1)[0][0]
-
 
 z_int_2 = np.int(np.round(z_int_1+L/dz));               # Finding the far edge of the sample
 
@@ -158,8 +157,8 @@ for t_val in np.arange(1/R,np.size(t)-1):
     Ez_last_ref[t_i] = E_z_ref[-3];
     E_z_ref[-2] = Ez_last_ref[t_i-1];
     
-    Sig_trc[t_i] = E_z[z_int_2+50];
-    Ref_trc[t_i] = E_z_ref[z_int_2+50];
+    Sig_trc[t_i] = E_z[-3];
+    Ref_trc[t_i] = E_z_ref[-3];
     
     if plot_on:
         if np.mod(t_i, 10) == 0: 
@@ -183,71 +182,52 @@ for t_val in np.arange(1/R,np.size(t)-1):
 
 #%%
 
-chi_f = np.fft.fftshift(np.fft.fft(chi_t,N));
-
-"""
-plt.plot(t,Sig_trc)
-plt.show()
-
-plt.plot(t,Ref_trc)
-plt.show()
-"""
-
-freq = np.fft.fftshift(np.fft.fftfreq(N,dt))
-omega = 2*np.pi*np.fft.ifftshift(freq)
-
+chi_f = np.fft.fft(chi_t,N)
+fig101 = plt.figure(101)
+plt.clf()
+f101_ax1 = fig101.add_subplot(4,2,(1,3))
+f101_ax1.plot(t,Sig_trc)
+f101_ax1.plot(t,Ref_trc)
+#
+freq = np.fft.fftfreq(N,dt)
+omega = 2*np.pi*freq
+#
 sig_spec = np.fft.fft(Sig_trc-np.mean(Sig_trc),N)
 ref_spec = np.fft.fft(Ref_trc-np.mean(Ref_trc),N)
-
-t_spec = (sig_spec/ref_spec)**2
-phi = -np.angle(t_spec)
+#
+t_spec = np.divide(sig_spec,ref_spec)
+phi = -np.unwrap(np.angle(t_spec))
 Abs_spec = np.abs(t_spec)
 #
 n = c0/(omega*L)*phi + 1
 #
 k = -c0/(omega*L)*np.log(Abs_spec*(n+1)**2/(4*n))
 #
-n = np.fft.fftshift(n);
-k = np.fft.fftshift(k);
+#n = np.fft.fftshift(n)
+#k = np.fft.fftshift(k)
 #
-#subplot(4,2,2)
-plt.plot(freq,n)
-plt.ylabel('n')
-plt.xlabel('frequency [THz]')
-plt.xlim(0.2, 2.5)
-plt.show()
+f1_ax2 = fig101.add_subplot(4,2,2)
+f1_ax2.plot(np.fft.fftshift(freq),np.fft.fftshift(n))
+f1_ax2.set_ylabel('n')
+f1_ax2.set_xlim([0.2, 2.5])
+f1_ax2.set_ylim([3, 5])
 #
-#subplot(4,2,4)
-#plot(freq,k)
-#xlim([0.2 2.5])
-#ylabel('\kappa')
-#xlabel('frequency (THz)')
-#
-plt.plot(freq,k)
-plt.ylabel('$\kappa$')
-plt.xlabel('frequency [THz]')
-plt.xlim(0.2, 2.5)
-plt.show()
-#
-plt.plot(freq,sig_spec)
-plt.ylabel('signal spectrum')
-plt.xlabel('frequency [THz]')
-#plt.xlim(0.2, 2.5)
-plt.show()
-#
-plt.plot(freq,ref_spec)
-plt.ylabel('reference spectrum')
-plt.xlabel('frequency [THz]')
-#plt.xlim(0.2, 2.5)
-plt.show()
-#subplot(2,2,3); 
-#plot(t,chi_t)
-#xlabel('t (ps)')
-#ylabel('\chi(t) (a.u.)')
-#
-#subplot(2,2,4); 
-#plot(freq,real(chi_f),freq,-imag(chi_f))
-#xlabel('frequency (THz)')
-#ylabel('\chi(t) (a.u.)')
-#xlim([0.2 2.5])
+f1_ax4 = fig101.add_subplot(4,2,4)
+f1_ax4.plot(np.fft.fftshift(freq),np.fft.fftshift(k))
+f1_ax4.set_xlim([0.2, 2.5])
+f1_ax4.set_ylabel(r'$\kappa$')
+f1_ax4.set_xlabel('frequency (THz)')
 
+f101_ax5 = fig101.add_subplot(2,2,3) 
+f101_ax5.plot(t,chi_t)
+f101_ax5.set_xlabel('t (ps)')
+f101_ax5.set_ylabel(r'$\chi$(t) (a.u.)')
+
+f101_ax6 = fig101.add_subplot(2,2,4) 
+f101_ax6.plot(freq,np.real(chi_f),freq,-np.imag(chi_f))
+f101_ax6.set_xlabel('frequency (THz)')
+f101_ax6.set_ylabel(r'$\chi(\omega)$ (a.u.)')
+f101_ax6.set_xlim([0.2, 2.5])
+
+plt.tight_layout()
+plt.show()

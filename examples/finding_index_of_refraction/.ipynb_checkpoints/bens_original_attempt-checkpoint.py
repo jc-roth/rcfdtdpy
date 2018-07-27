@@ -21,7 +21,7 @@ gamma = 0.01;                                       # (THz) linewidth
 gamma_j = gamma * 2 * np.pi;
 
 beta_j = np.sqrt((gamma_j)**2 - (2*np.pi*nu_j)**2);      # (THz) effective oscillation frequency
-A = 160;                                            # (a.u.) oscillator amplitude
+A = 0;                                            # (a.u.) oscillator amplitude
 
 
 #%% Next, define the simulation parameters
@@ -193,7 +193,7 @@ plt.plot(t,Ref_trc)
 plt.show()
 """
 
-freq = np.fft.fftfreq(N,dt)
+freq = np.fft.fftshift(np.fft.fftfreq(N,dt))
 omega = 2*np.pi*np.fft.ifftshift(freq)
 
 sig_spec = np.fft.fft(Sig_trc-np.mean(Sig_trc),N)
