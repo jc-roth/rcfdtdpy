@@ -3,9 +3,6 @@ from rcfdtd_sim import Sim, Current, Mat, vis
 import numpy as np
 from scipy.fftpack import fft, fftfreq, fftshift
 from matplotlib import pyplot as plt
-from pathlib import Path
-# Determine file save name
-fsave = 'material_fun.npz'
 
 # ================
 # SETUP SIMULATION
@@ -17,10 +14,10 @@ dn = di/c0 # (0.3 um) / (300 um/ps) = 0.001 ps = 1 fs
 epsilon0 = 1
 mu0 = 1
 # Define bounds
-i0 = -500 # -500 um
-i1 = 1500 # 1500 um
-n0 = -900 # (1 fs) * (-900 um) / (0.3 um/step) = (1 fs) * (-3,000 steps) = -3,000 fs = -3 ps
-n1 = 8100 # (1 fs) * (8100 um) / (0.3 um/step) = (1 fs) * (27,000 steps) = 27,000 fs = 27 ps
+i0 = -100 # -100 um
+i1 = 1100 # 1100 um
+n0 = -300 # (1 fs) * (-300 um) / (0.3 um/step) = (1 fs) * (-1,000 steps) = -1,000 fs = -1 ps
+n1 = 5100 # (1 fs) * (5100 um) / (0.3 um/step) = (1 fs) * (17,000 steps) = 17,000 fs = 17 ps
 # Calculate dimensions
 nlen, ilen = Sim.calc_dims(n0, n1, dn, i0, i1, di)
 print('nlen=%i, ilen=%i' % (nlen, ilen))
@@ -32,7 +29,7 @@ z = np.linspace(i0+di/2, i1+di/2, ilen, endpoint=False)
 # SETUP CURRENT
 # =============
 # Set current location
-cp_loc_val = -250 # -250 um
+cp_loc_val = -50 # -250 um
 cp_time_val = 0 # 0 fs
 # Find current indicies
 cp_loc_ind = np.argmin(np.abs(np.subtract(z, cp_loc_val)))
@@ -50,22 +47,17 @@ current = Current(nlen, ilen, cp_time_s, cp_loc_ind, cpulse)
 # SETUP MATERIAL
 # ==============
 # Set material length
-m_len = 1250 # 1250 um = 1.25mm
+m_len_val = 1000 # 1000 um = 1mm
 # Set locations
 m_s_val = 0
-m_e_val = m_s_val + m_len
-# Set material length
-m_len = 1250 # 1250 um = 1.25mm
-# Set locations
-m_s_val = 0
-m_e_val = m_s_val + m_len
+m_e_val = m_s_val + m_len_val
 # Find indicies
 m_s_ind = np.argmin(np.abs(np.subtract(z, m_s_val)))
 m_e_ind = np.argmin(np.abs(np.subtract(z, m_e_val)))
 # Set constants
 a = np.complex64(1)
-gamma = np.complex64(0.01)
-freq = np.complex64(1)
+gamma = np.complex64(1e-2)
+freq = np.complex64(2e-1)
 # Calculate beta
 ang_gamma = np.complex64(gamma * 2 * np.pi)
 omega = np.complex64(freq * 2 * np.pi)
@@ -73,15 +65,15 @@ beta = np.sqrt(np.add(np.square(ang_gamma), -np.square(omega)), dtype=np.complex
 a1 = np.complex64(a/(2*beta))
 a2 = np.complex64(-a/(2*beta))
 # Determine matrix length
-mlen = m_e_ind - m_s_ind
+m_len_ind = m_e_ind - m_s_ind
 # Create matrices
-m = np.ones((1, mlen), dtype=np.complex64)
+m = np.ones((1, m_len_ind), dtype=np.complex64)
 mgamma = m * ang_gamma
 mbeta = m * beta
 ma1 = m * a1
 ma2 = m * a2
 # Create material object
-inf_perm = 16
+inf_perm = 9
 material = Mat(dn, ilen, nlen, m_s_ind, inf_perm, ma1, ma2, mgamma, mbeta, storelocs=[1])
 # Display constants
 print('gamma=%i, beta=%i, a1=%i, a2=%i' % (gamma, beta, a1, a2))
@@ -91,28 +83,14 @@ print('gamma=%i, beta=%i, a1=%i, a2=%i' % (gamma, beta, a1, a2))
 # ==============
 # Create Sim object
 s = Sim(i0, i1, di, n0, n1, dn, epsilon0, mu0, 'absorbing', current, material, nstore=int(nlen/40), storelocs=[5,ilen-6])
-# Run simulation if simulation save doesn't exist
-sim_file = Path(fsave)
-if sim_file.is_file():
-    # Load results
-    dat = np.load(fsave)
-    n = dat['n']
-    ls = dat['ls']
-    els = dat['els']
-    erls = dat['erls']
-    hls = dat['hls']
-    hrls = dat['hrls']
-    chi = dat['chi']
-else:
-    # Run simulation
-    s.simulate()
-    # Export visualization
-    vis.timeseries(s, iunit='um')#, fname=fsave+'.mp4')
-    # Export and save arrays
-    n, ls, els, erls, hls, hrls = s.export_locs()
-    ls_mat, chi = material.export_locs()
-    n = n * (10/3) # 10/3 scale factor converts from um -> fs
-    np.savez(fsave, n=n, ls=ls, els=els, erls=erls, hls=hls, hrls=hrls, chi=chi)
+# Run simulation
+s.simulate()
+# Export visualization
+vis.timeseries(s, iunit='um')
+# Export and save arrays
+n, ls, els, erls, hls, hrls = s.export_locs()
+ls_mat, chi = material.export_locs()
+n = n * (10/3) # 10/3 scale factor converts from um -> fs
 
 # ===================================
 # EXTRACT SIMULATION DATA AND ANALYZE
@@ -146,11 +124,11 @@ spec_a = np.abs(np.unwrap(np.angle(spec)))
 # =============================
 # Set constants (MAKE SURE THAT THESE ARE UP TO DATE WITH DATA TO LOAD IN)
 c0 = 1 # 300 um/ps : Taken from original.py
-L = m_len/300 # 1250 um / (300 um/ps) = 125 ps / 30 : Material length (manually divided by 300 um/ps as c0 = 1)
+m_len_adj = m_len_val/300 # 1250 um / (300 um/ps) = 125 ps / 30 : Material length (manually divided by 300 um/ps as c0 = 1)
 # Calculate the angular frequency
 ang_freq = 2 * np.pi * freq # THz * 2pi
 # Calculate coefficients
-coeff = np.divide(c0, np.multiply(ang_freq, L))
+coeff = np.divide(c0, np.multiply(ang_freq, m_len_adj))
 # Calculate the real part of the index of refraction
 n1 = np.multiply(coeff, spec_a) + 1
 # Calculate the imaginary part of the index of refraction
@@ -163,7 +141,7 @@ kappa1 = np.multiply(-coeff, np.log(np.multiply(spec_m, np.divide(np.square(n1+1
 plt.close('all')
 fig = plt.figure(figsize=(12, 8), dpi=100)
 # Setup axes
-ax_current = plt.subplot2grid((5,3), (1, 0), 2, 1)
+ax_chi = plt.subplot2grid((5,3), (1, 0), 2, 1)
 ax_freq = plt.subplot2grid((5,3), (1, 1), 2, 2)
 ax_time = plt.subplot2grid((5,3), (0, 0), 1, 3)
 ax_t = plt.subplot2grid((5,3), (3, 0), 1, 2, sharex = ax_freq)
@@ -177,11 +155,12 @@ ax_time.plot(n*1e-3, refl, label='$E_r(t)$')
 ax_time.set_ylabel('amplitude [?]')
 ax_time.set_xlabel('time [ps]')
 ax_time.legend(bbox_to_anchor=(1.01, 1), loc=2, borderaxespad=0)
-# Current axis
-ax_current.plot(t[cp_time_s:cp_time_e], cpulse)
-ax_current.set_ylabel('current [?]')
-ax_current.set_xlabel('time [fs]')
-ax_current.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
+# Chi axis
+ax_chi.plot(n, np.real(chi))
+ax_chi.set_ylabel('$\chi(t)$')
+ax_chi.set_xlabel('time [fs]')
+ax_chi.set_xlim(-1e3,-6e2)
+ax_chi.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
 # Frequency axis
 ax_freq.plot(freq, np.abs(incf), label='$E_i(\omega)$')
 ax_freq.plot(freq, np.abs(transf), label='$E_t(\omega)$')
@@ -204,12 +183,11 @@ ax_n.set_xlabel(r'$\omega$ [$2\pi\times$THz]')
 ax_n.set_ylabel(r'$n$')
 ax_k.set_ylabel(r'$\kappa$')
 ax_n.set_xlim(0, 2*np.pi*1e1)
-ax_n.set_ylim(4, 4.01)
+ax_n.set_ylim(2.68, 2.69)
 ax_n.legend((n1_line, kappa1_line), ('$n$', '$\kappa$'), bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode='expand', borderaxespad=0)
 # Final setup
-ax_time.set_title(r'RC-FDTD Simulation: $\epsilon_\infty=16$, $\gamma=2\pi\times0.01$, $\omega=\gamma=2\pi\times1$, $A=1$, L=$1.25$mm, THz pulse')
+ax_time.set_title(r'RC-FDTD Simulation: $\epsilon_\infty=%0.2f$, $A=%0.2f$, $\gamma=%0.2f$, $\omega=%0.2f$, L=$%0.2f$mm, THz pulse' % (inf_perm, a, gamma, omega, m_len_val))
 ax_p.set_xlim(0,10)
 plt.tight_layout()
 # Show figure
-#fig.savefig(fname='/Users/jroth/Downloads/export.pdf', format='pdf')
 plt.show()
