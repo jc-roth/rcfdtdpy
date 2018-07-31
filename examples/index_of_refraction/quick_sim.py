@@ -62,9 +62,9 @@ m_s_ind = np.argmin(np.abs(np.subtract(z, m_s_val)))
 m_e_ind = np.argmin(np.abs(np.subtract(z, m_e_val)))
 # Set constants
 inf_perm = 4
-a = np.complex64(0)
-gamma = np.complex64(1e0)
-nu = np.complex64(0e0)
+a = np.complex64(2)
+gamma = np.complex64(1e-1)
+nu = np.complex64(5e-1)
 # Calculate beta
 ang_gamma = np.complex64(gamma * 2 * np.pi)
 omega = np.complex64(nu * 2 * np.pi)
