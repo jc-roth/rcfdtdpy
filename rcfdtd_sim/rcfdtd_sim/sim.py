@@ -174,16 +174,18 @@ class Sim:
         to_return += '( n x i ): ( ' + str(self._nlen) + ' x ' + str(self._ilen) + ' )'
         return to_return
         
-    def simulate(self):
+    def simulate(self, tqdmarg={}):
         """
         Executes the simulation.
+
+        :param tqdmarg: The arguments to pass the tdqm iterator (lookup arguments on the tqdm documentation)
         """
         # Iterate through all materials and reset each so that prior simulation information isn't held in the material. Resets ensure that consecutive simulations on the same Mat object are independent of each other.
         for m in self._mats:
             m._reset_mat()
         n_save = 0
         # Simulate for one less step than the number of temporal indicies because initializing the fields to zero takes up the first temporal index
-        for n in tqdm(range(self._nlen), desc='Executing simulation'):
+        for n in tqdm(range(self._nlen), **tqdmarg):
             # Calculate the H and E fields
             if self._bound == 'zero': # Zero boundary condition
                 self._zero(n)
