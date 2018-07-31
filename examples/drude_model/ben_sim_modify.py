@@ -110,15 +110,20 @@ for t_val in tqdm(np.arange(1/R,np.size(t)-1)):
         chi_n_1 = A_1j/(beta_j-gamma_j)*np.exp((t_i-1)*dt*(-gamma_j+beta_j)) * (np.exp(dt*(-gamma_j+beta_j))-1);
         chi_n_2 = -A_2j/(beta_j+gamma_j)*np.exp((t_i-1)*dt*(-gamma_j-beta_j)) * (np.exp(dt*(-gamma_j-beta_j))-1);
     
+
     chi_n = np.real(chi_n_1* np.exp(dt*(-gamma_j+beta_j)) + chi_n_2 * np.exp(dt*(-gamma_j-beta_j)));
     
+    
+
     psi_n_1 = E_z*d_chi_0_1 + np.exp(dt*(-gamma_j+beta_j))*psi_n_1;
     psi_n_2 = E_z*d_chi_0_2 + np.exp(dt*(-gamma_j-beta_j))*psi_n_2;
     
     psi_n = np.real(psi_n_1 + psi_n_2);
     
+    
     chi_t[t_i] = chi_n;
     
+
     H_z[0:-2] = H_z[0:-2] - dt/dz*(E_z[1:-1]-E_z[0:-2]);
     H_z_ref[0:-2] = H_z_ref[0:-2] - dt/dz*(E_z_ref[1:-1]-E_z_ref[0:-2]);
         

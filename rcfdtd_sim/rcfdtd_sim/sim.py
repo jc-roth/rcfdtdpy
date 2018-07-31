@@ -495,16 +495,14 @@ class Mat:
         self._chi0_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype) # Set chi0_2=0 initially
         for j in range(self._jlen):
             for mi in range(self._matlen):
-
                 if np.abs(b_min_g[j, mi]) < 1e-5:
                     # beta-gamma is small, avoid divide by zero error
                     self._chi0_1[j, mi] = np.complex64(0)
-                    self._chi0_2[j, mi] = np.multiply(np.divide(mata2[j, mi], -min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
+                    self._chi0_2[j, mi] = np.multiply(np.divide(mata2[j, mi], -min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1)) # TODO: I don't entirely understand the purpose of the added negative in this computation. Follow up with Ben.
                 else:
                     # beta-gamma is not small, calculate normally
                     self._chi0_1[j, mi] = np.multiply(np.divide(mata1[j, mi], b_min_g[j, mi]), np.subtract(self._exp_1[j, mi], 1))
                     self._chi0_2[j, mi] = np.multiply(np.divide(mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
-                    
         # Calclate first delta susceptabiility values
         self._dchi0_1 = np.multiply(self._chi0_1, np.subtract(1, self._exp_1))
         self._dchi0_2 = np.multiply(self._chi0_2, np.subtract(1, self._exp_2))
