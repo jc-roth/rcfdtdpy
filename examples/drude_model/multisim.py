@@ -6,6 +6,7 @@ Simulates optical properties of a 10nm thick material using the Drude model in t
 from rcfdtd_sim import Sim, Current, Mat, vis
 import numpy as np
 from scipy.fftpack import fft, fftfreq
+import matplotlib
 from matplotlib import pyplot as plt
 from pathlib import Path
 
@@ -195,6 +196,32 @@ def main():
         n_imag = np.imag(n_complex)
 
         # PLOTTING
+        spec_real = np.real(spec)
+        spec_imag = np.imag(spec)
+
+        f_max = np.argmin(np.abs(np.subtract(freq, 8)))
+
+        r_max = np.max(spec_real[0:f_max])
+        r_min = np.min(spec_real[0:f_max])
+
+        i_max = np.max(spec_imag[0:f_max])
+        i_min = np.min(spec_imag[0:f_max])
+
+        plt.close('all')
+        fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True)
+        ax0.set_title(r'RC-FDTD Simulation: $\epsilon_\infty=%5.5f$, $A=%5.5f$, $\gamma=%5.5f$, $L=10$nm, data=%s.npz' % (inf_perm, a, gamma, fname))
+        ax1.set_xlim(0, 8)
+        ax0.plot(freq, spec_real)
+        ax0.set_ylim(r_min, r_max)
+        ax0.set_ylabel('Real')
+        ax1.plot(freq, spec_imag)
+        ax1.set_ylim(i_min, i_max)
+        ax1.set_ylabel('Imaginary')
+        ax1.set_xlabel('Frequency')
+        fig.savefig(fname=fprefix+fname+'.pdf', format='pdf')
+
+        # PLOTTING
+        """
         # Setup figure
         plt.close('all')
         fig = plt.figure(figsize=(12, 8), dpi=60)
@@ -232,6 +259,7 @@ def main():
         # Coefficient plot
         ax_t.plot(freq, spec_m)
         ax_t.set_ylabel(r'$E_t(\omega)/E_i(\omega)$')
+        ax_t.set_ylim(0, 2)
 
         ax_p.plot(freq, spec_a)
         ax_p.set_ylabel(r'$\phi(\nu)$ [rad]')
@@ -255,8 +283,9 @@ def main():
         plt.tight_layout()
 
         # Show figure
-        fig.savefig(fname=fprefix+fname+'.pdf', format='pdf')
-        # plt.show()
+        # fig.savefig(fname=fprefix+fname+'.pdf', format='pdf')
+        plt.show()
+        """
 
 
 # Run if main script
