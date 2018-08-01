@@ -158,21 +158,6 @@ class Sim:
         self._coeffe2r = self._dn/(self._epsilon0 * self._di)
         self._coeffe3r = self._dn/(self._epsilon0)
         self._coeffh1r = self._dn/(self._mu0 * self._di)
-
-    def __str__(self):
-        """
-        Returns a descriptive string of the Sim object.
-        """
-        to_return = ''
-        to_return += '----------\nConstants:\n'
-        to_return += 'epsilon0:' + '{0:.3f}'.format(self._epsilon0) + ' epsiloninf:' + '{0:.3f}'.format(self._epsiloninf) + ' mu0:' + '{0:.3f}'.format(self._mu0) + ' chi:' + 'NOT YET IMPLEMENTED' + ' chi0:' + '{0:.3f}'.format(self._chi0)
-        to_return += '\n-------------\nCoefficients:\n'
-        to_return += 'e1:' + '{0:.3f}'.format(self._coeffe0) + ' e2:' + '{0:.3f}'.format(self._coeffe1) + ' e3:' + '{0:.3f}'.format(self._coeffe2) + ' e4:' + '{0:.3f}'.format(self._coeffe3) + ' h2:' + '{0:.3f}'.format(self._coeffh1)
-        to_return += '\n-------\nBounds:\n'
-        to_return += 'i0:' + '{0:.3f}'.format(self._i0) + ' i1:' + '{0:.3f}'.format(self._i1) + ' di:' + '{0:.3f}'.format(self._di) + '\nn0:' + '{0:.3f}'.format(self._n0) + ' n1:' + '{0:.3f}'.format(self._n1) + ' dn:' + '{0:.3f}'.format(self._dn)
-        to_return += '\n-------\nDimensions:\n'
-        to_return += '( n x i ): ( ' + str(self._nlen) + ' x ' + str(self._ilen) + ' )'
-        return to_return
         
     def simulate(self, tqdmarg={}):
         """
@@ -477,10 +462,14 @@ class Mat:
         if self._mat0 < 0 or self._mat0 + self._matlen > self._ilen:
             raise ValueError("Material cannot start at i=" + str(self._mat0) + " and end at i=" + str(self._mat0 + self._matlen) + " as this exceeds the dimensions of the simulation.")
         # Reshape arrays so that they can be indexed correctly
-        mata1 = np.reshape(mata1, (self._jlen, self._matlen))
-        mata2 = np.reshape(mata2, (self._jlen, self._matlen))
-        matg = np.reshape(matg, (self._jlen, self._matlen))
-        matb = np.reshape(matb, (self._jlen, self._matlen))
+        self._mata1 = np.reshape(mata1, (self._jlen, self._matlen))
+        self._mata2 = np.reshape(mata2, (self._jlen, self._matlen))
+        self._matg = np.reshape(matg, (self._jlen, self._matlen))
+        self._matb = np.reshape(matb, (self._jlen, self._matlen))
+        del mata1
+        del mata2
+        del matg
+        del matb
         # Epsilon_infinity is equal to one in vacuum, so only set self._epsiloninf equal to epsiloninf in the material
         epsiloninf_repeat = np.repeat(epsiloninf, self._matlen)
         self._epsiloninf = np.pad(epsiloninf_repeat, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant', constant_values=1)
@@ -488,8 +477,8 @@ class Mat:
         # MATERIAL SETUP
         # --------------
         # Calculate susceptability beta and gamma sums and exponents
-        b_min_g = np.add(matb, -matg)
-        min_b_min_g = np.add(-matb, -matg)
+        b_min_g = np.add(self._matb, -self._matg)
+        min_b_min_g = np.add(-self._matb, -self._matg)
         self._exp_1 = np.exp(np.multiply(b_min_g, self._dn))
         self._exp_2 = np.exp(np.multiply(min_b_min_g, self._dn))
         # Calculate initial susceptability values
@@ -500,11 +489,11 @@ class Mat:
                 if np.abs(b_min_g[j, mi]) < 1e-5:
                     # beta-gamma is small, avoid divide by zero error
                     self._chi0_1[j, mi] = np.complex64(0)
-                    self._chi0_2[j, mi] = np.multiply(np.divide(mata2[j, mi], -min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1)) # TODO: I don't entirely understand the purpose of the added negative in this computation. Follow up with Ben.
+                    self._chi0_2[j, mi] = np.multiply(np.divide(self._mata2[j, mi], -min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1)) # TODO: I don't entirely understand the purpose of the added negative in this computation. Follow up with Ben.
                 else:
                     # beta-gamma is not small, calculate normally
-                    self._chi0_1[j, mi] = np.multiply(np.divide(mata1[j, mi], b_min_g[j, mi]), np.subtract(self._exp_1[j, mi], 1))
-                    self._chi0_2[j, mi] = np.multiply(np.divide(mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
+                    self._chi0_1[j, mi] = np.multiply(np.divide(self._mata1[j, mi], b_min_g[j, mi]), np.subtract(self._exp_1[j, mi], 1))
+                    self._chi0_2[j, mi] = np.multiply(np.divide(self._mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
         # Calclate first delta susceptabiility values
         self._dchi0_1 = np.multiply(self._chi0_1, np.subtract(1, self._exp_1))
         self._dchi0_2 = np.multiply(self._chi0_2, np.subtract(1, self._exp_2))
@@ -533,12 +522,25 @@ class Mat:
         # Save the chi0 values from chi0_1 and chi0_2 from the indicies we wish to store at all j values
         self._prev_chi_1 = self._chi0_1[:,self._storelocs]
         self._prev_chi_2 = self._chi0_2[:,self._storelocs]
+        
+    def __eq__(self, other):
+        """
+        Tests for equality between this Material object and another. This does not account for the current state of the object, but rather its initial conditions.
+        """
+        if isinstance(other, Mat):
 
-    def __str__(self):
-        """
-        Returns a descriptive string of the Mat object
-        """
-        return 'exp1:\n' + str(self._exp_1) + '\nexp2:\n' + str(self._exp_2) + '\nchi0:\n' + str(self._chi0) + '\ndchi1:\n' + str(self._dchi0_1) + '\ndchi2:\n' + str(self._dchi0_2)
+            """dn, ilen, nlen, mat0, epsiloninf, mata1, mata2, matg, matb"""
+            dn_eq = (self._dn == other._dn)
+            ilen_eq = (self._ilen == other._ilen)
+            nlen_eq = (self._nlen == other._nlen)
+            mat0_eq = (self._mat0 == other._mat0)
+            epsiloninf_eq = (self._epsiloninf == other._epsiloninf)
+            mata1_eq = np.array_equal(self._mata1, other._mata1)
+            mata2_eq = np.array_equal(self._mata2, other._mata2)
+            matg_eq = np.array_equal(self._matg, other._matg)
+            matb_eq = np.array_equal(self._matb, other._matb)
+            return (dn_eq and ilen_eq and nlen_eq and mat0_eq and epsiloninf_eq and mata1_eq and mata2_eq and matg_eq and matb_eq)
+        return False
 
     def get_pos(self):
         r"""
