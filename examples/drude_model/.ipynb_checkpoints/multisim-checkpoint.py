@@ -9,6 +9,7 @@ from scipy.fftpack import fft, fftfreq
 import matplotlib
 from matplotlib import pyplot as plt
 from pathlib import Path
+from tqdm import tqdm
 
 # Determine folder save name
 fprefix = 'multisim/'
@@ -21,7 +22,7 @@ fsim = 'multisim.sim'
 # ============================
 def mat_gen(dn, ilen, nlen, z, a, gamma, inf_perm):
     # Set material length
-    m_len = 0.010  # 10 nm
+    m_len = 1  # 1 um
 
     # Set locations
     m_s_val = 0
@@ -72,8 +73,8 @@ def main():
     # Define bounds
     i0 = -1  # -1 um
     i1 = 2  # 2 um
-    n0 = -225  # (0.01 fs) * (-225 um) / (0.003 um/step) = (0.01 fs) * (-75,000 steps) = -750 fs = -0.75 ps
-    n1 = 300  # (0.01 fs) * (300 um) / (0.003 um/step) = (0.01 fs) * (100,000 steps) = 1,000 fs = 1 ps
+    n0 = -300 # (0.01 fs) * (-300 um) / (0.003 um/step) = (0.01 fs) * (-100,000 steps) = -1,000 fs = -1 ps
+    n1 = 1500 # (0.01 fs) * (1500 um) / (0.003 um/step) = (0.01 fs) * (500,000 steps) = 5,000 fs = 5 ps
 
     # Calculate dimensions
     nlen, ilen = Sim.calc_dims(n0, n1, dn, i0, i1, di)
@@ -91,7 +92,7 @@ def main():
     cp_time_ind = np.argmin(np.abs(np.subtract(t, cp_time_val)))
 
     # Find start and end indicies in time
-    spread = int(500 / 0.01) # (500 fs) / (0.1 fs/step) = 5,000 steps
+    spread = int(750 / 0.01) # (750 fs) / (0.01 fs/step) = 75,000 steps
     cp_time_s = cp_time_ind - spread
     cp_time_e = cp_time_ind + spread
 
@@ -103,17 +104,16 @@ def main():
 
     # LOAD REQUESTED SIMULATIONS
     sims = np.loadtxt(fsim, dtype=str, delimiter=',', skiprows=1)
-    for a, gamma, inf_perm, fname in sims:
+    for a, gamma, inf_perm, fname in tqdm(sims, desc='Performing needed simulations..'):
         # Parse floats
         a = np.float(a)
         gamma = np.float(gamma)
         inf_perm = np.float(inf_perm)
+        # Strip fname
+        fname = fname.strip()
         # Check to see if simulation already exists
         simfile = Path(fprefix + fname + '.npz')
-        # Notify user
-        print('Checking simulation with parameters a=%10.10f gamma=%10.10f infperm=%10.10f' % (a, gamma, inf_perm))
         if simfile.is_file():
-            print('Simulation exists, loading now...')
             # Load results
             dat = np.load(simfile)
             n = dat['n']
@@ -124,14 +124,12 @@ def main():
             hrls = dat['hrls']
             chi = dat['chi']
         else:
-            tqdmarg = {'leave': False, 'desc': 'Simulation does not exist, simulating now...'}
+            tqdmarg = {'leave': False, 'desc': ('Simulating a=%5.5f gamma=%5.5f infperm=%5.5f' % (a, gamma, inf_perm))}
             # Finish preparing simulation
             mat = mat_gen(dn, ilen, nlen, z, a, gamma, inf_perm)
             s = Sim(i0, i1, di, n0, n1, dn, epsilon0, mu0, 'absorbing', current, mat, storelocs=[5,ilen-6])
             # Run simulation
             s.simulate(tqdmarg)
-            # Notify user
-            print('Done simulating')
             # Export and save arrays
             n, ls, els, erls, hls, hrls = s.export_locs()
             ls_mat, chi = mat.export_locs()
@@ -177,8 +175,12 @@ def main():
         spec_m = np.absolute(spec)
         spec_a = np.abs(np.unwrap(np.angle(spec)))
 
+        # Calculate the imaginary part of the spectrum
+        spec_real = np.real(spec)
+        spec_imag = np.imag(spec)
+
         # Set calculation constants
-        L = 10 * 1e-9
+        L = 12 * 1e-9
         Z0 = 376.73 # Ohms (impedance of free space)
         permittivity_free_space = 8.854187817e-12
 
@@ -187,28 +189,55 @@ def main():
 
         # Calculate conductivity
         conductivity = np.multiply(np.divide(2, Z0*L), np.subtract(np.divide(1, spec), 1))
-
-        # Calculate index of refraction
-        n_complex = np.sqrt(inf_perm + np.divide(np.multiply(1j, conductivity), np.multiply(ang_freq, permittivity_free_space)))
-
-        # Calculate the imaginary part of the index of refraction
-        n_real = np.real(n_complex)
-        n_imag = np.imag(n_complex)
+        sigma1 = np.real(conductivity)
+        sigma2 = np.imag(conductivity)
 
         # PLOTTING
+        f_max = np.argmin(np.abs(np.subtract(freq,8)))
+
+        r_max = np.max(spec_real[0:f_max])
+        r_min = np.min(spec_real[0:f_max])
+
+        i_max = np.max(spec_imag[0:f_max])
+        i_min = np.min(spec_imag[0:f_max])
+
         plt.close('all')
         fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True)
-        ax0.set_title(r'RC-FDTD Simulation: $\epsilon_\infty=%5.5f$, $A=%5.5f$, $\gamma=%5.5f$, $L=10$nm, data=%s.npz' % (inf_perm, a, gamma, fname))
-        ax0.plot(freq, np.real(spec))
-        ax0.set_ylim(0.99, 1)
-        ax0.set_ylabel('Real')
-        ax1.plot(freq, np.imag(spec))
-        ax1.set_ylim(-0.01, 0)
-        ax1.set_ylabel('Imaginary')
-        ax1.set_xlabel('Frequency')
-        ax1.set_xlim(0, 10)
-        plt.show()
-        
+        ax0.set_title(r'$\epsilon_\infty=%5.5f$, $A=%5.5f$, $\gamma=%5.5f$, $L=12$nm, data=%s.npz' % (inf_perm, a, gamma, fname))
+        ax1.set_xlim(0, 30)
+        ax0.plot(freq, spec_real)
+        ax0.set_ylim(r_min, r_max)
+        ax0.set_ylabel(r'Re$(\tilde{t}(\omega))$')
+        ax1.plot(freq, spec_imag)
+        ax1.set_ylim(i_min, i_max)
+        ax1.set_ylabel(r'Im$(\tilde{t}(\omega))$')
+        ax1.set_xlabel('frequency [Thz]')
+        fig.savefig(fname=fprefix+fname+'_field.pdf', format='pdf')
+        #plt.show()
+
+        # PLOTTING
+        f_max = np.argmin(np.abs(np.subtract(freq,8)))
+
+        r_max = np.max(sigma1[0:f_max])
+        r_min = np.min(sigma1[0:f_max])
+
+        i_max = np.max(sigma2[0:f_max])
+        i_min = np.min(sigma2[0:f_max])
+
+        plt.close('all')
+        fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True)
+        ax0.set_title(r'$\epsilon_\infty=%5.5f$, $A=%5.5f$, $\gamma=%5.5f$, $L=12$nm, data=%s.npz' % (inf_perm, a, gamma, fname))
+        ax1.set_xlim(0, 30)
+        ax0.plot(freq, sigma1)
+        ax0.set_ylim(r_min, r_max)
+        ax0.set_ylabel(r'$\sigma_1$')
+        ax1.plot(freq, sigma2)
+        ax1.set_ylim(i_min, i_max)
+        ax1.set_ylabel(r'$\sigma_2$')
+        ax1.set_xlabel('frequency [Thz]')
+        fig.savefig(fname=fprefix+fname+'_cond.pdf', format='pdf')
+        #plt.show()
+
         # PLOTTING
         """
         # Setup figure
@@ -275,6 +304,7 @@ def main():
         # fig.savefig(fname=fprefix+fname+'.pdf', format='pdf')
         plt.show()
         """
+
 
 
 # Run if main script

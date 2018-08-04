@@ -3,38 +3,31 @@ a, gamma, inf_perm, name
 # You can comment out lines like in python!
 # Simulations are only run if no simulation of the same name exists
 
-10, 0.01, 1, a10_g0.01_p1
-100, 0.1, 1, a100_g0.1_p1
-1000, 1, 1, a1000_g1_p1
+# Search across A values
 
-10, 0.01, 1, a10_g0.01_p1
-100, 0.1, 1, a100_g0.1_p1
-1000, 1, 1, a1000_g1_p1
+1e4, 5e1, 1e0, a1e4_g5e1
+1e3, 5e1, 1e0, a1e3_g5e1
+#1e2, 5e1, 1e0, a1e2_g5e1
+#1e1, 5e1, 1e0, a1e1_g5e1
+#1e0, 5e1, 1e0, a1e0_g5e1
+#1e-1, 5e1, 1e0, a1e-1_g5e1
 
-10, 0.01, 1, a10_g0.01_p1
-100, 0.1, 1, a100_g0.1_p1
-1000, 1, 1, a1000_g1_p1
+# Determined a roughly good A value, search for gamma value
 
-10, 0.01, 10, a10_g0.01_p10
-100, 0.1, 10, a100_g0.1_p10
-1000, 1, 10, a1000_g1_p10
+#5e3, 1e-1, 1e0, a1e3_g1e-1
+5e3, 5e-1, 1e0, a1e3_g5e-1
+5e3, 1e0, 1e0, a1e3_g1e0
+5e3, 5e0, 1e0, a1e3_g5e0
+5e3, 1e1, 1e0, a1e3_g1e1
+#5e3, 5e1, 1e0, a1e3_g5e1
+#5e3, 1e2, 1e0, a1e3_g1e2
+#5e3, 5e2, 1e0, a1e3_g5e2
+#5e3, 1e3, 1e0, a1e3_g1e3
+#5e3, 5e3, 1e0, a1e3_g5e3
 
-10, 0.01, 10, a10_g0.01_p10
-100, 0.1, 10, a100_g0.1_p10
-1000, 1, 10, a1000_g1_p10
-
-10, 0.01, 10, a10_g0.01_p10
-100, 0.1, 10, a100_g0.1_p10
-1000, 1, 10, a1000_g1_p10
-
-10, 0.01, 100, a10_g0.01_p100
-100, 0.1, 100, a100_g0.1_p100
-1000, 1, 100, a1000_g1_p100
-
-10, 0.01, 100, a10_g0.01_p100
-100, 0.1, 100, a100_g0.1_p100
-1000, 1, 100, a1000_g1_p100
-
-10, 0.01, 100, a10_g0.01_p100
-100, 0.1, 100, a100_g0.1_p100
-1000, 1, 100, a1000_g1_p100
+# Epsilon search
+5e3, 5e1, 1e0, a5e3_g5e1_1e0
+5e3, 5e1, 1e1, a5e3_g5e1_1e1
+5e3, 5e1, 5e1, a5e3_g5e1_5e1
+5e3, 5e1, 1e2, a5e3_g5e1_1e2
+5e3, 5e1, 5e2, a5e3_g5e1_5e2
