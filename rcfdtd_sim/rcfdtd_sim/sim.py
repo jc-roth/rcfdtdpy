@@ -488,7 +488,7 @@ class Mat:
             for mi in range(self._matlen):
                 if np.abs(b_min_g[j, mi]) < 1e-5:
                     # beta-gamma is small, avoid divide by zero error
-                    self._chi0_1[j, mi] = -self._mata1[j, mi]*self._dn
+                    self._chi0_1[j, mi] = self._mata1[j, mi]*self._dn
                     self._chi0_2[j, mi] = np.multiply(np.divide(self._mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
                 else:
                     # beta-gamma is not small, calculate normally
