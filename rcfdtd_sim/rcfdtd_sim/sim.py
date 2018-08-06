@@ -77,16 +77,11 @@ class Sim:
         elif len(mat) == 0:
             # Create an empty material
             m = np.ones((1, 1))
-            mat.append(Mat(self._dn, self._ilen, 0, 1, m*0, m*0, m, m))
+            mat.append(Mat(self._dn, self._ilen, self._nlen, 0, 1, m*0, m*0, m, m))
         # Save the material
         self._mats = mat
         # Check to see if there is any material overlap
         self._matpos = np.zeros(self._ilen)
-        for m in self._mats:
-            self._matpos = np.add(self._matpos, m.get_pos())
-        # Raise error if there is overlap
-        if np.max(self._matpos) > 1:
-            raise ValueError("Found overlap between materials, remove before proceeding.")
         # --------------
         # BOUNDARY SETUP
         # --------------
@@ -194,6 +189,8 @@ class Sim:
     def _absorbing(self, n):
         """
         Computes the E-field and H-fields at time step n with absorbing boundaries.
+        
+        :param n: The current temporal index of the simulation.
         """
         # Update Psi
         self._update_mat(n)
@@ -217,6 +214,8 @@ class Sim:
     def _zero(self, n):
         """
         Computes the E-field and H-fields at time step n with constant zero boundaries.
+        
+        :param n: The current temporal index of the simulation.
         """
         # Update Psi
         self._update_mat(n)
@@ -230,6 +229,8 @@ class Sim:
     def _update_hfield(self, n):
         """
         Updates the H-field to the values at the next iteration. Should be called once per simulation step.
+        
+        :param n: The current temporal index of the simulation.
         """
         h_t1 = self._hfield[:-1]
         h_t2 = self._coeffh1 * (self._efield[1:]-self._efield[:-1])
@@ -238,9 +239,11 @@ class Sim:
     def _update_efield(self, n):
         """
         Updates the E-field to the values at the next iteration. Should be called once per simulation step.
+
+        :param n: The current temporal index of the simulation.
         """
         e_t1 = self._coeffe0[1:] * self._efield[1:]
-        e_t2 = self._coeffe1[1:] * self._compute_psi()[1:]
+        e_t2 = self._coeffe1[1:] * self._compute_psi(n)[1:]
         e_t3 = self._coeffe2[1:] * (self._hfield[1:]-self._hfield[:-1])
         e_t4 = self._coeffe3[1:] * self._get_current(n)[1:]
         self._efield[1:] = e_t1 + e_t2 - e_t3 - e_t4
@@ -248,6 +251,8 @@ class Sim:
     def _update_hfieldr(self, n):
         """
         Updates the reference H-field to the values at the next iteration. Should be called once per simulation step.
+        
+        :param n: The current temporal index of the simulation.
         """
         h_t1 = self._hfieldr[:-1]
         h_t2 = self._coeffh1r * (self._efieldr[1:]-self._efieldr[:-1])
@@ -256,6 +261,8 @@ class Sim:
     def _update_efieldr(self, n):
         """
         Updates the reference E-field to the values at the next iteration. Should be called once per simulation step.
+        
+        :param n: The current temporal index of the simulation.
         """
         e_t1 = self._coeffe0r * self._efieldr[1:]
         e_t3 = self._coeffe2r * (self._hfieldr[1:]-self._hfieldr[:-1])
@@ -275,14 +282,16 @@ class Sim:
         # Return
         return current
 
-    def _compute_psi(self):
+    def _compute_psi(self, n):
         """
         Calculates psi at all points in the simulation using all materials in the simulation.
+
+        :param n: The current temporal index of the simulation.
         """
         # Create an array to hold psi
         psi = np.zeros(self._ilen)
         for m in self._mats:
-            psi = np.add(psi, m._compute_psi())
+            psi = np.add(psi, m._compute_psi(n))
         # Return
         return psi
 
@@ -427,7 +436,9 @@ class Mat:
     The Mat class is used to represent a material present in a simulation
 
     :param dn: The temporal step size
-    :param ilen: The number of temporal indicies in the simulation
+    :param ilen: The number of spatial indicies in the simulation
+    :param nlen: The number of temporal indicies in the simulation
+    :param timebounds: A tuple `(timeStart, timeEnd)` of the time indicies between which the material exists in the simulation where `timeStart` is inclusive and `timeEnd` is exclusive. Multiple materials with carefully chosen time bounds can be used to change material properties in time.
     :param mat0: The starting index of the material
     :param epsiloninf: :math:`\epsilon_\infty` inside the material
     :param mata1: A matrix representing :math:`A_1` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
@@ -438,19 +449,30 @@ class Mat:
     :param dtype: The data type to store the field values in
     """
 
-    def __init__(self, dn, ilen, nlen, mat0, epsiloninf, mata1, mata2, matg, matb, storelocs=[], dtype=np.complex64):
+    def __init__(self, dn, ilen, nlen, mat0, epsiloninf, mata1, mata2, matg, matb, timebounds=(), storelocs=[], dtype=np.complex64):
         # -------------
         # INITIAL SETUP
         # -------------
         # Check for error
         if np.shape(mata1) != np.shape(mata2) or np.shape(mata1) != np.shape(matg) or np.shape(mata1) != np.shape(matb):
             raise ValueError("The dimensions of mata1, mata2, matg, and matb should be the same")
+        # Check for timebound error
+        if (len(timebounds) == 2) and (timebounds[1] <= timebounds[0]):
+            raise ValueError("The ending time bound of the material must be greater than its starting time bound")
+        if (len(timebounds) == 2) and ((nlen < timebounds[1]) or (timebounds[0] < 0)):
+            raise ValueError("The time bounds must be inside the simulation temporal bounds")
+        elif (len(timebounds) !=0 and len(timebounds) !=2):
+            raise ValueError("There must only be two time bounds given")
         # Save arguments
         self._dn = dn
         self._ilen = ilen
         self._nlen = nlen
         self._mat0 = mat0
         self._dtype = dtype
+        # Save argument timebounds if provided, otherwise span length of simulation
+        self._time0, self._time1 = (0, nlen)
+        if len(timebounds) == 2:
+            self._time0, self._time1 = timebounds
         # Get and save material dimension info
         if len(np.shape(mata1)) > 1:
             self._jlen = np.shape(mata1)[0]
@@ -522,13 +544,14 @@ class Mat:
         # Save the chi0 values from chi0_1 and chi0_2 from the indicies we wish to store at all j values
         self._prev_chi_1 = self._chi0_1[:,self._storelocs]
         self._prev_chi_2 = self._chi0_2[:,self._storelocs]
+
+        self.counttt = 0
         
     def __eq__(self, other):
         """
         Tests for equality between this Material object and another. This does not account for the current state of the object, but rather its initial conditions.
         """
         if isinstance(other, Mat):
-
             """dn, ilen, nlen, mat0, epsiloninf, mata1, mata2, matg, matb"""
             dn_eq = (self._dn == other._dn)
             ilen_eq = (self._ilen == other._ilen)
@@ -544,11 +567,11 @@ class Mat:
 
     def get_pos(self):
         r"""
-        Returns a Numpy array of value 0 outside of the material and 1 inside of the material.
+        Returns a Tuple contianing a Numpy array of value 0 outside of the material and 1 inside of the material, time0, and time1.
 
-        :return: A Numpy array of value 0 outside of the material and 1 inside of the material
+        :return: `(arr, time0, time1)`
         """
-        return np.pad(np.repeat(1, self._matlen), (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
+        return (np.pad(np.repeat(1, self._matlen), (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant'), self._time0, self._time1)
 
     def _update_chi(self):
         r"""
@@ -600,10 +623,17 @@ class Mat:
         # Return the real part as specified in Beard
         return np.real(self._chi0)
 
-    def _compute_psi(self):
+    def _compute_psi(self, n):
         """
-        Calculates psi at all points in the simulation using the current value of psi_1 and psi_2
+        Calculates psi at all points in the simulation using the current value of psi_1 and psi_2. If the current time step n is out of the material bounds in time a zero valued psi is returned.
+
+        :param n: The current temporal index of the simulation.
         """
+        # Return zero if out of time bounds
+        if (n < self._time0) or (self._time1 <= n):
+            return np.zeros(self._ilen)
+        # Else continue as normal
+        self.counttt = self.counttt + 1
         # Find the psi matrix
         psi_j = np.add(self._psi_1, self._psi_2)
         # Sum the psi matrix along axis=0 to combine all oscillators
