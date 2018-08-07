@@ -445,34 +445,33 @@ class Mat:
     :param mata2: A matrix representing :math:`A_2` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
     :param matg: A matrix representing :math:`\gamma` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
     :param matb: A matrix representing :math:`\beta` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
+    :param opacity: A vector representing the opacity of the material in time. Each index corresponds to the :math:`n` th time index of the material where `1` corresponds to the material being opaque and `0` corresponds to the material being transparent. Defaults to an opaque material for all time.
     :param storelocs: A list of locations to save chi at during each step in time, indexed from 0 to the material length
     :param dtype: The data type to store the field values in
     """
 
-    def __init__(self, dn, ilen, nlen, mat0, epsiloninf, mata1, mata2, matg, matb, timebounds=(), storelocs=[], dtype=np.complex64):
+    def __init__(self, dn, ilen, nlen, mat0, epsiloninf, mata1, mata2, matg, matb, opacity=None, storelocs=[], dtype=np.complex64):
         # -------------
         # INITIAL SETUP
         # -------------
         # Check for error
         if np.shape(mata1) != np.shape(mata2) or np.shape(mata1) != np.shape(matg) or np.shape(mata1) != np.shape(matb):
             raise ValueError("The dimensions of mata1, mata2, matg, and matb should be the same")
-        # Check for timebound error
-        if (len(timebounds) == 2) and (timebounds[1] <= timebounds[0]):
-            raise ValueError("The ending time bound of the material must be greater than its starting time bound")
-        if (len(timebounds) == 2) and ((nlen < timebounds[1]) or (timebounds[0] < 0)):
-            raise ValueError("The time bounds must be inside the simulation temporal bounds")
-        elif (len(timebounds) !=0 and len(timebounds) !=2):
-            raise ValueError("There must only be two time bounds given")
+        elif (opacity is not None) and (len(np.shape(opacity)) != 1):
+            raise ValueError("opacity should be a 1-dimensional Numpy array of length nlen")
+        elif (opacity is not None) and (np.shape(opacity)[0] != nlen):
+            raise ValueError("opacity should be a Numpy array of length nlen")
         # Save arguments
         self._dn = dn
         self._ilen = ilen
         self._nlen = nlen
         self._mat0 = mat0
         self._dtype = dtype
-        # Save argument timebounds if provided, otherwise span length of simulation
-        self._time0, self._time1 = (0, nlen)
-        if len(timebounds) == 2:
-            self._time0, self._time1 = timebounds
+        # If opacity is unspecified, set equal to opaque for all time, else save provided opacity
+        if opacity is None:
+            self._opacity = np.ones(self._nlen)
+        else:
+            self._opacity = opacity
         # Get and save material dimension info
         if len(np.shape(mata1)) > 1:
             self._jlen = np.shape(mata1)[0]
@@ -544,8 +543,6 @@ class Mat:
         # Save the chi0 values from chi0_1 and chi0_2 from the indicies we wish to store at all j values
         self._prev_chi_1 = self._chi0_1[:,self._storelocs]
         self._prev_chi_2 = self._chi0_2[:,self._storelocs]
-
-        self.counttt = 0
         
     def __eq__(self, other):
         """
@@ -625,15 +622,10 @@ class Mat:
 
     def _compute_psi(self, n):
         """
-        Calculates psi at all points in the simulation using the current value of psi_1 and psi_2. If the current time step n is out of the material bounds in time a zero valued psi is returned.
+        Calculates psi at all points in the simulation using the current value of psi_1 and psi_2. Scaled by the `opacity` array passed in at initialization.
 
         :param n: The current temporal index of the simulation.
         """
-        # Return zero if out of time bounds
-        if (n < self._time0) or (self._time1 <= n):
-            return np.zeros(self._ilen)
-        # Else continue as normal
-        self.counttt = self.counttt + 1
         # Find the psi matrix
         psi_j = np.add(self._psi_1, self._psi_2)
         # Sum the psi matrix along axis=0 to combine all oscillators
@@ -641,7 +633,7 @@ class Mat:
         # Pad the psi array so that it spans the length of the simulation
         psi_padded = np.pad(psi, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
         # Return the real part as specified in Beard
-        return np.real(psi_padded)
+        return np.real(psi_padded*self._opacity[n])
 
     def _update_psi(self, efield):
         """
