@@ -161,6 +161,11 @@
 <li>Discuss the choice of <span class="math notranslate nohighlight">\(\frac{\Delta t}{\Delta z}\approx c\)</span></li>
 </ul>
 <span class="target" id="module-rcfdtd_sim.sim"></span><dl class="class">
+<dt id="rcfdtd_sim.sim.BaseMat">
+<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">BaseMat</code><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#BaseMat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.BaseMat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
 <dt id="rcfdtd_sim.sim.Current">
 <em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">Current</code><span class="sig-paren">(</span><em>nlen</em>, <em>ilen</em>, <em>n0</em>, <em>i0</em>, <em>current</em>, <em>dtype=&lt;class 'numpy.complex64'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Current" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Current class is used to represent a current in the simulation.</p>
@@ -184,7 +189,7 @@
 
 <dl class="class">
 <dt id="rcfdtd_sim.sim.Mat">
-<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">Mat</code><span class="sig-paren">(</span><em>dn</em>, <em>ilen</em>, <em>nlen</em>, <em>mat0</em>, <em>epsiloninf</em>, <em>mata1</em>, <em>mata2</em>, <em>matg</em>, <em>matb</em>, <em>timebounds=()</em>, <em>storelocs=[]</em>, <em>dtype=&lt;class 'numpy.complex64'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Mat" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">Mat</code><span class="sig-paren">(</span><em>dn</em>, <em>ilen</em>, <em>nlen</em>, <em>mat0</em>, <em>epsiloninf</em>, <em>mata1</em>, <em>mata2</em>, <em>matg</em>, <em>matb</em>, <em>opacity=None</em>, <em>storelocs=[]</em>, <em>dtype=&lt;class 'numpy.complex64'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Mat" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Mat class is used to represent a material present in a simulation</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -201,6 +206,7 @@
 <li><strong>mata2</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_2\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
 <li><strong>matg</strong> – A matrix representing <span class="math notranslate nohighlight">\(\gamma\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
 <li><strong>matb</strong> – A matrix representing <span class="math notranslate nohighlight">\(\beta\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>opacity</strong> – A vector representing the opacity of the material in time. Each index corresponds to the <span class="math notranslate nohighlight">\(n\)</span> th time index of the material where <cite>1</cite> corresponds to the material being opaque and <cite>0</cite> corresponds to the material being transparent. Defaults to an opaque material for all time.</li>
 <li><strong>storelocs</strong> – A list of locations to save chi at during each step in time, indexed from 0 to the material length</li>
 <li><strong>dtype</strong> – The data type to store the field values in</li>
 </ul>
@@ -225,6 +231,57 @@
 <dl class="method">
 <dt id="rcfdtd_sim.sim.Mat.get_pos">
 <code class="descname">get_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Mat.get_pos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Mat.get_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Tuple contianing a Numpy array of value 0 outside of the material and 1 inside of the material, time0, and time1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>(arr, time0, time1)</cite></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="rcfdtd_sim.sim.NumericMat">
+<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">NumericMat</code><span class="sig-paren">(</span><em>dn</em>, <em>ilen</em>, <em>nlen</em>, <em>mati0</em>, <em>matn0</em>, <em>storelocs=[]</em>, <em>dtype=&lt;class 'numpy.complex64'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#NumericMat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.NumericMat" title="Permalink to this definition">¶</a></dt>
+<dd><p>The NumberMat class is used to represent a material present in a simulation using values of chi that have been computed previously at each step in time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dn</strong> – The temporal step size</li>
+<li><strong>ilen</strong> – The number of spatial indicies in the simulation</li>
+<li><strong>nlen</strong> – The number of temporal indicies in the simulation</li>
+<li><strong>mati0</strong> – The starting index of the material in space.</li>
+<li><strong>matn0</strong> – The starting index of the material in time.</li>
+<li><strong>storelocs</strong> – A list of locations to save chi at during each step in time, indexed from 0 to the material length</li>
+<li><strong>dtype</strong> – The data type to store the field values in</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="rcfdtd_sim.sim.NumericMat.export_locs">
+<code class="descname">export_locs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#NumericMat.export_locs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.NumericMat.export_locs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports the value of chi at a specific location(s) (specified with <code class="code docutils literal notranslate"><span class="pre">storelocs</span></code> at initialization) at each point in time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A tuple <code class="code docutils literal notranslate"><span class="pre">(ls,</span> <span class="pre">locs)</span></code> where <code class="code docutils literal notranslate"><span class="pre">ls</span></code> is the list <code class="code docutils literal notranslate"><span class="pre">storelocs</span></code> (the same <code class="code docutils literal notranslate"><span class="pre">storelocs</span></code> that is passed to the Sim class during instantiation), <code class="code docutils literal notranslate"><span class="pre">locs</span></code> is a Numpy array containing chi at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rcfdtd_sim.sim.NumericMat.get_pos">
+<code class="descname">get_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#NumericMat.get_pos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.NumericMat.get_pos" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a Tuple contianing a Numpy array of value 0 outside of the material and 1 inside of the material, time0, and time1.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
