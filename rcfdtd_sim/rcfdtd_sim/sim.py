@@ -527,6 +527,9 @@ class Mat:
         # Pad chi0 so that it spans the length of the simulation
         chi0_padded = np.pad(chi0, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
         self._chi0 = chi0_padded
+        #print(chi0_j[0,:])
+        #print(chi0_j[1,:])
+        #print(chi0)
         # -------------------
         # STORED VALUES SETUP
         # -------------------
