@@ -527,6 +527,264 @@ class Mat:
         # Pad chi0 so that it spans the length of the simulation
         chi0_padded = np.pad(chi0, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
         self._chi0 = chi0_padded
+        # -------------------
+        # STORED VALUES SETUP
+        # -------------------
+        # Save storeloc info
+        self._storelocs = storelocs
+        self._nlocs = len(self._storelocs)
+        # Check to see if any storelocs are requested
+        if self._nlocs != 0:
+            # Create arrays to store the field values in each location
+            self._locs = np.zeros((self._nlen, self._nlocs), dtype=self._dtype)
+        # ---------------------
+        # CHI CALCULATION SETUP
+        # ---------------------
+        # Save the chi0 values from chi0_1 and chi0_2 from the indicies we wish to store at all j values
+        self._prev_chi_1 = self._chi0_1[:,self._storelocs]
+        self._prev_chi_2 = self._chi0_2[:,self._storelocs]
+        
+    def __eq__(self, other):
+        """
+        Tests for equality between this Material object and another. This does not account for the current state of the object, but rather its initial conditions.
+        """
+        if isinstance(other, Mat):
+            """dn, ilen, nlen, mat0, epsiloninf, mata1, mata2, matg, matb"""
+            dn_eq = (self._dn == other._dn)
+            ilen_eq = (self._ilen == other._ilen)
+            nlen_eq = (self._nlen == other._nlen)
+            mat0_eq = (self._mat0 == other._mat0)
+            epsiloninf_eq = (self._epsiloninf == other._epsiloninf)
+            mata1_eq = np.array_equal(self._mata1, other._mata1)
+            mata2_eq = np.array_equal(self._mata2, other._mata2)
+            matg_eq = np.array_equal(self._matg, other._matg)
+            matb_eq = np.array_equal(self._matb, other._matb)
+            return (dn_eq and ilen_eq and nlen_eq and mat0_eq and epsiloninf_eq and mata1_eq and mata2_eq and matg_eq and matb_eq)
+        return False
+
+    def get_pos(self):
+        r"""
+        Returns a Tuple contianing a Numpy array of value 0 outside of the material and 1 inside of the material, time0, and time1.
+
+        :return: `(arr, time0, time1)`
+        """
+        return (np.pad(np.repeat(1, self._matlen), (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant'), self._time0, self._time1)
+
+    def _update_chi(self):
+        r"""
+        Updates chi_1 and chi_2 (i.e. :math:`\chi_1` and :math:`\chi_2`) using the update equations :math:`\chi^{m+1}_{1,j}=\chi^m_{1,j}e^{\Delta t\left(-\gamma_j+\beta_j\right)}` and :math:`\chi^{m+1}_{2,j}=\chi^m_{2,j}e^{\Delta t\left(-\gamma_j-\beta_j\right)}`. Should be called once per simulation step.
+        """
+        # Extract the exponents at the j-values we are interested in updating
+        exp_1 = self._exp_1[:,self._storelocs]
+        exp_2 = self._exp_2[:,self._storelocs]
+        # Calculate the updated chi_1 and chi_2
+        update_chi_1 = np.multiply(self._prev_chi_1, exp_1)
+        update_chi_2 = np.multiply(self._prev_chi_2, exp_2)
+        # Save the update_chi_1 and update_chi_2 into the prev_chi_1 and prev_chi_2 values
+        self._prev_chi_1 = update_chi_1
+        self._prev_chi_2 = update_chi_2
+
+    def _compute_chi(self):
+        r"""
+        Computes chi at the points specified in the simulation by the `storelocs` parameter via :math:`\chi^n=\Re\left[\chi^n_1e^{\Delta t(-\gamma_j+\beta_j)} + \chi^n_2e^{\Delta t(-\gamma_j-\beta_j)}\right]`.
+
+        :return: :math:`\chi^n` where :math:`n` is the :math:`n` th call to the function `_update_chi`
+        """
+        # Extract the exponents at the j-values we wish to store
+        exp_1 = self._exp_1[:,self._storelocs]
+        exp_2 = self._exp_2[:,self._storelocs]
+        # Compute chi_1 and chi_2
+        t1 = np.multiply(self._prev_chi_1, exp_1)
+        t2 = np.multiply(self._prev_chi_2, exp_2)
+        # Add chi_1 and chi_2 to yield chi for each oscillator
+        chi_j = np.add(t1, t2)
+        # Sum across all oscillators to determine chi at each location specified by storelocs
+        chi = np.sum(chi_j, axis=0)
+        # Return
+        return chi
+
+    def _get_epsiloninf(self):
+        r"""
+        Returns the high frequency susceptability of the material :math:`\epsilon_\infty`.
+
+        :return: A Numpy array of length :code:`ilen` of value 1 outside of the material and :math:`\epsilon_\infty` inside of the material
+        """
+        return self._epsiloninf
+
+    def _get_chi0(self):
+        r"""
+        Returns the initial susceptibility of the material :math:`\chi_0`.
+
+        :return: A Numpy array of length :code:`ilen` of value 0 outside of the material and :math:`\chi_0` inside of the material
+        """
+        # Return the real part as specified in Beard
+        return np.real(self._chi0)
+
+    def _compute_psi(self, n):
+        """
+        Calculates psi at all points in the simulation using the current value of psi_1 and psi_2. Scaled by the `opacity` array passed in at initialization.
+
+        :param n: The current temporal index of the simulation.
+        """
+        # Find the psi matrix
+        psi_j = np.add(self._psi_1, self._psi_2)
+        # Sum the psi matrix along axis=0 to combine all oscillators
+        psi = np.sum(psi_j, axis=0)
+        # Pad the psi array so that it spans the length of the simulation
+        psi_padded = np.pad(psi, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
+        # Return the real part as specified in Beard
+        return np.real(psi_padded*self._opacity[n])
+
+    def _update_psi(self, efield):
+        """
+        Updates the value of psi_1 and psi_2. Should be called once per simulation step.
+
+        :param efield: The efield to use in update calculations
+        """
+        # Copy the efield so that instead of being a vector it is a matrix composed of horizontal efield vectors
+        e = np.tile(efield[self._mat0:self._mat0 + self._matlen], (self._jlen, 1))
+        # Calculate first term
+        t1_1 = np.multiply(e, self._dchi0_1)
+        t1_2 = np.multiply(e, self._dchi0_2)
+        # Calculate second term
+        t2_1 = np.multiply(self._psi_1, self._exp_1)
+        t2_2 = np.multiply(self._psi_2, self._exp_2)
+        # Update next psi values
+        self._psi_1 = np.add(t1_1, t2_1)
+        self._psi_2 = np.add(t1_2, t2_2)
+
+    def _update_mat(self, n, efield):
+        """
+        Updates the value of psi_1, psi_2, chi_1, and chi_2. Saves the values of chi requested via the `storelocs` parameter.
+
+        :param n: The iteration index :math:`n`
+        :param efield: The efield to use in update calculations
+        """
+        # Update psi and chi
+        self._update_psi(efield)
+        self._update_chi()
+        # Save specific field locations if storing has been requested
+        if self._nlocs != 0:
+            # Store each location
+            self._locs[n,:] = self._compute_chi()
+
+    def _reset_mat(self):
+        """
+        Resets previously stored values of psi_1, psi_2, chi_1, and chi_2 to their initial values. Resets ensure that consecutive simulations on the same Mat object are independent of each other.
+        """
+        # Reset psi calculation
+        self._psi_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
+        self._psi_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
+        # Reset previous chi values to chi0
+        self._prev_chi_1 = self._chi0_1[:,self._storelocs]
+        self._prev_chi_2 = self._chi0_2[:,self._storelocs]
+
+    def export_locs(self):
+        """
+        Exports the value of chi at a specific location(s) (specified with :code:`storelocs` at initialization) at each point in time.
+
+        :return: A tuple :code:`(ls, locs)` where :code:`ls` is the list :code:`storelocs` (the same :code:`storelocs` that is passed to the Sim class during instantiation), :code:`locs` is a Numpy array containing chi at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location)
+        """
+        # Check to see if the value of each field at a specific location was saved over time
+        if self._nlocs == 0:
+            self._locs = None
+        # Return
+        return (self._storelocs, self._locs)
+
+class SchMat:
+    r"""
+    The SchMat class is used to represent a Schmuttenmaer material present in a simulation
+
+    :param dn: The temporal step size
+    :param ilen: The number of spatial indicies in the simulation
+    :param nlen: The number of temporal indicies in the simulation
+    :param timebounds: A tuple `(timeStart, timeEnd)` of the time indicies between which the material exists in the simulation where `timeStart` is inclusive and `timeEnd` is exclusive. Multiple materials with carefully chosen time bounds can be used to change material properties in time.
+    :param mat0: The starting index of the material
+    :param epsiloninf: :math:`\epsilon_\infty` inside the material
+    :param mata1: A matrix representing :math:`A_1` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
+    :param mata2: A matrix representing :math:`A_2` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
+    :param matg: A matrix representing :math:`\gamma` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
+    :param matb: A matrix representing :math:`\beta` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index
+    :param opacity: A vector representing the opacity of the material in time. Each index corresponds to the :math:`n` th time index of the material where `1` corresponds to the material being opaque and `0` corresponds to the material being transparent. Defaults to an opaque material for all time.
+    :param storelocs: A list of locations to save chi at during each step in time, indexed from 0 to the material length
+    :param dtype: The data type to store the field values in
+    """
+
+    def __init__(self, dn, ilen, nlen, mat0, matlen, epsiloninf, absorp_vis, nvis, vis_width, time_const, c, tdiff, ga1, ga2, gg, gb, ea1, ea2, eg, eb, storelocs=[], dtype=np.complex64):
+        # -------------
+        # INITIAL SETUP
+        # -------------
+        # Save arguments
+        self._dn = dn
+        self._ilen = ilen
+        self._nlen = nlen
+        self._mat0 = mat0
+        self._dtype = dtype
+        self._matlen = matlen
+        # Check for error
+        if self._mat0 < 0 or self._mat0 + self._matlen > self._ilen:
+            raise ValueError("Material cannot start at i=" + str(self._mat0) + " and end at i=" + str(self._mat0 + self._matlen) + " as this exceeds the dimensions of the simulation.")
+        # Epsilon_infinity is equal to one in vacuum, so only set self._epsiloninf equal to epsiloninf in the material
+        epsiloninf_repeat = np.repeat(epsiloninf, self._matlen)
+        self._epsiloninf = np.pad(epsiloninf_repeat, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant', constant_values=1)
+        # ------------------
+        # GROUND STATE SETUP
+        # ------------------
+        g_b_min_g = 
+        # HERE!!
+
+        
+        # -------------------
+        # EXCITED STATE SETUP
+        # -------------------
+        
+        # -------------------------
+        # POPULATION FRACTION SETUP
+        # -------------------------
+        # Calculate f_e
+        
+        # ---------------
+        # CHI STATE SETUP
+        # ---------------
+        # Here we calculate chi at each time in the simulation (display progress bar)
+        
+        # -----------
+        # CHI^m SETUP
+        # -----------
+        # Here we calculate chi^m at each point in the simulation (display progress bar)
+
+
+
+        # Calculate susceptability beta and gamma sums and exponents
+        b_min_g = np.add(self._matb, -self._matg)
+        min_b_min_g = np.add(-self._matb, -self._matg)
+        self._exp_1 = np.exp(np.multiply(b_min_g, self._dn))
+        self._exp_2 = np.exp(np.multiply(min_b_min_g, self._dn))
+        # Calculate initial susceptability values
+        self._chi0_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype) # Set chi0_1=0 initially
+        self._chi0_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype) # Set chi0_2=0 initially
+        for j in range(self._jlen):
+            for mi in range(self._matlen):
+                if np.abs(b_min_g[j, mi]) < 1e-5:
+                    # beta-gamma is small, avoid divide by zero error
+                    self._chi0_1[j, mi] = self._mata1[j, mi]*self._dn
+                    self._chi0_2[j, mi] = np.multiply(np.divide(self._mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
+                else:
+                    # beta-gamma is not small, calculate normally
+                    self._chi0_1[j, mi] = np.multiply(np.divide(self._mata1[j, mi], b_min_g[j, mi]), np.subtract(self._exp_1[j, mi], 1))
+                    self._chi0_2[j, mi] = np.multiply(np.divide(self._mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
+        # Calclate first delta susceptabiility values
+        self._dchi0_1 = np.multiply(self._chi0_1, np.subtract(1, self._exp_1))
+        self._dchi0_2 = np.multiply(self._chi0_2, np.subtract(1, self._exp_2))
+        # Initialize psi values to zero
+        self._psi_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
+        self._psi_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
+        # Calculate chi0
+        chi0_j = np.add(self._chi0_1, self._chi0_2)
+        chi0 = np.sum(chi0_j, axis=0)
+        # Pad chi0 so that it spans the length of the simulation
+        chi0_padded = np.pad(chi0, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
+        self._chi0 = chi0_padded
         #print(chi0_j[0,:])
         #print(chi0_j[1,:])
         #print(chi0)

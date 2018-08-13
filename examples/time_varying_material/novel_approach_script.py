@@ -87,7 +87,7 @@ e_mbeta = e_m * e_beta
 e_ma1 = e_m * e_a1
 e_ma2 = e_m * e_a2
 
-pulse_delays = np.arange(-90e-15, 450e-15, 30e-15) # -500 fs to 500 fs at intervals of 100 fs
+pulse_delays = np.arange(-240e-15, 450e-15, 10e-15) # -500 fs to 500 fs at intervals of 100 fs
 
 def e_osc_frac(pulse_delay):
     # Set constants
@@ -114,7 +114,7 @@ plt.title('$f_e$ as a function of pulse delay at each material index')
 plt.show()
 
 #Create Sim object
-sim_name = 'novel_approach_sim4.npz'
+sim_name = 'novel_approach_sim7.npz'
 if Path(sim_name).is_file():
     # Load results
     dat = np.load(sim_name)
@@ -180,7 +180,7 @@ plt.plot(n*1e12, np.real(chi_ars.T))
 plt.show()
 
 # Remove last row and column of the trans_ars array (while also taking the transpose and real part) so that it fits in our grid
-trans_ars_to_plot = np.real(trans_ars.T)
+trans_ars_to_plot = np.real(trans_ars.T)[:-1, :-1]
 
 # Make grid
 ddn = np.diff(pulse_delays)[0]
