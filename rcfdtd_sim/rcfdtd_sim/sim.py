@@ -727,13 +727,18 @@ class SchMat:
         # Epsilon_infinity is equal to one in vacuum, so only set self._epsiloninf equal to epsiloninf in the material
         epsiloninf_repeat = np.repeat(epsiloninf, self._matlen)
         self._epsiloninf = np.pad(epsiloninf_repeat, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant', constant_values=1)
-        # ------------------
-        # GROUND STATE SETUP
-        # ------------------
-        g_b_min_g = 
-        # HERE!!
-
-        
+        # ---------------
+        # Save chi values
+        # ---------------
+        self._ga1
+        self._ga1 = ga1
+        self._ga2 = ga2
+        self._gg = gg
+        self._gb = gb
+        self._ea1 = ea1
+        self._ea2 = ea2
+        self._eg = eg
+        self._eb = eb
         # -------------------
         # EXCITED STATE SETUP
         # -------------------
@@ -754,40 +759,10 @@ class SchMat:
         # Here we calculate chi^m at each point in the simulation (display progress bar)
 
 
-
-        # Calculate susceptability beta and gamma sums and exponents
-        b_min_g = np.add(self._matb, -self._matg)
-        min_b_min_g = np.add(-self._matb, -self._matg)
-        self._exp_1 = np.exp(np.multiply(b_min_g, self._dn))
-        self._exp_2 = np.exp(np.multiply(min_b_min_g, self._dn))
-        # Calculate initial susceptability values
-        self._chi0_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype) # Set chi0_1=0 initially
-        self._chi0_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype) # Set chi0_2=0 initially
-        for j in range(self._jlen):
-            for mi in range(self._matlen):
-                if np.abs(b_min_g[j, mi]) < 1e-5:
-                    # beta-gamma is small, avoid divide by zero error
-                    self._chi0_1[j, mi] = self._mata1[j, mi]*self._dn
-                    self._chi0_2[j, mi] = np.multiply(np.divide(self._mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
-                else:
-                    # beta-gamma is not small, calculate normally
-                    self._chi0_1[j, mi] = np.multiply(np.divide(self._mata1[j, mi], b_min_g[j, mi]), np.subtract(self._exp_1[j, mi], 1))
-                    self._chi0_2[j, mi] = np.multiply(np.divide(self._mata2[j, mi], min_b_min_g[j, mi]), np.subtract(self._exp_2[j, mi], 1))
-        # Calclate first delta susceptabiility values
-        self._dchi0_1 = np.multiply(self._chi0_1, np.subtract(1, self._exp_1))
-        self._dchi0_2 = np.multiply(self._chi0_2, np.subtract(1, self._exp_2))
-        # Initialize psi values to zero
-        self._psi_1 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
-        self._psi_2 = np.zeros((self._jlen, self._matlen), dtype=self._dtype)
-        # Calculate chi0
-        chi0_j = np.add(self._chi0_1, self._chi0_2)
         chi0 = np.sum(chi0_j, axis=0)
         # Pad chi0 so that it spans the length of the simulation
         chi0_padded = np.pad(chi0, (self._mat0, self._ilen - (self._mat0 + self._matlen)), 'constant')
         self._chi0 = chi0_padded
-        #print(chi0_j[0,:])
-        #print(chi0_j[1,:])
-        #print(chi0)
         # -------------------
         # STORED VALUES SETUP
         # -------------------
@@ -805,23 +780,9 @@ class SchMat:
         self._prev_chi_1 = self._chi0_1[:,self._storelocs]
         self._prev_chi_2 = self._chi0_2[:,self._storelocs]
         
-    def __eq__(self, other):
-        """
-        Tests for equality between this Material object and another. This does not account for the current state of the object, but rather its initial conditions.
-        """
-        if isinstance(other, Mat):
-            """dn, ilen, nlen, mat0, epsiloninf, mata1, mata2, matg, matb"""
-            dn_eq = (self._dn == other._dn)
-            ilen_eq = (self._ilen == other._ilen)
-            nlen_eq = (self._nlen == other._nlen)
-            mat0_eq = (self._mat0 == other._mat0)
-            epsiloninf_eq = (self._epsiloninf == other._epsiloninf)
-            mata1_eq = np.array_equal(self._mata1, other._mata1)
-            mata2_eq = np.array_equal(self._mata2, other._mata2)
-            matg_eq = np.array_equal(self._matg, other._matg)
-            matb_eq = np.array_equal(self._matb, other._matb)
-            return (dn_eq and ilen_eq and nlen_eq and mat0_eq and epsiloninf_eq and mata1_eq and mata2_eq and matg_eq and matb_eq)
-        return False
+    def _calc_ground_chi(self, m):
+        chi_1 = (self._ga1/(self._gb - self._gg))*(np.exp((self._gb - self._gg)*self._dn) - 1)*np.exp((self._gb - self._gg)*m*self._dn)
+        chi_2 = (self._ga2/(-self._gb - self._gg))*(np.exp((-self._gb - self._gg)*self._dn) - 1)*np.exp((-self._gb - self._gg)*m*self._dn)
 
     def get_pos(self):
         r"""
