@@ -197,9 +197,13 @@ plt.pcolormesh(dtime_grid*1e15, time_grid*1e12, trans_ars_to_plot, cmap=cmap, no
 plt.colorbar()
 
 # Label plot
-plt.ylabel('$t$ [ps]')
-plt.xlabel('$\Delta t$ [fs]')
+plt.title('$\chi$ Time Dependence Method', fontsize=15)
+plt.ylabel('$t$ [ps]', fontsize=15)
+plt.xlabel('$\Delta t$ [fs]', fontsize=15)
+plt.gca().tick_params(labelsize=15)
 plt.gcf().set_dpi(100)
+plt.tight_layout()
+plt.savefig(fname='mat_chi_time_dep.png', format='png', dpi=600)
 plt.show()
 
 # Do some other things

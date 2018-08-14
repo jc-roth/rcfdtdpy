@@ -6,6 +6,9 @@ from scipy.special import erf
 from matplotlib import pyplot as plt
 from pathlib import Path
 from tqdm import tqdm
+from matplotlib.colors import BoundaryNorm
+from matplotlib.ticker import MaxNLocator
+
 # Constants
 c0 = 3e8 # um/ps
 di = 0.03e-6 # 0.03 um
@@ -84,12 +87,12 @@ e_mbeta = e_m * e_beta
 e_ma1 = e_m * e_a1
 e_ma2 = e_m * e_a2
 
-pulse_delays = np.arange(-500e-15, 600e-15, 30e-15) # -500 fs to 500 fs at intervals of 100 fs
+pulse_delays = np.arange(-240e-15, 450e-15, 10e-15) # -500 fs to 500 fs at intervals of 100 fs
 
 def e_osc_frac(pulse_delay):
     # Set constants
     pulse_width = 150e-15 # 100 fs pulse width
-    pulse_scaling = 16e11 # Sets the amplitude of the optical pulse amplitude
+    pulse_scaling = 30e11 # Sets the amplitude of the optical pulse amplitude
     state_decay_const = 0.8e-12 # 0.47 ps pulse decay time
     absorption_const = 2e-1 # 400 cm^-1 absorption coefficient
     material_indicies = np.arange(0, mlen, 1)
@@ -111,7 +114,7 @@ plt.title('$f_e$ as a function of pulse delay at each material index')
 plt.show()
 
 #Create Sim object
-sim_name = 'novel_approach_sim2_final.npz'
+sim_name = 'novel_approach_sim7.npz'
 if Path(sim_name).is_file():
     # Load results
     dat = np.load(sim_name)
@@ -172,24 +175,40 @@ else:
     chi_ars = chi_ars[1:,:]
     # Save data
     np.savez(sim_name, n=n, pulse_delays=pulse_delays, inc_ars=inc_ars, trans_ars=trans_ars, refl_ars=refl_ars, chi_ars=chi_ars)
-    
-np.shape(trans_ars)
 
-plt.plot(n*1e12, np.real(chi_ars[0]))
-plt.plot(n*1e12, np.real(chi_ars[1]))
-plt.plot(n*1e12, np.real(chi_ars[2]))
-plt.plot(n*1e12, np.real(chi_ars[3]))
-plt.plot(n*1e12, np.real(chi_ars[4]))
-plt.plot(n*1e12, np.real(chi_ars[5]))
-plt.plot(n*1e12, np.real(chi_ars[6]))
-plt.plot(n*1e12, np.real(chi_ars[7]))
+plt.plot(n*1e12, np.real(chi_ars.T))
 plt.show()
 
+# Remove last row and column of the trans_ars array (while also taking the transpose and real part) so that it fits in our grid
+trans_ars_to_plot = np.real(trans_ars.T)[:-1, :-1]
+
+# Make grid
 ddn = np.diff(pulse_delays)[0]
 time_grid, dtime_grid = np.mgrid[slice(n[0], n[-1] + dn, dn),
                 slice(pulse_delays[0],pulse_delays[-1] + ddn, ddn)]
-plt.pcolormesh(dtime_grid*1e15, time_grid*1e12, np.real(trans_ars.T))
-plt.ylabel('$t$ [ps]')
-plt.xlabel('$\Delta t$ [fs]')
-plt.gcf().set_dpi(200)
+
+# Setup colorbar
+cmap = plt.get_cmap('PiYG')
+levels = MaxNLocator(nbins=500).tick_values(trans_ars_to_plot.min(), trans_ars_to_plot.max())
+norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
+
+# Plot and add colorbar
+plt.pcolormesh(dtime_grid*1e15, time_grid*1e12, trans_ars_to_plot, cmap=cmap, norm=norm)
+plt.colorbar()
+
+# Label plot
+plt.title('$\chi$ Time Dependence Method', fontsize=15)
+plt.ylabel('$t$ [ps]', fontsize=15)
+plt.xlabel('$\Delta t$ [fs]', fontsize=15)
+plt.gca().tick_params(labelsize=15)
+plt.gcf().set_dpi(100)
+plt.tight_layout()
+plt.savefig(fname='mat_chi_time_dep.png', format='png', dpi=600)
+plt.show()
+
+# Do some other things
+index_to_extract = np.argmin(np.abs(np.subtract(n, 1.55e-15)))
+plt.plot(pulse_delays, np.real(trans_ars.T)[index_to_extract])
+plt.ylabel('$E_t(t)$')
+plt.xlabel('$\Delta t$')
 plt.show()
