@@ -8,6 +8,7 @@ from pathlib import Path
 from tqdm import tqdm
 from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
+import matplotlib.gridspec as gridspec
 
 # Constants
 c0 = 3e8 # um/ps
@@ -56,8 +57,8 @@ m_e_ind = np.argmin(np.abs(np.subtract(z, m_e_val)))
 mlen = m_e_ind - m_s_ind
 
 # Set constants
-g_a1 = np.complex64(0)
-g_a2 = np.complex64(1e16)
+g_a1 = np.complex64(1e16)
+g_a2 = np.complex64(-1e16)
 g_gamma = np.complex64(1e12)
 g_freq = np.complex64(0)
 # Calculate beta
@@ -74,7 +75,7 @@ g_ma2 = g_m * g_a2
 # Set constants
 e_a1 = np.complex64(1e16)
 e_a2 = np.complex64(-1e16)
-e_gamma = np.complex64(1e12)
+e_gamma = np.complex64(12e12)
 e_freq = np.complex64(0)
 # Calculate beta
 e_ang_gamma = np.complex64(e_gamma * 2 * np.pi)
@@ -87,7 +88,19 @@ e_mbeta = e_m * e_beta
 e_ma1 = e_m * e_a1
 e_ma2 = e_m * e_a2
 
-pulse_delays = np.arange(-240e-15, 450e-15, 10e-15) # -500 fs to 500 fs at intervals of 100 fs
+# Delete lines 91-99 once comparison simulations are done
+# Set the spread and step size
+spread = int(300/0.1) # 300 fs / (0.1 fs/step) = 3000 steps
+n_steps = 100 # Number of steps
+# Calculate the step size
+step_size = int(spread*2 / n_steps)
+# Generate an array of the index offsets from mat_transition_ind to use
+trans_inds = np.arange(-spread, spread + step_size, step_size)
+# Determine the pulse_delays from this
+pulse_delays = t[5015+trans_inds]
+
+# Uncomment once comparison simulations are done
+#pulse_delays = np.arange(-300e-15, 300e-15, 10e-15) # -300 fs to 300 fs at intervals of 10 fs
 
 def e_osc_frac(pulse_delay):
     # Set constants
@@ -114,7 +127,7 @@ plt.title('$f_e$ as a function of pulse delay at each material index')
 plt.show()
 
 #Create Sim object
-sim_name = 'novel_approach_sim7.npz'
+sim_name = 'novel_approach_sim11.npz'
 if Path(sim_name).is_file():
     # Load results
     dat = np.load(sim_name)
@@ -182,14 +195,17 @@ plt.show()
 # Remove last row and column of the trans_ars array (while also taking the transpose and real part) so that it fits in our grid
 trans_ars_to_plot = np.real(trans_ars.T)[:-1, :-1]
 
+print(np.shape(trans_ars))
+
 # Make grid
 ddn = np.diff(pulse_delays)[0]
 time_grid, dtime_grid = np.mgrid[slice(n[0], n[-1] + dn, dn),
                 slice(pulse_delays[0],pulse_delays[-1] + ddn, ddn)]
 
 # Setup colorbar
-cmap = plt.get_cmap('PiYG')
-levels = MaxNLocator(nbins=500).tick_values(trans_ars_to_plot.min(), trans_ars_to_plot.max())
+cmap = plt.get_cmap('bwr')
+min_max = np.max(np.abs([trans_ars_to_plot.min(), trans_ars_to_plot.max()]))
+levels = MaxNLocator(nbins=500).tick_values(-min_max, min_max)
 norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
 
 # Plot and add colorbar
@@ -201,9 +217,9 @@ plt.title('$\chi$ Time Dependence Method', fontsize=15)
 plt.ylabel('$t$ [ps]', fontsize=15)
 plt.xlabel('$\Delta t$ [fs]', fontsize=15)
 plt.gca().tick_params(labelsize=15)
-plt.gcf().set_dpi(100)
+plt.gcf().set_dpi(400)
 plt.tight_layout()
-plt.savefig(fname='mat_chi_time_dep.png', format='png', dpi=600)
+#plt.savefig(fname='mat_chi_time_dep.png', format='png', dpi=600)
 plt.show()
 
 # Do some other things
@@ -212,3 +228,54 @@ plt.plot(pulse_delays, np.real(trans_ars.T)[index_to_extract])
 plt.ylabel('$E_t(t)$')
 plt.xlabel('$\Delta t$')
 plt.show()
+
+# Clear figure
+plt.clf()
+# Setup grid
+cfig = plt.figure()
+widths = [20, 1]
+heights = [2, 1]
+spec = gridspec.GridSpec(ncols=2, nrows=2, width_ratios=widths, height_ratios=heights)
+# Add axes
+axs = cfig.add_subplot(spec[1,0])
+axc = cfig.add_subplot(spec[0,0], sharex=axs)
+axcc = cfig.add_subplot(spec[0,1])
+# Formatting
+axc.set_ylabel('$t$ [ps]', fontsize=15)
+axs.set_ylabel('$E_t(t)$', fontsize=15)
+axs.set_xlabel('$\Delta t$ [fs]', fontsize=15)
+axc.set_title('Material Bleed Method', fontsize=15)
+axc.tick_params(labelsize=12, bottom=False, labelbottom=False)
+axs.tick_params(labelsize=12)
+axcc.tick_params(labelsize=12)
+axs.set_xlim(-250, 250)
+axc.set_ylim(-0.5, 0.5)
+# Define variables to plot
+trans_ars_to_plot = np.real(trans_ars.T)[:-1,:-1]
+ddn = np.diff(pulse_delays)[0]
+time_grid, dtime_grid = np.mgrid[slice(n[0], n[-1] + dn, dn),
+                slice(pulse_delays[0],pulse_delays[-1] + ddn, ddn)]
+# Define colorbar
+min_max = np.max(np.abs([trans_ars_to_plot.min(), trans_ars_to_plot.max()]))
+cmap = plt.get_cmap('bwr')
+levels = MaxNLocator(nbins=500).tick_values(-min_max, min_max)
+norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
+# Plot colormesh and colorbar
+im = axc.pcolormesh(dtime_grid*1e15, time_grid*1e12, trans_ars_to_plot, cmap=cmap, norm=norm)
+cb = plt.colorbar(im, cax=axcc)
+cb.set_label('$E_t$', fontsize=15)
+
+# Plot lineout
+zero_ind = np.argmin(np.abs(np.subtract(n, 0)))
+tf = np.argmin(np.abs(np.subtract(n, 25e-15)))
+ntf = np.argmin(np.abs(np.subtract(n, -25e-15)))
+axs.plot(pulse_delays*1e15, np.real(trans_ars.T)[zero_ind], label='$\Delta t=0$')
+axs.plot(pulse_delays*1e15, np.real(trans_ars.T)[tf], label='$\Delta t=25$fs')
+axs.plot(pulse_delays*1e15, np.real(trans_ars.T)[ntf], label='$\Delta t=-25$fs')
+axs.legend()
+
+# Final plotting things
+plt.tight_layout()
+plt.subplots_adjust(hspace=0, wspace=0)
+plt.savefig(fname='mat_chi_time_dep.png', format='png', dpi=600)
+cfig.show()
