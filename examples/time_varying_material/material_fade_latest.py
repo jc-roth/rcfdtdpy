@@ -16,6 +16,7 @@ from pathlib import Path
 from tqdm import tqdm
 from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
+import matplotlib.gridspec as gridspec
 # Constants
 c0 = 3e8 # um/ps
 di = 0.03e-6 # 0.03 um
@@ -242,7 +243,7 @@ def metal_gen(trans_ind):
 
 
 #Create Sim object
-sim_name = 'post_material_transition.npz'
+sim_name = 'post_material_transition2.npz'
 if Path(sim_name).is_file():
     # Load results
     dat = np.load(sim_name)
@@ -306,25 +307,57 @@ else:
 # In[ ]:
 
 
-# Extract values to plot
+# Clear figure
+plt.clf()
+# Setup grid
+cfig = plt.figure()
+widths = [20, 1]
+heights = [2, 1]
+spec = gridspec.GridSpec(ncols=2, nrows=2, width_ratios=widths, height_ratios=heights)
+# Add axes
+axs = cfig.add_subplot(spec[1,0])
+axc = cfig.add_subplot(spec[0,0], sharex=axs)
+axcc = cfig.add_subplot(spec[0,1])
+# Formatting
+axc.set_ylabel('$t$ [ps]', fontsize=15)
+axs.set_ylabel('$E_t(t)$', fontsize=15)
+axs.set_xlabel('$\Delta t$ [fs]', fontsize=15)
+axc.set_title('Material Bleed Method', fontsize=15)
+axc.tick_params(labelsize=12, bottom=False, labelbottom=False)
+axs.tick_params(labelsize=12)
+axcc.tick_params(labelsize=12)
+axs.set_xlim(-100, 100)
+axc.set_ylim(-0.5, 0.5)
+# Define variables to plot
 trans_ars_to_plot = np.real(trans_ars.T)
-
-cmap = plt.get_cmap('PiYG')
-levels = MaxNLocator(nbins=500).tick_values(trans_ars_to_plot.min(), trans_ars_to_plot.max())
-norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
-
 ddn = np.diff(trans_vals)[0]
 time_grid, dtime_grid = np.mgrid[slice(n[0], n[-1] + dn, dn),
                 slice(trans_vals[0],trans_vals[-1] + ddn, ddn)]
-plt.pcolormesh(dtime_grid*1e15, time_grid*1e12, trans_ars_to_plot, cmap=cmap, norm=norm)
+# Define colorbar
+min_max = np.max(np.abs([trans_ars_to_plot.min(), trans_ars_to_plot.max()]))
+cmap = plt.get_cmap('PiYG')
+levels = MaxNLocator(nbins=500).tick_values(-min_max, min_max)
+norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
+# Plot colormesh and colorbar
+im = axc.pcolormesh(dtime_grid*1e15, time_grid*1e12, trans_ars_to_plot, cmap=cmap, norm=norm)
+cb = plt.colorbar(im, cax=axcc)
+cb.set_label('$E_t$', fontsize=15)
 
-plt.colorbar()
-plt.ylabel('$t$ [ps]', fontsize=15)
-plt.xlabel('$\Delta t$ [fs]', fontsize=15)
-plt.title('Material Bleed Method', fontsize=15)
-plt.gca().tick_params(labelsize=15)
-plt.gcf().set_dpi(400)
+# Plot lineout
+zero_ind = np.argmin(np.abs(np.subtract(n, 0)))
+tf = np.argmin(np.abs(np.subtract(n, 25e-15)))
+ntf = np.argmin(np.abs(np.subtract(n, -25e-15)))
+tff = np.argmin(np.abs(np.subtract(n, 50e-15)))
+ntff = np.argmin(np.abs(np.subtract(n, -50e-15)))
+axs.plot(trans_vals*1e15, np.real(trans_ars.T)[zero_ind], label='$t=0$')
+axs.plot(trans_vals*1e15, np.real(trans_ars.T)[tf], label='$t=25$fs')
+axs.plot(trans_vals*1e15, np.real(trans_ars.T)[ntf], label='$t=-25$fs')
+axs.plot(trans_vals*1e15, np.real(trans_ars.T)[tff], label='$t=50$fs')
+axs.plot(trans_vals*1e15, np.real(trans_ars.T)[ntff], label='$t=-50$fs')
+axs.legend(fontsize=8)
+
+# Final plotting things
 plt.tight_layout()
+plt.subplots_adjust(hspace=0, wspace=0)
 plt.savefig(fname='mat_bleed.png', format='png', dpi=600)
 plt.show()
-
