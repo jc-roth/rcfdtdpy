@@ -1,3 +1,3 @@
-from .sim import Sim, Current, Mat
+from .sim import Simulation, Current, Mat
 from .vis import plot, timeseries
-__all__ = ['Sim', 'Current', 'Mat', 'plot', 'timeseries']
+__all__ = ['Simulation', 'Current', 'Mat', 'plot', 'timeseries']
