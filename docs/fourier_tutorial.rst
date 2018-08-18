@@ -9,7 +9,7 @@ Import needed libraries and define constants
 .. code:: ipython3
 
     # Imports
-    from rcfdtd_sim import Sim, Current, Mat, vis
+    from rcfdtd_sim import Simulation, Current, Mat, vis
     import numpy as np
     from scipy.fftpack import fft
     from matplotlib import pyplot as plt
@@ -33,7 +33,7 @@ Define simulation bounds and calculate length in indicies
     n0 = -1e-2 # -1e-3 ps = -10 fs
     n1 = 1 # 1 ps = 1000 fs
     # Calculate dimensions
-    nlen, ilen = Sim.calc_dims(n0, n1, dn, i0, i1, di)
+    nlen, ilen = Simulation.calc_dims(n0, n1, dn, i0, i1, di)
 
 Create our time and space arrays to help construct our material and
 current pulse
@@ -144,8 +144,8 @@ Create and run our simulation (or load simulation if one already exists)
 
 .. code:: ipython3
 
-    # Create Sim object
-    s = Sim(i0, i1, di, n0, n1, dn, epsilon0, mu0, 'absorbing', current, material, nstore=int(nlen/20), storelocs=[1,ilen-2])
+    # Create Simulation object
+    s = Simulation(i0, i1, di, n0, n1, dn, epsilon0, mu0, 'absorbing', current, material, nstore=int(nlen/20), storelocs=[1,ilen-2])
     # Run simulation if simulation save doesn't exist
     sim_file = Path(fsave)
     if sim_file.is_file():

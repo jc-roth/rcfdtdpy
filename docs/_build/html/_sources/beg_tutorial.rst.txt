@@ -62,14 +62,14 @@ how ``rcfdtd_sim`` can be used follows.
 Example
 -------
 
-We begin by importing the ``Sim`` (used for simulation) and ``Mat``
+We begin by importing the ``Simulation`` (used for simulation) and ``Mat``
 (used to define materials) classes, as well as other needed imports
 
 .. code:: ipython3
 
     import numpy as np
     from matplotlib import pyplot as plt
-    from rcfdtd_sim.sim import Sim, Current, Mat
+    from rcfdtd_sim.sim import Simulation, Current, Mat
     from rcfdtd_sim import vis
 
 We next want to define our constants. We start with the speed of light
@@ -133,13 +133,13 @@ time. Lets say we want our simulation to span from :math:`-3`\ um to
     n0 = -5
     n1 = 10
 
-We now utilize the ``Sim`` class for the first time by making use of its
+We now utilize the ``Simulation`` class for the first time by making use of its
 static function ``calc_dims``, which yields the dimensions of the
 simulation in discritized cells
 
 .. code:: ipython3
 
-    nlen, ilen = Sim.calc_dims(n0, n1, dn, i0, i1, di)
+    nlen, ilen = Simulation.calc_dims(n0, n1, dn, i0, i1, di)
     print(f'nlen={nlen}, ilen={ilen}')
 
 
@@ -276,8 +276,8 @@ simulation object's ``simulate`` function to run the simulation
 
 .. code:: ipython3
 
-    # Create Sim object
-    s = Sim(i0, i1, di, n0, n1, dn, epsilon0, mu0, 'absorbing', current, material, nstore=int(nlen/5), storelocs=[1,ilen-2])
+    # Create Simulation object
+    s = Simulation(i0, i1, di, n0, n1, dn, epsilon0, mu0, 'absorbing', current, material, nstore=int(nlen/5), storelocs=[1,ilen-2])
     # Run simulation
     s.simulate()
 
