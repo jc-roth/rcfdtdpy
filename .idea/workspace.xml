@@ -2,13 +2,31 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cbd1a98a-191d-477a-8b37-cee00282655e" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/examples/drude_model/.ipynb_checkpoints/drude_model-checkpoint.ipynb" afterPath="$PROJECT_DIR$/examples/drude_model/.ipynb_checkpoints/drude_model-checkpoint.ipynb" />
-      <change beforePath="$PROJECT_DIR$/examples/drude_model/drude_model.ipynb" afterPath="$PROJECT_DIR$/examples/drude_model/drude_model.ipynb" />
-      <change beforePath="$PROJECT_DIR$/examples/time_varying_material/.ipynb_checkpoints/material_fade_latest-checkpoint.py" afterPath="$PROJECT_DIR$/examples/time_varying_material/.ipynb_checkpoints/material_fade_latest-checkpoint.py" />
-      <change beforePath="$PROJECT_DIR$/examples/time_varying_material/.ipynb_checkpoints/time_varying_material-checkpoint.ipynb" afterPath="$PROJECT_DIR$/examples/time_varying_material/.ipynb_checkpoints/time_varying_material-checkpoint.ipynb" />
-      <change beforePath="$PROJECT_DIR$/examples/time_varying_material/mat_bleed.png" afterPath="$PROJECT_DIR$/examples/time_varying_material/mat_bleed.png" />
-      <change beforePath="$PROJECT_DIR$/examples/time_varying_material/material_fade_latest.py" afterPath="$PROJECT_DIR$/examples/time_varying_material/material_fade_latest.py" />
-      <change beforePath="$PROJECT_DIR$/examples/time_varying_material/time_varying_material.ipynb" afterPath="$PROJECT_DIR$/examples/time_varying_material/time_varying_material.ipynb" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/doctrees/beg_tutorial.doctree" afterPath="$PROJECT_DIR$/docs/_build/doctrees/beg_tutorial.doctree" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/doctrees/environment.pickle" afterPath="$PROJECT_DIR$/docs/_build/doctrees/environment.pickle" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/doctrees/fourier_tutorial.doctree" afterPath="$PROJECT_DIR$/docs/_build/doctrees/fourier_tutorial.doctree" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/doctrees/index.doctree" afterPath="$PROJECT_DIR$/docs/_build/doctrees/index.doctree" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/doctrees/sim.doctree" afterPath="$PROJECT_DIR$/docs/_build/doctrees/sim.doctree" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/doctrees/vis.doctree" afterPath="$PROJECT_DIR$/docs/_build/doctrees/vis.doctree" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/.buildinfo" afterPath="$PROJECT_DIR$/docs/_build/html/.buildinfo" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/_modules/index.html" afterPath="$PROJECT_DIR$/docs/_build/html/_modules/index.html" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/_modules/rcfdtd_sim/sim.html" afterPath="$PROJECT_DIR$/docs/_build/html/_modules/rcfdtd_sim/sim.html" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/_static/basic.css" afterPath="$PROJECT_DIR$/docs/_build/html/_static/basic.css" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/_static/doctools.js" afterPath="$PROJECT_DIR$/docs/_build/html/_static/doctools.js" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/_static/jquery.js" afterPath="$PROJECT_DIR$/docs/_build/html/_static/jquery.js" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/_static/searchtools.js" afterPath="$PROJECT_DIR$/docs/_build/html/_static/searchtools.js" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/_static/websupport.js" afterPath="$PROJECT_DIR$/docs/_build/html/_static/websupport.js" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/beg_tutorial.html" afterPath="$PROJECT_DIR$/docs/_build/html/beg_tutorial.html" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/fourier_tutorial.html" afterPath="$PROJECT_DIR$/docs/_build/html/fourier_tutorial.html" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/genindex.html" afterPath="$PROJECT_DIR$/docs/_build/html/genindex.html" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/objects.inv" afterPath="$PROJECT_DIR$/docs/_build/html/objects.inv" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/searchindex.js" afterPath="$PROJECT_DIR$/docs/_build/html/searchindex.js" />
+      <change beforePath="$PROJECT_DIR$/docs/_build/html/sim.html" afterPath="$PROJECT_DIR$/docs/_build/html/sim.html" />
+      <change beforePath="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim.egg-info/PKG-INFO" afterPath="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim.egg-info/PKG-INFO" />
+      <change beforePath="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/__init__.py" afterPath="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/__init__.py" />
+      <change beforePath="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/sim.py" afterPath="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/sim.py" />
+      <change beforePath="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/vis.py" afterPath="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/vis.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -22,8 +40,8 @@
       <file leaf-file-name="sim.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/sim.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="373">
-              <caret line="436" column="87" lean-forward="false" selection-start-line="436" selection-start-column="87" selection-end-line="436" selection-end-column="87" />
+            <state relative-caret-position="266">
+              <caret line="171" column="42" lean-forward="true" selection-start-line="171" selection-start-column="42" selection-end-line="171" selection-end-column="42" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -31,7 +49,26 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="vis.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/vis.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="221">
+              <caret line="25" column="39" lean-forward="true" selection-start-line="25" selection-start-column="39" selection-end-line="25" selection-end-column="39" />
+              <folding>
+                <element signature="e#111#138#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>type</find>
+      <find>self._ilen</find>
+      <find>tuple</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -39,6 +76,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+        <option value="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/__init__.py" />
+        <option value="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/vis.py" />
         <option value="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/sim.py" />
       </list>
     </option>
@@ -70,7 +109,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -94,6 +132,7 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -117,6 +156,9 @@
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value=",SHOW_INHERITED,SHOW_FIELDS" />
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -132,6 +174,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="2" y="23" width="1357" height="741" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -143,7 +186,7 @@
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24981578" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -162,10 +205,32 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="1" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/sim.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/sim.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/sim.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="330">
@@ -180,20 +245,40 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Library/Caches/PyCharm2017.3/python_stubs/2051321509/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="5470" column="0" lean-forward="true" selection-start-line="5440" selection-start-column="0" selection-end-line="5545" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="17" lean-forward="false" selection-start-line="1" selection-start-column="17" selection-end-line="1" selection-end-column="17" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/vis.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="221">
+          <caret line="25" column="39" lean-forward="true" selection-start-line="25" selection-start-column="39" selection-end-line="25" selection-end-column="39" />
+          <folding>
+            <element signature="e#111#138#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/sim.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="373">
-          <caret line="436" column="87" lean-forward="false" selection-start-line="436" selection-start-column="87" selection-end-line="436" selection-end-column="87" />
+        <state relative-caret-position="266">
+          <caret line="171" column="42" lean-forward="true" selection-start-line="171" selection-start-column="42" selection-end-line="171" selection-end-column="42" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
           </folding>

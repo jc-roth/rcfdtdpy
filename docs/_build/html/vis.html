@@ -152,32 +152,8 @@
 <p>The visualization class provides a number of ways to easily visualize simulation results.</p>
 <span class="target" id="module-rcfdtd_sim.vis"></span><p>Used to quickly visualize results from the sim module, should not be used for production quality plots</p>
 <dl class="function">
-<dt id="rcfdtd_sim.vis.plot">
-<code class="descclassname">rcfdtd_sim.vis.</code><code class="descname">plot</code><span class="sig-paren">(</span><em>sim</em>, <em>fname=None</em>, <em>nscale=1</em>, <em>escale=1</em>, <em>hscale=1</em>, <em>nunit='NA'</em>, <em>eunit='NA'</em>, <em>hunit='NA'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/vis.html#plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.vis.plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Displays the E and H-fields at a given index in time.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>sim</strong> – The simulation to visualize</li>
-<li><strong>fname</strong> – The filename to export to, does not export if blank</li>
-<li><strong>nscale</strong> – The scalar factor that the x-axis is scaled by</li>
-<li><strong>escale</strong> – The scalar factor that the y-axis of the E-field is scaled by</li>
-<li><strong>hscale</strong> – The scalar factor that the y-axis of the H-field is scaled by</li>
-<li><strong>nunit</strong> – The units given to the x-label</li>
-<li><strong>eunit</strong> – The units given to the y-label for the E-field axis</li>
-<li><strong>hunit</strong> – The units given to the y-label for the H-field axis</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
 <dt id="rcfdtd_sim.vis.timeseries">
-<code class="descclassname">rcfdtd_sim.vis.</code><code class="descname">timeseries</code><span class="sig-paren">(</span><em>sim</em>, <em>fname=None</em>, <em>interval=10</em>, <em>iscale=1</em>, <em>escale=1</em>, <em>hscale=1</em>, <em>iunit='NA'</em>, <em>eunit='NA'</em>, <em>hunit='NA'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/vis.html#timeseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.vis.timeseries" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">rcfdtd_sim.vis.</code><code class="descname">timeseries</code><span class="sig-paren">(</span><em>sim</em>, <em>i</em>, <em>fname=None</em>, <em>interval=10</em>, <em>iscale=1</em>, <em>escale=1</em>, <em>hscale=1</em>, <em>iunit='NA'</em>, <em>eunit='NA'</em>, <em>hunit='NA'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/vis.html#timeseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.vis.timeseries" title="Permalink to this definition">¶</a></dt>
 <dd><p>Animates the E and H-fields in time.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

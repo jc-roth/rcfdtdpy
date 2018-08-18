@@ -165,18 +165,15 @@
 <span class="sd">    :param dn: The temporal step size</span>
 <span class="sd">    :param epsilon0: :math:`\epsilon_0`, the vacuum permittivity</span>
 <span class="sd">    :param mu0: :math:`\mu_0`, the vacuum permeability</span>
-<span class="sd">    :param boundary: The boundary type of the field, either &#39;zero&#39;, for fields bounded by zeros or &#39;absorbing&#39; for</span>
-<span class="sd">    absorbing boundary conditions</span>
-<span class="sd">    :param currents: A Current object or a tuple of Current objects that represent the currents present in the</span>
-<span class="sd">    simulation, defaults to none</span>
-<span class="sd">    :param materials: A Material object or a tuple of Material objects that represent the materials present in the</span>
-<span class="sd">    simulation, defaults to none</span>
-<span class="sd">    :param nstore: A tuple of time indices to save field values at in all points in space</span>
-<span class="sd">    :param istore: A tuple of spatial indices to save field values at in all points in time</span>
+<span class="sd">    :param boundary: The boundary type of the field, either &#39;zero&#39;, for fields bounded by zeros or &#39;absorbing&#39; for absorbing boundary conditions</span>
+<span class="sd">    :param currents: A Current object or a list of Current objects that represent the currents present in the simulation, defaults to none</span>
+<span class="sd">    :param materials: A Material object or a list of Material objects that represent the materials present in the simulation, defaults to none</span>
+<span class="sd">    :param nstore: A list of time indices to save field values at in all points in space</span>
+<span class="sd">    :param istore: A list of spatial indices to save field values at in all points in time</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">epsilon0</span><span class="p">,</span> <span class="n">mu0</span><span class="p">,</span> <span class="n">boundary</span><span class="p">,</span> <span class="n">currents</span><span class="o">=</span><span class="p">(),</span> <span class="n">materials</span><span class="o">=</span><span class="p">(),</span> <span class="n">nstore</span><span class="o">=</span><span class="p">(),</span>
-                 <span class="n">istore</span><span class="o">=</span><span class="p">()):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">epsilon0</span><span class="p">,</span> <span class="n">mu0</span><span class="p">,</span> <span class="n">boundary</span><span class="p">,</span> <span class="n">currents</span><span class="o">=</span><span class="p">[],</span> <span class="n">materials</span><span class="o">=</span><span class="p">[],</span> <span class="n">nstore</span><span class="o">=</span><span class="p">[],</span>
+                 <span class="n">istore</span><span class="o">=</span><span class="p">[]):</span>
         <span class="c1"># -------------</span>
         <span class="c1"># INITIAL SETUP</span>
         <span class="c1"># -------------</span>
@@ -189,14 +186,14 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;di must be greater than zero&quot;</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">dn</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;dn must be greater than zero&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="n">materials</span><span class="p">)</span> <span class="o">==</span> <span class="n">Material</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">materials</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">)))</span> <span class="ow">or</span> <span class="p">(</span>
-                <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">materials</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">materials</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">materials</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="n">Material</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;materials must be either a Material object or a tuple of Material objects&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="n">currents</span><span class="p">)</span> <span class="o">==</span> <span class="n">Current</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">currents</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">)))</span> <span class="ow">or</span> <span class="p">(</span>
-                <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">currents</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">currents</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">currents</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">!=</span> <span class="n">Current</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;currents must be either a Current object or a tuple of Current objects&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">materials</span><span class="p">,</span> <span class="n">Material</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">materials</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">)))</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">materials</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">materials</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">materials</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Material</span><span class="p">))):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;materials must be either a Material object or a list of Material objects&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">currents</span><span class="p">,</span> <span class="n">Current</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">currents</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">)))</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">currents</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">currents</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currents</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Current</span><span class="p">))):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;currents must be either a Current object or a list of Current objects&quot;</span><span class="p">)</span>
         <span class="c1"># Determine the number of temporal and spatial cells in the field</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">=</span> <span class="n">Simulation</span><span class="o">.</span><span class="n">calc_dims</span><span class="p">(</span><span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span> <span class="o">=</span> <span class="n">Simulation</span><span class="o">.</span><span class="n">calc_dims</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">)</span>
         <span class="c1"># Save field dimensions and resolution</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_i0</span> <span class="o">=</span> <span class="n">i0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_i1</span> <span class="o">=</span> <span class="n">i1</span>
@@ -207,26 +204,26 @@
         <span class="c1"># -------------</span>
         <span class="c1"># CURRENT SETUP</span>
         <span class="c1"># -------------</span>
-        <span class="c1"># Put the currents variable into a tuple if it isn&#39;t already</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">currents</span><span class="p">)</span> <span class="o">==</span> <span class="n">Current</span><span class="p">:</span>
+        <span class="c1"># Put the currents variable into a list if it isn&#39;t already</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">currents</span><span class="p">,</span> <span class="n">Current</span><span class="p">):</span>
             <span class="n">currents</span> <span class="o">=</span> <span class="p">(</span><span class="n">currents</span><span class="p">,)</span>
-        <span class="c1"># Tuple already exits, create an empty current object</span>
+        <span class="c1"># List already exits, create an empty current object</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">currents</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># Create an empty currents tuple</span>
+            <span class="c1"># Create an empty currents list</span>
             <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-            <span class="n">currents</span> <span class="o">=</span> <span class="p">(</span><span class="n">Current</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">),)</span>
+            <span class="n">currents</span> <span class="o">=</span> <span class="p">[</span><span class="n">Current</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">)]</span>
         <span class="c1"># Save the currents</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_currents</span> <span class="o">=</span> <span class="n">currents</span>
         <span class="c1"># --------------</span>
         <span class="c1"># MATERIAL SETUP</span>
         <span class="c1"># --------------</span>
-        <span class="c1"># Put the mat variable into a tuple if it isn&#39;t already</span>
-        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">materials</span><span class="p">)</span> <span class="o">==</span> <span class="n">Material</span><span class="p">:</span>
+        <span class="c1"># Put the mat variable into a list if it isn&#39;t already</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">materials</span><span class="p">,</span> <span class="n">Material</span><span class="p">):</span>
             <span class="n">materials</span> <span class="o">=</span> <span class="p">(</span><span class="n">materials</span><span class="p">,)</span>
-        <span class="c1"># Tuple already exits, create an non-interacting material</span>
+        <span class="c1"># List already exits, create an non-interacting material</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">materials</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># Create an empty material</span>
-            <span class="n">materials</span> <span class="o">=</span> <span class="p">(</span><span class="n">EmptyMaterial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_di</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">),)</span>
+            <span class="n">materials</span> <span class="o">=</span> <span class="p">[</span><span class="n">EmptyMaterial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_di</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">)]</span>
         <span class="c1"># Save the material</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_materials</span> <span class="o">=</span> <span class="n">materials</span>
         <span class="c1"># --------------</span>
@@ -258,7 +255,7 @@
         <span class="c1"># STORED VALUES SETUP</span>
         <span class="c1"># -------------------</span>
         <span class="c1"># Save nstore info</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nstore</span> <span class="o">=</span> <span class="n">nstore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nstore</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">nstore</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nstore_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nstore</span><span class="p">)</span>
         <span class="c1"># Check to see if any time index stores are requested</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstore_len</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
@@ -268,7 +265,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_nstore_efieldr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nstore_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_nstore_hfieldr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nstore_len</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
         <span class="c1"># Save istore info</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_istore</span> <span class="o">=</span> <span class="n">istore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_istore</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">istore</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_istore_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_istore</span><span class="p">)</span>
         <span class="c1"># Check to see if any location index stores are requested</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_len</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
@@ -439,9 +436,9 @@
 
 <div class="viewcode-block" id="Simulation.get_materials"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Simulation.get_materials">[docs]</a>    <span class="k">def</span> <span class="nf">get_materials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the tuple of Material objects present in the simulation.</span>
+<span class="sd">        Returns the list of Material objects present in the simulation.</span>
 
-<span class="sd">        :returns: A tuple of Material objects</span>
+<span class="sd">        :returns: A list of Material objects</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_materials</span></div>
 
@@ -451,8 +448,7 @@
 <span class="sd">        where an index along axis=0 corresponds to the corresponding temporal index in nstore. Values along axis=1</span>
 <span class="sd">        correspond to the spatial index.</span>
 
-<span class="sd">        :return: `(hfield, efield, hfieldr, efieldr)` where the suffix `r` corresponds to a reference field. If nstore</span>
-<span class="sd">        is unspecified returns None</span>
+<span class="sd">        :return: `(hfield, efield, hfieldr, efieldr)` where the suffix `r` corresponds to a reference field. If nstore is unspecified returns None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstore_len</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -465,8 +461,7 @@
 <span class="sd">        where an index along axis=1 corresponds to the corresponding spatial index in istore. Values along axis=0</span>
 <span class="sd">        correspond to the temporal index.</span>
 
-<span class="sd">        :return: `(hfield, efield, hfieldr, efieldr)` where the suffix `r` corresponds to a reference field. If istore</span>
-<span class="sd">        is unspecified returns None</span>
+<span class="sd">        :return: `(hfield, efield, hfieldr, efieldr)` where the suffix `r` corresponds to a reference field. If istore is unspecified returns None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_len</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -517,15 +512,14 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Current class is used to represent a current in the simulation.</span>
 
-<span class="sd">    :param nlen: The number of temporal indices in the simulation</span>
-<span class="sd">    :param ilen: The number of spatial indices in the simulation</span>
-<span class="sd">    :param n0: The starting temporal index of the current</span>
 <span class="sd">    :param i0: The starting spatial index of the current</span>
-<span class="sd">    :param current: A matrix representing the current, where axis=0 represents locations in time :math:`n` and axis=1</span>
-<span class="sd">    represents locations in space :math:`i`</span>
+<span class="sd">    :param n0: The starting temporal index of the current</span>
+<span class="sd">    :param ilen: The number of spatial indices in the simulation</span>
+<span class="sd">    :param nlen: The number of temporal indices in the simulation</span>
+<span class="sd">    :param current: A matrix representing the current, where axis=0 represents locations in time :math:`n` and axis=1 represents locations in space :math:`i`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">current</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i0</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="n">current</span><span class="p">):</span>
         <span class="c1"># -------------</span>
         <span class="c1"># INITIAL SETUP</span>
         <span class="c1"># -------------</span>
@@ -647,16 +641,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Material.get_chi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Material.get_chi">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">get_chi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the value of :math:`\chi` at the current time step in the simulation at each spatial location in the</span>
-<span class="sd">        simulation.</span>
-
-<span class="sd">        :return: The current value of :math:`\chi` at each spatial location in the simulation</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
-
 <div class="viewcode-block" id="Material.get_psi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Material.get_psi">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -670,7 +654,7 @@
 
 <div class="viewcode-block" id="EmptyMaterial"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.EmptyMaterial">[docs]</a><span class="k">class</span> <span class="nc">EmptyMaterial</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Represents an empty Material, or in other words vacuum</span>
+<span class="sd">    Represents an empty Material, i.e. vacuum</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span><span class="p">):</span>
@@ -688,10 +672,6 @@
 <div class="viewcode-block" id="EmptyMaterial.get_epsiloninf"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.EmptyMaterial.get_epsiloninf">[docs]</a>    <span class="k">def</span> <span class="nf">get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Simply return 1</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="EmptyMaterial.get_chi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.EmptyMaterial.get_chi">[docs]</a>    <span class="k">def</span> <span class="nf">get_chi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># Simply return 0</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EmptyMaterial.get_psi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.EmptyMaterial.get_psi">[docs]</a>    <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Simply return 0</span>
@@ -712,21 +692,16 @@
 <span class="sd">    :param ilen: The number of spatial indices in the simulation</span>
 <span class="sd">    :param nlen: The number of temporal indices in the simulation</span>
 <span class="sd">    :param material_i0: The starting spatial index of the material</span>
-<span class="sd">    :param a1: A matrix representing :math:`A_1` where axis=0 represents the :math:`j` th oscillator and axis=1</span>
-<span class="sd">    represents the :math:`i` th spatial index</span>
-<span class="sd">    :param a2: A matrix representing :math:`A_2` where axis=0 represents the :math:`j` th oscillator and axis=1</span>
-<span class="sd">    represents the :math:`i` th spatial index</span>
-<span class="sd">    :param g: A matrix representing :math:`\gamma` where axis=0 represents the :math:`j` th oscillator and axis=1</span>
-<span class="sd">    represents the :math:`i` th spatial index</span>
-<span class="sd">    :param b: A matrix representing :math:`\beta` where axis=0 represents the :math:`j` th oscillator and axis=1</span>
-<span class="sd">    represents the :math:`i` th spatial index</span>
-<span class="sd">    :param opacity: A vector representing the opacity of the material in time. Each index corresponds to the</span>
-<span class="sd">    :math:`n` th time index of the material where `1` corresponds to the material being opaque and `0` corresponds to</span>
-<span class="sd">    the material being transparent. Values can be real numbers. Defaults to an opaque material for all time.</span>
-<span class="sd">    :param istore: A tuple of spatial indices to save :math:`\chi` values at in all points in time</span>
+<span class="sd">    :param epsiloninf: The :math:`\epsilon_\infty` of the material, which is constant over space and time.</span>
+<span class="sd">    :param a1: A matrix representing :math:`A_1` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index</span>
+<span class="sd">    :param a2: A matrix representing :math:`A_2` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index</span>
+<span class="sd">    :param g: A matrix representing :math:`\gamma` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index</span>
+<span class="sd">    :param b: A matrix representing :math:`\beta` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index</span>
+<span class="sd">    :param opacity: A vector representing the opacity of the material in time. Each index corresponds to the :math:`n` th time index of the material where `1` corresponds to the material being opaque and `0` corresponds to the material being transparent. Values can be real numbers. Defaults to an opaque material for all time.</span>
+<span class="sd">    :param istore: A list of spatial indices to save :math:`\chi` values at in all points in time</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="n">material_i0</span><span class="p">,</span> <span class="n">epsiloninf</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">istore</span><span class="o">=</span><span class="p">()):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="n">material_i0</span><span class="p">,</span> <span class="n">epsiloninf</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">istore</span><span class="o">=</span><span class="p">[]):</span>
         <span class="c1"># -------------</span>
         <span class="c1"># INITIAL SETUP</span>
         <span class="c1"># -------------</span>
@@ -745,7 +720,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="n">material_i1</span> <span class="o">=</span> <span class="n">material_i0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">a1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># Check for error</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">material_i1</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">material_i0</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">material_i1</span> <span class="o">&gt;</span> <span class="n">ilen</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Material cannot start at i=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">material_i0</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; and end at i=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">material_i1</span><span class="p">)</span>
                              <span class="o">+</span> <span class="s2">&quot; as this exceeds the dimensions of the simulation.&quot;</span><span class="p">)</span>
         <span class="c1"># Call super</span>
@@ -802,8 +777,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_chi0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">chi0_summed</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">)),</span>
                             <span class="s1">&#39;constant&#39;</span><span class="p">)</span>
         <span class="c1"># Create a place to store susceptibility values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_chi_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_chi_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chi_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chi0_1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chi_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chi0_2</span><span class="p">)</span>
         <span class="c1"># -------------------</span>
         <span class="c1"># STORED VALUES SETUP</span>
         <span class="c1"># -------------------</span>
@@ -820,252 +795,41 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_psi_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_psi_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
         <span class="c1"># Reset chi</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_chi_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_chi_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
-        <span class="c1"># Rest istore_chi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chi_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chi_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_2</span>
+        <span class="c1"># Reset istore_chi</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_len</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># Create arrays to store the field values in each location</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_istore_chi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_len</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="StaticMaterial.update_material"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.update_material">[docs]</a>    <span class="k">def</span> <span class="nf">update_material</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
-        <span class="k">pass</span></div>
-
-<div class="viewcode-block" id="StaticMaterial.get_chi0"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.get_chi0">[docs]</a>    <span class="k">def</span> <span class="nf">get_chi0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
-
-<div class="viewcode-block" id="StaticMaterial.get_epsiloninf"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.get_epsiloninf">[docs]</a>    <span class="k">def</span> <span class="nf">get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
-
-<div class="viewcode-block" id="StaticMaterial.get_chi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.get_chi">[docs]</a>    <span class="k">def</span> <span class="nf">get_chi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
-
-<div class="viewcode-block" id="StaticMaterial.get_psi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.get_psi">[docs]</a>    <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div></div>
-
-
-<span class="c1"># Implement DynamicMat</span>
-<span class="c1">#  - Two possible methods of numerical integration? Symbolic (preferred?) vs numerical?</span>
-
-<div class="viewcode-block" id="Mat"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Mat">[docs]</a><span class="k">class</span> <span class="nc">Mat</span><span class="p">:</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    The Mat class is used to represent a material present in a simulation</span>
-
-<span class="sd">    :param dn: The temporal step size</span>
-<span class="sd">    :param ilen: The number of spatial indicies in the simulation</span>
-<span class="sd">    :param nlen: The number of temporal indicies in the simulation</span>
-<span class="sd">    :param timebounds: A tuple `(timeStart, timeEnd)` of the time indicies between which the material exists in the simulation where `timeStart` is inclusive and `timeEnd` is exclusive. Multiple materials with carefully chosen time bounds can be used to change material properties in time.</span>
-<span class="sd">    :param mat0: The starting index of the material</span>
-<span class="sd">    :param epsiloninf: :math:`\epsilon_\infty` inside the material</span>
-<span class="sd">    :param mata1: A matrix representing :math:`A_1` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index</span>
-<span class="sd">    :param mata2: A matrix representing :math:`A_2` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index</span>
-<span class="sd">    :param matg: A matrix representing :math:`\gamma` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index</span>
-<span class="sd">    :param matb: A matrix representing :math:`\beta` where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial index</span>
-<span class="sd">    :param opacity: A vector representing the opacity of the material in time. Each index corresponds to the :math:`n` th time index of the material where `1` corresponds to the material being opaque and `0` corresponds to the material being transparent. Defaults to an opaque material for all time.</span>
-<span class="sd">    :param storelocs: A list of locations to save chi at during each step in time, indexed from 0 to the material length</span>
-<span class="sd">    :param dtype: The data type to store the field values in</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="n">mat0</span><span class="p">,</span> <span class="n">epsiloninf</span><span class="p">,</span> <span class="n">mata1</span><span class="p">,</span> <span class="n">mata2</span><span class="p">,</span> <span class="n">matg</span><span class="p">,</span> <span class="n">matb</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">storelocs</span><span class="o">=</span><span class="p">[],</span>
-                 <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">):</span>
-        <span class="c1"># -------------</span>
-        <span class="c1"># INITIAL SETUP</span>
-        <span class="c1"># -------------</span>
-        <span class="c1"># Check for error</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">mata1</span><span class="p">)</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">mata2</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">mata1</span><span class="p">)</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">matg</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">mata1</span><span class="p">)</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">matb</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The dimensions of mata1, mata2, matg, and matb should be the same&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="n">opacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">opacity</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;opacity should be a 1-dimensional Numpy array of length nlen&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="n">opacity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">opacity</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">nlen</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;opacity should be a Numpy array of length nlen&quot;</span><span class="p">)</span>
-        <span class="c1"># Save arguments</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dn</span> <span class="o">=</span> <span class="n">dn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">=</span> <span class="n">ilen</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span> <span class="o">=</span> <span class="n">nlen</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span> <span class="o">=</span> <span class="n">mat0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">dtype</span>
-        <span class="c1"># If opacity is unspecified, set equal to opaque for all time, else save provided opacity</span>
-        <span class="k">if</span> <span class="n">opacity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_opacity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_opacity</span> <span class="o">=</span> <span class="n">opacity</span>
-        <span class="c1"># Get and save material dimension info</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">mata1</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">mata1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">mata1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">mata1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="c1"># Check for error</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Material cannot start at i=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; and end at i=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; as this exceeds the dimensions of the simulation.&quot;</span><span class="p">)</span>
-        <span class="c1"># Reshape arrays so that they can be indexed correctly</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mata1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">mata1</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mata2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">mata2</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_matg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">matg</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_matb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">matb</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">))</span>
-        <span class="k">del</span> <span class="n">mata1</span>
-        <span class="k">del</span> <span class="n">mata2</span>
-        <span class="k">del</span> <span class="n">matg</span>
-        <span class="k">del</span> <span class="n">matb</span>
-        <span class="c1"># Epsilon_infinity is equal to one in vacuum, so only set self._epsiloninf equal to epsiloninf in the material</span>
-        <span class="n">epsiloninf_repeat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">epsiloninf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_epsiloninf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">epsiloninf_repeat</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">)),</span> <span class="s1">&#39;constant&#39;</span><span class="p">,</span>
-                                  <span class="n">constant_values</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="c1"># --------------</span>
-        <span class="c1"># MATERIAL SETUP</span>
-        <span class="c1"># --------------</span>
-        <span class="c1"># Calculate susceptability beta and gamma sums and exponents</span>
-        <span class="n">b_min_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_matb</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_matg</span><span class="p">)</span>
-        <span class="n">min_b_min_g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_matb</span><span class="p">,</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_matg</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_exp_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">b_min_g</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dn</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_exp_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">min_b_min_g</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dn</span><span class="p">))</span>
-        <span class="c1"># Calculate initial susceptability values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">)</span>  <span class="c1"># Set chi0_1=0 initially</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">)</span>  <span class="c1"># Set chi0_2=0 initially</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">mi</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">b_min_g</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-5</span><span class="p">:</span>
-                    <span class="c1"># beta-gamma is small, avoid divide by zero error</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_1</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mata1</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dn</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_2</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mata2</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">],</span> <span class="n">min_b_min_g</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">]),</span>
-                                                      <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp_2</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># beta-gamma is not small, calculate normally</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_1</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mata1</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">],</span> <span class="n">b_min_g</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">]),</span>
-                                                      <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp_1</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_2</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mata2</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">],</span> <span class="n">min_b_min_g</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">]),</span>
-                                                      <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_exp_2</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="n">mi</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="c1"># Calclate first delta susceptabiility values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dchi0_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chi0_1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_1</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_dchi0_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chi0_2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_2</span><span class="p">))</span>
-        <span class="c1"># Initialize psi values to zero</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_psi_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_psi_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">)</span>
-        <span class="c1"># Calculate chi0</span>
-        <span class="n">chi0_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chi0_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_2</span><span class="p">)</span>
-        <span class="n">chi0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">chi0_j</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="c1"># Pad chi0 so that it spans the length of the simulation</span>
-        <span class="n">chi0_padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">chi0</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">)),</span> <span class="s1">&#39;constant&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_chi0</span> <span class="o">=</span> <span class="n">chi0_padded</span>
-        <span class="c1"># -------------------</span>
-        <span class="c1"># STORED VALUES SETUP</span>
-        <span class="c1"># -------------------</span>
-        <span class="c1"># Save storeloc info</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_storelocs</span> <span class="o">=</span> <span class="n">storelocs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nlocs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_storelocs</span><span class="p">)</span>
-        <span class="c1"># Check to see if any storelocs are requested</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlocs</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># Create arrays to store the field values in each location</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_locs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlocs</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">)</span>
-        <span class="c1"># ---------------------</span>
-        <span class="c1"># CHI CALCULATION SETUP</span>
-        <span class="c1"># ---------------------</span>
-        <span class="c1"># Save the chi0 values from chi0_1 and chi0_2 from the indicies we wish to store at all j values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prev_chi_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_1</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storelocs</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prev_chi_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_2</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storelocs</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Tests for equality between this Material object and another. This does not account for the current state of the object, but rather its initial conditions.</span>
+<span class="sd">        Updates the values of :math:`\psi` and :math:`\chi` Saves the values of :math:`chi` requested via the `istore`</span>
+<span class="sd">        parameter.</span>
+
+<span class="sd">        :param n: The iteration index :math:`n`</span>
+<span class="sd">        :param efield: The efield to use in update calculations</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Mat</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;dn, ilen, nlen, mat0, epsiloninf, mata1, mata2, matg, matb&quot;&quot;&quot;</span>
-            <span class="n">dn_eq</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dn</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_dn</span><span class="p">)</span>
-            <span class="n">ilen_eq</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_ilen</span><span class="p">)</span>
-            <span class="n">nlen_eq</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_nlen</span><span class="p">)</span>
-            <span class="n">mat0_eq</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_mat0</span><span class="p">)</span>
-            <span class="n">epsiloninf_eq</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_epsiloninf</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_epsiloninf</span><span class="p">)</span>
-            <span class="n">mata1_eq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mata1</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_mata1</span><span class="p">)</span>
-            <span class="n">mata2_eq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mata2</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_mata2</span><span class="p">)</span>
-            <span class="n">matg_eq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_matg</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_matg</span><span class="p">)</span>
-            <span class="n">matb_eq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_matb</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_matb</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">(</span>
-                    <span class="n">dn_eq</span> <span class="ow">and</span> <span class="n">ilen_eq</span> <span class="ow">and</span> <span class="n">nlen_eq</span> <span class="ow">and</span> <span class="n">mat0_eq</span> <span class="ow">and</span> <span class="n">epsiloninf_eq</span> <span class="ow">and</span> <span class="n">mata1_eq</span> <span class="ow">and</span> <span class="n">mata2_eq</span> <span class="ow">and</span> <span class="n">matg_eq</span> <span class="ow">and</span> <span class="n">matb_eq</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># Update psi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_psi</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">)</span>
+        <span class="c1"># Update chi_1 and chi_2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chi_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chi_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chi_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chi_2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_2</span><span class="p">)</span>
+        <span class="c1"># Save specific field locations if storing has been requested</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_len</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Add chi_1 and chi_2 to yield chi for each oscillator at each location specified by istore</span>
+            <span class="n">chi_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chi_1</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi_2</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore</span><span class="p">])</span>
+            <span class="c1"># Sum across all oscillators to determine chi and store</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_istore_chi</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">chi_j</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Mat.get_pos"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Mat.get_pos">[docs]</a>    <span class="k">def</span> <span class="nf">get_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a Tuple contianing a Numpy array of value 0 outside of the material and 1 inside of the material, time0, and time1.</span>
-
-<span class="sd">        :return: `(arr, time0, time1)`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">),</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">)),</span> <span class="s1">&#39;constant&#39;</span><span class="p">),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_time0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time1</span><span class="p">)</span></div>
-
-    <span class="k">def</span> <span class="nf">_update_chi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates chi_1 and chi_2 (i.e. :math:`\chi_1` and :math:`\chi_2`) using the update equations :math:`\chi^{m+1}_{1,j}=\chi^m_{1,j}e^{\Delta t\left(-\gamma_j+\beta_j\right)}` and :math:`\chi^{m+1}_{2,j}=\chi^m_{2,j}e^{\Delta t\left(-\gamma_j-\beta_j\right)}`. Should be called once per simulation step.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Extract the exponents at the j-values we are interested in updating</span>
-        <span class="n">exp_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_1</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storelocs</span><span class="p">]</span>
-        <span class="n">exp_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_2</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storelocs</span><span class="p">]</span>
-        <span class="c1"># Calculate the updated chi_1 and chi_2</span>
-        <span class="n">update_chi_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prev_chi_1</span><span class="p">,</span> <span class="n">exp_1</span><span class="p">)</span>
-        <span class="n">update_chi_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prev_chi_2</span><span class="p">,</span> <span class="n">exp_2</span><span class="p">)</span>
-        <span class="c1"># Save the update_chi_1 and update_chi_2 into the prev_chi_1 and prev_chi_2 values</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prev_chi_1</span> <span class="o">=</span> <span class="n">update_chi_1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prev_chi_2</span> <span class="o">=</span> <span class="n">update_chi_2</span>
-
-    <span class="k">def</span> <span class="nf">_compute_chi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Computes chi at the points specified in the simulation by the `storelocs` parameter via :math:`\chi^n=\Re\left[\chi^n_1e^{\Delta t(-\gamma_j+\beta_j)} + \chi^n_2e^{\Delta t(-\gamma_j-\beta_j)}\right]`.</span>
-
-<span class="sd">        :return: :math:`\chi^n` where :math:`n` is the :math:`n` th call to the function `_update_chi`</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Extract the exponents at the j-values we wish to store</span>
-        <span class="n">exp_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_1</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storelocs</span><span class="p">]</span>
-        <span class="n">exp_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_2</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storelocs</span><span class="p">]</span>
-        <span class="c1"># Compute chi_1 and chi_2</span>
-        <span class="n">t1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prev_chi_1</span><span class="p">,</span> <span class="n">exp_1</span><span class="p">)</span>
-        <span class="n">t2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prev_chi_2</span><span class="p">,</span> <span class="n">exp_2</span><span class="p">)</span>
-        <span class="c1"># Add chi_1 and chi_2 to yield chi for each oscillator</span>
-        <span class="n">chi_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">)</span>
-        <span class="c1"># Sum across all oscillators to determine chi at each location specified by storelocs</span>
-        <span class="n">chi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">chi_j</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="c1"># Return</span>
-        <span class="k">return</span> <span class="n">chi</span>
-
-    <span class="k">def</span> <span class="nf">_get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the high frequency susceptability of the material :math:`\epsilon_\infty`.</span>
-
-<span class="sd">        :return: A Numpy array of length :code:`ilen` of value 1 outside of the material and :math:`\epsilon_\infty` inside of the material</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epsiloninf</span>
-
-    <span class="k">def</span> <span class="nf">_get_chi0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the initial susceptibility of the material :math:`\chi_0`.</span>
-
-<span class="sd">        :return: A Numpy array of length :code:`ilen` of value 0 outside of the material and :math:`\chi_0` inside of the material</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Return the real part as specified in Beard</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chi0</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_compute_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_update_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculates psi at all points in the simulation using the current value of psi_1 and psi_2. Scaled by the `opacity` array passed in at initialization.</span>
-
-<span class="sd">        :param n: The current temporal index of the simulation.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Find the psi matrix</span>
-        <span class="n">psi_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psi_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_psi_2</span><span class="p">)</span>
-        <span class="c1"># Sum the psi matrix along axis=0 to combine all oscillators</span>
-        <span class="n">psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">psi_j</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="c1"># Pad the psi array so that it spans the length of the simulation</span>
-        <span class="n">psi_padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">)),</span> <span class="s1">&#39;constant&#39;</span><span class="p">)</span>
-        <span class="c1"># Return the real part as specified in Beard</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">psi_padded</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opacity</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">_update_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the value of psi_1 and psi_2. Should be called once per simulation step.</span>
+<span class="sd">        Updates the value of psi_1, psi_2, and psi_opacity. Should be called once per simulation step.</span>
 
 <span class="sd">        :param efield: The efield to use in update calculations</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Copy the efield so that instead of being a vector it is a matrix composed of horizontal efield vectors</span>
-        <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">efield</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">],</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">efield</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">],</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="c1"># Calculate first term</span>
         <span class="n">t1_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dchi0_1</span><span class="p">)</span>
         <span class="n">t1_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dchi0_2</span><span class="p">)</span>
@@ -1075,44 +839,56 @@
         <span class="c1"># Update next psi values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_psi_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t1_1</span><span class="p">,</span> <span class="n">t2_1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_psi_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t1_2</span><span class="p">,</span> <span class="n">t2_2</span><span class="p">)</span>
+        <span class="c1"># Update psi opacity values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_psi_opacity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opacity</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_update_mat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticMaterial.get_chi0"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.get_chi0">[docs]</a>    <span class="k">def</span> <span class="nf">get_chi0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Updates the value of psi_1, psi_2, chi_1, and chi_2. Saves the values of chi requested via the `storelocs` parameter.</span>
+<span class="sd">        Returns the value of :math:`\chi^0` at all spatial indices resulting from the material.</span>
 
-<span class="sd">        :param n: The iteration index :math:`n`</span>
-<span class="sd">        :param efield: The efield to use in update calculations</span>
+<span class="sd">        :return: :math:`\chi^0` at all values of the simulation resulting from the material.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Update psi and chi</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_psi</span><span class="p">(</span><span class="n">efield</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_update_chi</span><span class="p">()</span>
-        <span class="c1"># Save specific field locations if storing has been requested</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlocs</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="c1"># Store each location</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_locs</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_chi</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi0</span></div>
 
-    <span class="k">def</span> <span class="nf">_reset_mat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticMaterial.get_epsiloninf"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.get_epsiloninf">[docs]</a>    <span class="k">def</span> <span class="nf">get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Resets previously stored values of psi_1, psi_2, chi_1, and chi_2 to their initial values. Resets ensure that consecutive simulations on the same Mat object are independent of each other.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Reset psi calculation</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_psi_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_psi_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_matlen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span><span class="p">)</span>
-        <span class="c1"># Reset previous chi values to chi0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prev_chi_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_1</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storelocs</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_prev_chi_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi0_2</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storelocs</span><span class="p">]</span>
+<span class="sd">        Returns the value of :math:`\epsilon_\infty` at all spatial indices resulting from the material.</span>
 
-<div class="viewcode-block" id="Mat.export_locs"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Mat.export_locs">[docs]</a>    <span class="k">def</span> <span class="nf">export_locs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="sd">        :return: :math:`\epsilon_\infty` at all values of the simulation resulting from the material.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epsiloninf</span></div>
+
+<div class="viewcode-block" id="StaticMaterial.get_psi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.get_psi">[docs]</a>    <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Exports the value of chi at a specific location(s) (specified with :code:`storelocs` at initialization) at each point in time.</span>
+<span class="sd">        Calculates psi at all points in the simulation using the current value of psi_1 and psi_2. Scaled by the</span>
+<span class="sd">        `opacity` array passed in at initialization.</span>
 
-<span class="sd">        :return: A tuple :code:`(ls, locs)` where :code:`ls` is the list :code:`storelocs` (the same :code:`storelocs` that is passed to the Simulation class during instantiation), :code:`locs` is a Numpy array containing chi at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location)</span>
+<span class="sd">        :return:  :math:`\psi^n` at all values of the simulation resulting from the material where :math:`n` is given by the number of times `update_material` has been called by the `Material`&#39;s corresponding `Simulation` object, which is once per simulation step.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Check to see if the value of each field at a specific location was saved over time</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlocs</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_locs</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="c1"># Return</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_storelocs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locs</span><span class="p">)</span></div></div>
+        <span class="c1"># Find the psi matrix</span>
+        <span class="n">psi_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psi_1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_psi_2</span><span class="p">)</span>
+        <span class="c1"># Sum the psi matrix along axis=0 to combine all oscillators</span>
+        <span class="n">psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">psi_j</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Pad the psi array so that it spans the length of the simulation</span>
+        <span class="n">psi_padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">)),</span> <span class="s1">&#39;constant&#39;</span><span class="p">)</span>
+        <span class="c1"># Return the real part as specified in Beard</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">psi_padded</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_psi_opacity</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StaticMaterial.export_ifields"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.export_ifields">[docs]</a>    <span class="k">def</span> <span class="nf">export_ifields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Exports the :math:`\chi` values at spatial indices specified by istore at the Material object&#39;s initialization,</span>
+<span class="sd">        where an index along axis=1 corresponds to the corresponding spatial index in istore. Values along axis=0</span>
+<span class="sd">        correspond to the temporal index.</span>
+
+<span class="sd">        :return: `chi` or None if istore is unspecified.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_len</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_chi</span></div></div>
+
+
+<span class="c1"># TODO Implement DynamicMat, two possible methods of numerical integration? Symbolic (preferred?) vs numerical?</span>
 </pre></div>
 
            </div>

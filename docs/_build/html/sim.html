@@ -155,31 +155,30 @@
 <p>Both the electric and magnetic fields are initialized to the same length, meaning that they have a slight offset in starting and ending locations in the simulation. The E-field at each time is stored in a Numpy array with the following structure</p>
 <a class="reference internal image-reference" href="_images/numpy_structure.png"><img alt="_images/numpy_structure.png" class="align-center" src="_images/numpy_structure.png" style="width: 480.0px; height: 360.0px;" /></a>
 <p>The H-field and current arrays have corresponding structures. The variables <span class="math notranslate nohighlight">\(A_1\)</span>, <span class="math notranslate nohighlight">\(A_2\)</span>, <span class="math notranslate nohighlight">\(\gamma\)</span>, and <span class="math notranslate nohighlight">\(\beta\)</span> are represented using the following two dimensional array</p>
-<a class="reference internal image-reference" href="_images/material_numpy_structure.png"><img alt="_images/material_numpy_structure.png" class="align-center" src="_images/material_numpy_structure.png" style="width: 480.0px; height: 360.0px;" /></a>
+<a class="reference internal image-reference" href="_images/material_numpy_structure1.png"><img alt="_images/material_numpy_structure1.png" class="align-center" src="_images/material_numpy_structure1.png" style="width: 480.0px; height: 360.0px;" /></a>
 <p>where <span class="math notranslate nohighlight">\(m_0\)</span> is the starting index of the material. Increments along the vertical axis represent increments in the oscillator index <span class="math notranslate nohighlight">\(j\)</span>, and increments along the horizontal axis represent increments in space.</p>
 <ul class="simple">
 <li>Discuss the choice of <span class="math notranslate nohighlight">\(\frac{\Delta t}{\Delta z}\approx c\)</span></li>
 </ul>
 <span class="target" id="module-rcfdtd_sim.sim"></span><dl class="class">
 <dt id="rcfdtd_sim.sim.Current">
-<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">Current</code><span class="sig-paren">(</span><em>nlen</em>, <em>ilen</em>, <em>n0</em>, <em>i0</em>, <em>current</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Current" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">Current</code><span class="sig-paren">(</span><em>i0</em>, <em>n0</em>, <em>ilen</em>, <em>nlen</em>, <em>current</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Current" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Current class is used to represent a current in the simulation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>nlen</strong> – The number of temporal indices in the simulation</li>
-<li><strong>ilen</strong> – The number of spatial indices in the simulation</li>
-<li><strong>n0</strong> – The starting temporal index of the current</li>
 <li><strong>i0</strong> – The starting spatial index of the current</li>
-<li><strong>current</strong> – A matrix representing the current, where axis=0 represents locations in time <span class="math notranslate nohighlight">\(n\)</span> and axis=1</li>
+<li><strong>n0</strong> – The starting temporal index of the current</li>
+<li><strong>ilen</strong> – The number of spatial indices in the simulation</li>
+<li><strong>nlen</strong> – The number of temporal indices in the simulation</li>
+<li><strong>current</strong> – A matrix representing the current, where axis=0 represents locations in time <span class="math notranslate nohighlight">\(n\)</span> and axis=1 represents locations in space <span class="math notranslate nohighlight">\(i\)</span></li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p>represents locations in space <span class="math notranslate nohighlight">\(i\)</span></p>
 <dl class="method">
 <dt id="rcfdtd_sim.sim.Current.get_current">
 <code class="descname">get_current</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Current.get_current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Current.get_current" title="Permalink to this definition">¶</a></dt>
@@ -191,22 +190,7 @@
 <dl class="class">
 <dt id="rcfdtd_sim.sim.EmptyMaterial">
 <em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">EmptyMaterial</code><span class="sig-paren">(</span><em>di</em>, <em>dn</em>, <em>ilen</em>, <em>nlen</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#EmptyMaterial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.EmptyMaterial" title="Permalink to this definition">¶</a></dt>
-<dd><p>Represents an empty Material, or in other words vacuum</p>
-<dl class="method">
-<dt id="rcfdtd_sim.sim.EmptyMaterial.get_chi">
-<code class="descname">get_chi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#EmptyMaterial.get_chi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.EmptyMaterial.get_chi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the value of <span class="math notranslate nohighlight">\(\chi\)</span> at the current time step in the simulation at each spatial location in the
-simulation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current value of <span class="math notranslate nohighlight">\(\chi\)</span> at each spatial location in the simulation</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
+<dd><p>Represents an empty Material, i.e. vacuum</p>
 <dl class="method">
 <dt id="rcfdtd_sim.sim.EmptyMaterial.get_chi0">
 <code class="descname">get_chi0</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#EmptyMaterial.get_chi0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.EmptyMaterial.get_chi0" title="Permalink to this definition">¶</a></dt>
@@ -281,63 +265,6 @@ the simulation to their initial values.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="rcfdtd_sim.sim.Mat">
-<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">Mat</code><span class="sig-paren">(</span><em>dn</em>, <em>ilen</em>, <em>nlen</em>, <em>mat0</em>, <em>epsiloninf</em>, <em>mata1</em>, <em>mata2</em>, <em>matg</em>, <em>matb</em>, <em>opacity=None</em>, <em>storelocs=[]</em>, <em>dtype=&lt;class 'numpy.complex64'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Mat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Mat" title="Permalink to this definition">¶</a></dt>
-<dd><p>The Mat class is used to represent a material present in a simulation</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>dn</strong> – The temporal step size</li>
-<li><strong>ilen</strong> – The number of spatial indicies in the simulation</li>
-<li><strong>nlen</strong> – The number of temporal indicies in the simulation</li>
-<li><strong>timebounds</strong> – A tuple <cite>(timeStart, timeEnd)</cite> of the time indicies between which the material exists in the simulation where <cite>timeStart</cite> is inclusive and <cite>timeEnd</cite> is exclusive. Multiple materials with carefully chosen time bounds can be used to change material properties in time.</li>
-<li><strong>mat0</strong> – The starting index of the material</li>
-<li><strong>epsiloninf</strong> – <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span> inside the material</li>
-<li><strong>mata1</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_1\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
-<li><strong>mata2</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_2\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
-<li><strong>matg</strong> – A matrix representing <span class="math notranslate nohighlight">\(\gamma\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
-<li><strong>matb</strong> – A matrix representing <span class="math notranslate nohighlight">\(\beta\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
-<li><strong>opacity</strong> – A vector representing the opacity of the material in time. Each index corresponds to the <span class="math notranslate nohighlight">\(n\)</span> th time index of the material where <cite>1</cite> corresponds to the material being opaque and <cite>0</cite> corresponds to the material being transparent. Defaults to an opaque material for all time.</li>
-<li><strong>storelocs</strong> – A list of locations to save chi at during each step in time, indexed from 0 to the material length</li>
-<li><strong>dtype</strong> – The data type to store the field values in</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="rcfdtd_sim.sim.Mat.export_locs">
-<code class="descname">export_locs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Mat.export_locs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Mat.export_locs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exports the value of chi at a specific location(s) (specified with <code class="code docutils literal notranslate"><span class="pre">storelocs</span></code> at initialization) at each point in time.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A tuple <code class="code docutils literal notranslate"><span class="pre">(ls,</span> <span class="pre">locs)</span></code> where <code class="code docutils literal notranslate"><span class="pre">ls</span></code> is the list <code class="code docutils literal notranslate"><span class="pre">storelocs</span></code> (the same <code class="code docutils literal notranslate"><span class="pre">storelocs</span></code> that is passed to the Simulation class during instantiation), <code class="code docutils literal notranslate"><span class="pre">locs</span></code> is a Numpy array containing chi at storelocs at each point in time (axis=0 is time and axis=1 is the respective storeloc location)</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="rcfdtd_sim.sim.Mat.get_pos">
-<code class="descname">get_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Mat.get_pos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Mat.get_pos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a Tuple contianing a Numpy array of value 0 outside of the material and 1 inside of the material, time0, and time1.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>(arr, time0, time1)</cite></td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="rcfdtd_sim.sim.Material">
 <em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">Material</code><span class="sig-paren">(</span><em>di</em>, <em>dn</em>, <em>ilen</em>, <em>nlen</em>, <em>material_i0</em>, <em>material_i1</em>, <em>material_n0</em>, <em>material_n1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Material"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Material" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Material class is an abstract class that defines the minimum requirements for a Material object to have in the
@@ -360,21 +287,6 @@ simulation. All Materials in the simulation must inherit Material.</p>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="rcfdtd_sim.sim.Material.get_chi">
-<code class="descname">get_chi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Material.get_chi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Material.get_chi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the value of <span class="math notranslate nohighlight">\(\chi\)</span> at the current time step in the simulation at each spatial location in the
-simulation.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current value of <span class="math notranslate nohighlight">\(\chi\)</span> at each spatial location in the simulation</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="method">
 <dt id="rcfdtd_sim.sim.Material.get_chi0">
 <code class="descname">get_chi0</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Material.get_chi0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Material.get_chi0" title="Permalink to this definition">¶</a></dt>
@@ -450,7 +362,7 @@ the simulation to their initial values.</p>
 
 <dl class="class">
 <dt id="rcfdtd_sim.sim.Simulation">
-<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">Simulation</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em>, <em>epsilon0</em>, <em>mu0</em>, <em>boundary</em>, <em>currents=()</em>, <em>materials=()</em>, <em>nstore=()</em>, <em>istore=()</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Simulation" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">Simulation</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em>, <em>epsilon0</em>, <em>mu0</em>, <em>boundary</em>, <em>currents=[]</em>, <em>materials=[]</em>, <em>nstore=[]</em>, <em>istore=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Simulation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Simulation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents a single simulation. Field is initialized to all zeros.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -465,19 +377,16 @@ the simulation to their initial values.</p>
 <li><strong>dn</strong> – The temporal step size</li>
 <li><strong>epsilon0</strong> – <span class="math notranslate nohighlight">\(\epsilon_0\)</span>, the vacuum permittivity</li>
 <li><strong>mu0</strong> – <span class="math notranslate nohighlight">\(\mu_0\)</span>, the vacuum permeability</li>
-<li><strong>boundary</strong> – The boundary type of the field, either ‘zero’, for fields bounded by zeros or ‘absorbing’ for</li>
+<li><strong>boundary</strong> – The boundary type of the field, either ‘zero’, for fields bounded by zeros or ‘absorbing’ for absorbing boundary conditions</li>
+<li><strong>currents</strong> – A Current object or a list of Current objects that represent the currents present in the simulation, defaults to none</li>
+<li><strong>materials</strong> – A Material object or a list of Material objects that represent the materials present in the simulation, defaults to none</li>
+<li><strong>nstore</strong> – A list of time indices to save field values at in all points in space</li>
+<li><strong>istore</strong> – A list of spatial indices to save field values at in all points in time</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p>absorbing boundary conditions
-:param currents: A Current object or a tuple of Current objects that represent the currents present in the
-simulation, defaults to none
-:param materials: A Material object or a tuple of Material objects that represent the materials present in the
-simulation, defaults to none
-:param nstore: A tuple of time indices to save field values at in all points in space
-:param istore: A tuple of spatial indices to save field values at in all points in time</p>
 <dl class="staticmethod">
 <dt id="rcfdtd_sim.sim.Simulation.calc_arrays">
 <em class="property">static </em><code class="descname">calc_arrays</code><span class="sig-paren">(</span><em>i0</em>, <em>i1</em>, <em>di</em>, <em>n0</em>, <em>n1</em>, <em>dn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Simulation.calc_arrays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Simulation.calc_arrays" title="Permalink to this definition">¶</a></dt>
@@ -539,11 +448,10 @@ correspond to the temporal index.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>(hfield, efield, hfieldr, efieldr)</cite> where the suffix <cite>r</cite> corresponds to a reference field. If istore</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>(hfield, efield, hfieldr, efieldr)</cite> where the suffix <cite>r</cite> corresponds to a reference field. If istore is unspecified returns None</td>
 </tr>
 </tbody>
 </table>
-<p>is unspecified returns None</p>
 </dd></dl>
 
 <dl class="method">
@@ -556,11 +464,10 @@ correspond to the spatial index.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>(hfield, efield, hfieldr, efieldr)</cite> where the suffix <cite>r</cite> corresponds to a reference field. If nstore</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>(hfield, efield, hfieldr, efieldr)</cite> where the suffix <cite>r</cite> corresponds to a reference field. If nstore is unspecified returns None</td>
 </tr>
 </tbody>
 </table>
-<p>is unspecified returns None</p>
 </dd></dl>
 
 <dl class="method">
@@ -580,12 +487,12 @@ correspond to the spatial index.</p>
 <dl class="method">
 <dt id="rcfdtd_sim.sim.Simulation.get_materials">
 <code class="descname">get_materials</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#Simulation.get_materials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.Simulation.get_materials" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the tuple of Material objects present in the simulation.</p>
+<dd><p>Returns the list of Material objects present in the simulation.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A tuple of Material objects</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A list of Material objects</td>
 </tr>
 </tbody>
 </table>
@@ -609,7 +516,7 @@ correspond to the spatial index.</p>
 
 <dl class="class">
 <dt id="rcfdtd_sim.sim.StaticMaterial">
-<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">StaticMaterial</code><span class="sig-paren">(</span><em>di</em>, <em>dn</em>, <em>ilen</em>, <em>nlen</em>, <em>material_i0</em>, <em>epsiloninf</em>, <em>a1</em>, <em>a2</em>, <em>g</em>, <em>b</em>, <em>opacity=None</em>, <em>istore=()</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#StaticMaterial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.StaticMaterial" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">StaticMaterial</code><span class="sig-paren">(</span><em>di</em>, <em>dn</em>, <em>ilen</em>, <em>nlen</em>, <em>material_i0</em>, <em>epsiloninf</em>, <em>a1</em>, <em>a2</em>, <em>g</em>, <em>b</em>, <em>opacity=None</em>, <em>istore=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#StaticMaterial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.StaticMaterial" title="Permalink to this definition">¶</a></dt>
 <dd><p>The StaticMaterial class allows for the simulation of a static material, that is a material that has a constant
 definition of electric susceptibility in time. The electric susceptibility is modeled using a harmonic oscillator.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -622,33 +529,29 @@ definition of electric susceptibility in time. The electric susceptibility is mo
 <li><strong>ilen</strong> – The number of spatial indices in the simulation</li>
 <li><strong>nlen</strong> – The number of temporal indices in the simulation</li>
 <li><strong>material_i0</strong> – The starting spatial index of the material</li>
-<li><strong>a1</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_1\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1</li>
+<li><strong>epsiloninf</strong> – The <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span> of the material, which is constant over space and time.</li>
+<li><strong>a1</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_1\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>a2</strong> – A matrix representing <span class="math notranslate nohighlight">\(A_2\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>g</strong> – A matrix representing <span class="math notranslate nohighlight">\(\gamma\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>b</strong> – A matrix representing <span class="math notranslate nohighlight">\(eta\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index</li>
+<li><strong>opacity</strong> – A vector representing the opacity of the material in time. Each index corresponds to the <span class="math notranslate nohighlight">\(n\)</span> th time index of the material where <cite>1</cite> corresponds to the material being opaque and <cite>0</cite> corresponds to the material being transparent. Values can be real numbers. Defaults to an opaque material for all time.</li>
+<li><strong>istore</strong> – A list of spatial indices to save <span class="math notranslate nohighlight">\(\chi\)</span> values at in all points in time</li>
 </ul>
 </td>
 </tr>
 </tbody>
 </table>
-<p>represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index
-:param a2: A matrix representing <span class="math notranslate nohighlight">\(A_2\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1
-represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index
-:param g: A matrix representing <span class="math notranslate nohighlight">\(\gamma\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1
-represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index
-:param b: A matrix representing <span class="math notranslate nohighlight">\(eta\)</span> where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1
-represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial index
-:param opacity: A vector representing the opacity of the material in time. Each index corresponds to the
-<span class="math notranslate nohighlight">\(n\)</span> th time index of the material where <cite>1</cite> corresponds to the material being opaque and <cite>0</cite> corresponds to
-the material being transparent. Values can be real numbers. Defaults to an opaque material for all time.
-:param istore: A tuple of spatial indices to save <span class="math notranslate nohighlight">\(\chi\)</span> values at in all points in time</p>
 <dl class="method">
-<dt id="rcfdtd_sim.sim.StaticMaterial.get_chi">
-<code class="descname">get_chi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#StaticMaterial.get_chi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.StaticMaterial.get_chi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the value of <span class="math notranslate nohighlight">\(\chi\)</span> at the current time step in the simulation at each spatial location in the
-simulation.</p>
+<dt id="rcfdtd_sim.sim.StaticMaterial.export_ifields">
+<code class="descname">export_ifields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#StaticMaterial.export_ifields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.StaticMaterial.export_ifields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exports the <span class="math notranslate nohighlight">\(\chi\)</span> values at spatial indices specified by istore at the Material object’s initialization,
+where an index along axis=1 corresponds to the corresponding spatial index in istore. Values along axis=0
+correspond to the temporal index.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current value of <span class="math notranslate nohighlight">\(\chi\)</span> at each spatial location in the simulation</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><cite>chi</cite> or None if istore is unspecified.</td>
 </tr>
 </tbody>
 </table>
@@ -657,13 +560,12 @@ simulation.</p>
 <dl class="method">
 <dt id="rcfdtd_sim.sim.StaticMaterial.get_chi0">
 <code class="descname">get_chi0</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#StaticMaterial.get_chi0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.StaticMaterial.get_chi0" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the value of <span class="math notranslate nohighlight">\(\chi_0\)</span> at the current time step in the simulation at each spatial location in the
-simulation.</p>
+<dd><p>Returns the value of <span class="math notranslate nohighlight">\(\chi^0\)</span> at all spatial indices resulting from the material.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current value of <span class="math notranslate nohighlight">\(\chi_0\)</span> at each spatial location in the simulation</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><span class="math notranslate nohighlight">\(\chi^0\)</span> at all values of the simulation resulting from the material.</td>
 </tr>
 </tbody>
 </table>
@@ -672,13 +574,12 @@ simulation.</p>
 <dl class="method">
 <dt id="rcfdtd_sim.sim.StaticMaterial.get_epsiloninf">
 <code class="descname">get_epsiloninf</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#StaticMaterial.get_epsiloninf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.StaticMaterial.get_epsiloninf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the value of <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span> at the current time step in the simulation at each spatial location
-in the simulation.</p>
+<dd><p>Returns the value of <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span> at all spatial indices resulting from the material.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current value of <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span> at each spatial location in the simulation</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><span class="math notranslate nohighlight">\(\epsilon_\infty\)</span> at all values of the simulation resulting from the material.</td>
 </tr>
 </tbody>
 </table>
@@ -687,13 +588,13 @@ in the simulation.</p>
 <dl class="method">
 <dt id="rcfdtd_sim.sim.StaticMaterial.get_psi">
 <code class="descname">get_psi</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#StaticMaterial.get_psi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.StaticMaterial.get_psi" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the value of <span class="math notranslate nohighlight">\(\psi\)</span> at the current time step in the simulation at each spatial location in the
-simulation.</p>
+<dd><p>Calculates psi at all points in the simulation using the current value of psi_1 and psi_2. Scaled by the
+<cite>opacity</cite> array passed in at initialization.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The current value of <span class="math notranslate nohighlight">\(\psi\)</span> at each spatial location in the simulation</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><span class="math notranslate nohighlight">\(\psi^n\)</span> at all values of the simulation resulting from the material where <span class="math notranslate nohighlight">\(n\)</span> is given by the number of times <cite>update_material</cite> has been called by the <cite>Material</cite>’s corresponding <cite>Simulation</cite> object, which is once per simulation step.</td>
 </tr>
 </tbody>
 </table>
@@ -709,15 +610,15 @@ the simulation to their initial values.</p>
 <dl class="method">
 <dt id="rcfdtd_sim.sim.StaticMaterial.update_material">
 <code class="descname">update_material</code><span class="sig-paren">(</span><em>n</em>, <em>efield</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#StaticMaterial.update_material"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.StaticMaterial.update_material" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function is called at the start of each simulation time step. It should update the <span class="math notranslate nohighlight">\(\chi\)</span> and
-<span class="math notranslate nohighlight">\(\psi\)</span> values of the material to their values at n.</p>
+<dd><p>Updates the values of <span class="math notranslate nohighlight">\(\psi\)</span> and <span class="math notranslate nohighlight">\(\chi\)</span> Saves the values of <span class="math notranslate nohighlight">\(chi\)</span> requested via the <cite>istore</cite>
+parameter.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>n</strong> – The current temporal index of the simulation.</li>
-<li><strong>efield</strong> – The previous electric field of the simulation.</li>
+<li><strong>n</strong> – The iteration index <span class="math notranslate nohighlight">\(n\)</span></li>
+<li><strong>efield</strong> – The efield to use in update calculations</li>
 </ul>
 </td>
 </tr>
