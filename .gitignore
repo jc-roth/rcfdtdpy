@@ -7,3 +7,4 @@ temp/
 *.mp4
 webapp/
 *.npz
+.idea/
