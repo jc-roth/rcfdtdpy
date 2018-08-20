@@ -1,8 +1,8 @@
 .vscode
 .DS_Store
+.idea/
 *.npy
 *.pyc
 *.pdf
 *.mp4
 *.npz
-.idea
