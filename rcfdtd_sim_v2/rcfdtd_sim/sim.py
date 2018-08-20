@@ -803,11 +803,6 @@ class NumericMaterial(Material):
             e = self._efield[n - m]
             dchi = np.repeat(self._dchi_m[m], self._material_ilen)
             self._psi = np.add(self._psi, np.multiply(e, dchi))
-        if 4900 < n < 5100:
-            pass
-            #print('psi: ' + str(self._psi))
-            #print('efield: ' + str(self._efield[n]))
-            #print('dchi: ' + str(self._dchi_m[0]))
 
     def get_chi0(self):
         return self._chi0
@@ -822,8 +817,16 @@ class NumericMaterial(Material):
         # Return the real part as specified in Beard
         return np.real(psi_padded)
 
-    def get_dchi(self):
-        return self._dchi_m
+    def export_chi(self):
+        """
+        Exports the electric susceptibility :math:`\chi` at each time index.
+        :return:
+        """
+        chi = np.zeros(nlen)
+        chi[0] = self._chi0
+        for n in range(nlen - 1):
+            chi[n + 1] = chi[n] - self._dchi_m[n]
+        return chi
 
 
 class TwoStateMaterial(Material):
