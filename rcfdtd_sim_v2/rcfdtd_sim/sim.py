@@ -771,7 +771,7 @@ class NumericMaterial(Material):
         chi_m[0], chi_m0_err = integrate.quad(chi_func, 0, dn)
         chi0_repeat = np.repeat(chi_m[0], self._material_ilen)
         self._chi0 = np.pad(chi0_repeat, (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
-                            'constant', constant_values=1)
+                            'constant', constant_values=0)
         # Iterate over all m and integrate at each to find dchi_m
         for m in tqdm(range(1, nlen), **tqdmarg):
             area, area_err = integrate.quad(chi_func, m * dn, (m + 1) * dn)

@@ -64,7 +64,7 @@ material_ind_len = material_ind_end - material_ind_start
 # Define numeric material behavior (Drude metal)
 # ----------------------------------------------
 #  Set constants
-a = np.complex64(1e16) * 0
+a = np.complex64(1e16)
 gamma = np.complex64(1e12 * 2 * np.pi)
 inf_perm = np.complex64(1e0)
 def chi(t):
@@ -130,7 +130,7 @@ plt.xlabel('time [s]')
 plt.legend()
 plt.show()
 
-"""
+
 # -----------
 # Frequencies
 # -----------
@@ -282,4 +282,3 @@ plt.tight_layout()
 
 plt.savefig('drude_model.pdf', format='pdf')
 plt.show()
-"""
