@@ -22,7 +22,7 @@ mu0 = np.divide(1, np.multiply(epsilon0, np.square(c0)))
 i0 = -1e-6  # -1 um
 i1 = 1e-6  # 1 um
 n0 = -0.5e-12  # -0.5 ps
-n1 = 0.5e-12  # 0.5 ps
+n1 = 2.5e-12  # 2.5 ps
 # Calculate dimensions
 ilen, nlen = Sim.calc_dims(i0, i1, di, n0, n1, dn)
 z, t = Sim.calc_arrays(i0, i1, di, n0, n1, dn)
@@ -84,8 +84,7 @@ if sim_file.is_file():
     erls = dat['erls']
     hls = dat['hls']
     hrls = dat['hrls']
-    dchi = dat['dchi']
-    chi0 = dat['chi0']
+    chi = dat['chi']
 else:
     # Create the material
     drude_material = Mat(di, dn, ilen, nlen, material_ind_start, material_ind_end, chi, inf_perm, tqdmarg={'desc':'Calculating chi^m'})
@@ -253,7 +252,7 @@ fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True, dpi=100)
 ax0.set_ylabel(r'$\sigma_1$', fontsize=15)
 ax1.set_ylabel(r'$\sigma_2$', fontsize=15)
 ax1.set_xlabel(r'$\omega$ [THz]', fontsize=15)
-ax0.set_title(r'Drude Model', fontsize=15)
+ax0.set_title(r'Drude Model (numeric)', fontsize=15)
 ax1.set_xlim(0, 15)
 ax0.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
 ax0.tick_params(labelsize=15)
@@ -275,5 +274,5 @@ ax1.legend()
 
 plt.tight_layout()
 
-plt.savefig('drude_model.pdf', format='pdf')
+plt.savefig('numeric_material.pdf', format='pdf')
 plt.show()
