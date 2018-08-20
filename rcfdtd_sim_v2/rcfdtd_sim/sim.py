@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import numpy as np
+from scipy import integrate
 from tqdm import tqdm
 
 """
@@ -178,10 +179,10 @@ class Simulation:
             # Save specific field locations if storing has been requested
             if self._istore_len != 0:
                 # Store each location
-                self._istore_hfield[n] = self._efield[self._istore]
-                self._istore_efield[n] = self._efieldr[self._istore]
-                self._istore_hfieldr[n] = self._hfield[self._istore]
-                self._istore_efieldr[n] = self._hfieldr[self._istore]
+                self._istore_hfield[n] = self._hfield[self._istore]
+                self._istore_efield[n] = self._efield[self._istore]
+                self._istore_hfieldr[n] = self._hfieldr[self._istore]
+                self._istore_efieldr[n] = self._efieldr[self._istore]
 
     def _update_hfield(self):
         """
@@ -617,7 +618,7 @@ class StaticMaterial(Material):
                                                       np.subtract(self._exp_1[j, mi], 1))
                     self._chi0_2[j, mi] = np.multiply(np.divide(self._a2[j, mi], min_b_min_g[j, mi]),
                                                       np.subtract(self._exp_2[j, mi], 1))
-        # Calculate first delta susceptibilityy values
+        # Calculate first delta susceptibility values
         self._dchi0_1 = np.multiply(self._chi0_1, np.subtract(1, self._exp_1))
         self._dchi0_2 = np.multiply(self._chi0_2, np.subtract(1, self._exp_2))
         # Initialize psi values to zero
@@ -723,7 +724,8 @@ class StaticMaterial(Material):
         # Sum the psi matrix along axis=0 to combine all oscillators
         psi = np.sum(psi_j, axis=0)
         # Pad the psi array so that it spans the length of the simulation
-        psi_padded = np.pad(psi, (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)), 'constant')
+        psi_padded = np.pad(psi, (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
+                            'constant')
         # Return the real part as specified in Beard
         return np.real(psi_padded * self._psi_opacity)
 
@@ -741,4 +743,157 @@ class StaticMaterial(Material):
             return self._istore_chi
 
 
-# TODO Implement DynamicMat, two possible methods of numerical integration? Symbolic (preferred?) vs numerical?
+class NumericMaterial(Material):
+    r"""
+    The NumericMaterial class represents a material that has a non-constant definition of electric susceptibility in
+    time. Currently this Material can only represent materials that have a constant definition of electric
+    susceptibility in space.
+
+    :param di: The spatial time step of the simulation
+    :param dn: The temporal step size of the simulation
+    :param ilen: The number of spatial indices in the simulation
+    :param nlen: The number of temporal indices in the simulation
+    :param material_i0: The starting spatial index of the material
+    :param material_i1: The ending spatial index of the material
+    :param chi_func: A function representing the electric susceptibility :math:`\chi` as a function of time. The function should accept a single argument, the time.
+    :param epsiloninf: The :math:`\epsilon_\infty` of the material, which is constant over space and time.
+    :param tqdmarg: The arguments to pass the tdqm iterator (lookup arguments on the tqdm documentation).
+    """
+
+    def __init__(self, di, dn, ilen, nlen, material_i0, material_i1, chi_func, epsiloninf, tqdmarg={}):
+        # Call super
+        super().__init__(di, dn, ilen, nlen, material_i0, material_i1, 0, nlen)
+        # Create an array to hold chi values at specific values of m
+        chi_m = np.zeros(nlen, dtype=np.complex64)
+        # Create an array to hold dchi values at specific values of m
+        self._dchi_m = np.zeros(nlen - 1, dtype=np.complex64)
+        # Calculate chi_m at m=0 and store
+        chi_m[0], chi_m0_err = integrate.quad(chi_func, 0, dn)
+        chi0_repeat = np.repeat(chi_m[0], self._material_ilen)
+        self._chi0 = np.pad(chi0_repeat, (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
+                            'constant', constant_values=1)
+        # Iterate over all m and integrate at each to find dchi_m
+        for m in tqdm(range(1, nlen), **tqdmarg):
+            area, area_err = integrate.quad(chi_func, m * dn, (m + 1) * dn)
+            chi_m[m] = area
+            self._dchi_m[m - 1] = chi_m[m - 1] - chi_m[m]
+        # Create a 2D Numpy array to hold previous values of the electric field
+        self._efield = np.zeros((self._material_nlen, self._material_ilen), dtype=np.complex64)
+        # Create a 1D Numpy array to hold the current value of psi
+        self._psi = np.zeros(self._material_ilen, dtype=np.complex64)
+        # Epsilon_infinity is equal to one in vacuum, so only set self._epsiloninf equal to epsiloninf in the material
+        epsiloninf_repeat = np.repeat(epsiloninf, self._material_ilen)
+        self._epsiloninf = np.pad(epsiloninf_repeat,
+                                  (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
+                                  'constant', constant_values=1)
+
+    def reset_material(self):
+        # Clear the electric field
+        self._efield = np.zeros((self._material_nlen, self._material_ilen), dtype=np.complex64)
+        # Clear the psi array
+        self._psi = np.zeros(self._material_ilen, dtype=np.complex64)
+
+    def update_material(self, n, efield):
+        # Reset psi
+        self._psi = np.zeros(self._material_ilen, dtype=np.complex64)
+        # Save the current efield value
+        self._efield[n] = efield[self._material_i0:self._material_i0 + self._material_ilen]
+        # Update the value of psi
+        for m in range(n):
+            e = self._efield[n - m]
+            dchi = np.repeat(self._dchi_m[m], self._material_ilen)
+            self._psi = np.add(self._psi, np.multiply(e, dchi))
+        if 4900 < n < 5100:
+            pass
+            #print('psi: ' + str(self._psi))
+            #print('efield: ' + str(self._efield[n]))
+            #print('dchi: ' + str(self._dchi_m[0]))
+
+    def get_chi0(self):
+        return self._chi0
+
+    def get_epsiloninf(self):
+        return self._epsiloninf
+
+    def get_psi(self):
+        # Pad the psi array so that it spans the length of the simulation
+        psi_padded = np.pad(self._psi, (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
+                            'constant')
+        # Return the real part as specified in Beard
+        return np.real(psi_padded)
+
+    def get_dchi(self):
+        return self._dchi_m
+
+
+class TwoStateMaterial(Material):
+    r"""
+    The TwoStateMaterial class represents a material that has oscillators that are either in excited or ground states.
+    The fraction of oscillators in each state is defined as a function of time passed to the material. Currently this
+    Material can only represent materials that have a constant definition of electric susceptibility in space.
+
+    :param di: The spatial time step of the simulation
+    :param dn: The temporal step size of the simulation
+    :param ilen: The number of spatial indices in the simulation
+    :param nlen: The number of temporal indices in the simulation
+    :param material_i0: The starting spatial index of the material
+    :param material_i1: The ending spatial index of the material
+    :param chi_func: A function representing the electric susceptibility :math:`\chi` as a function of time. The function should accept a single argument, the time.
+    :param epsiloninf: The :math:`\epsilon_\infty` of the material, which is constant over space and time.
+    :param tqdmarg: The arguments to pass the tdqm iterator (lookup arguments on the tqdm documentation).
+    """
+
+    def __init__(self, di, dn, ilen, nlen, material_i0, epsiloninf, excited_frac, a1_excited, a2_excited, g_excited, beta_excited, a1_ground, a2_ground, g_ground, beta_ground, tqdmarg={}):
+        # Call super
+        # TODO FIX THIS!!!: super().__init__(di, dn, ilen, nlen, material_i0, material_i1, 0, nlen)
+        # Create an array to hold chi values at specific values of m
+        chi_m = np.zeros(nlen, dtype=np.complex64)
+        # Create an array to hold dchi values at specific values of m
+        self._dchi_m = np.zeros(nlen - 1, dtype=np.complex64)
+        # Calculate chi_m at m=0 and store
+        chi_m[0], chi_m0_err = integrate.quad(chi_func, 0, dn)
+        chi0_repeat = np.repeat(chi_m[0], self._material_ilen)
+        self._chi0 = np.pad(chi0_repeat, (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
+                            'constant', constant_values=1)
+        # Iterate over all m and integrate at each to find dchi_m
+        for m in tqdm(range(1, nlen), **tqdmarg):
+            area, area_err = integrate.quad(chi_func, m * dn, (m + 1) * dn)
+            chi_m[m] = area
+            self._dchi_m[m - 1] = chi_m[m - 1] - chi_m[m]
+        # Create a 2D Numpy array to hold previous values of the electric field
+        self._efield = np.zeros((self._material_nlen, self._material_ilen), dtype=np.complex64)
+        # Create a 1D Numpy array to hold the current value of psi
+        self._psi = np.zeros(self._material_ilen, dtype=np.complex64)
+        # Epsilon_infinity is equal to one in vacuum, so only set self._epsiloninf equal to epsiloninf in the material
+        epsiloninf_repeat = np.repeat(epsiloninf, self._material_ilen)
+        self._epsiloninf = np.pad(epsiloninf_repeat,
+                                  (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
+                                  'constant', constant_values=1)
+
+    def reset_material(self):
+        # Clear the electric field
+        self._efield = np.zeros((self._material_nlen, self._material_ilen), dtype=np.complex64)
+        # Clear the psi array
+        self._psi = np.zeros(self._material_ilen, dtype=np.complex64)
+
+    def update_material(self, n, efield):
+        # Save the current efield value
+        self._efield[n] = efield[self._material_i0, self._material_i0 + self._material_ilen]
+        # Update the value of psi
+        for m in range(n - 1):
+            e = self._efield[n - m]
+            dchi = np.repeat(self._dchi_m[m], self._material_ilen)
+            self._psi = np.add(self._psi, np.multiply(e, dchi))
+
+    def get_chi0(self):
+        return self._chi0
+
+    def get_epsiloninf(self):
+        return self._epsiloninf
+
+    def get_psi(self):
+        # Pad the psi array so that it spans the length of the simulation
+        psi_padded = np.pad(self._psi, (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
+                            'constant')
+        # Return the real part as specified in Beard
+        return np.real(psi_padded)

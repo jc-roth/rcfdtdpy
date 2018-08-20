@@ -1,3 +1,3 @@
-from .sim import Simulation, Current, Material, EmptyMaterial, StaticMaterial
+from .sim import Simulation, Current, Material, EmptyMaterial, NumericMaterial, StaticMaterial
 from .vis import timeseries
-__all__ = ['Simulation', 'Current', 'Material', 'EmptyMaterial', 'StaticMaterial', 'timeseries']
+__all__ = ['Simulation', 'Current', 'Material', 'EmptyMaterial', 'StaticMaterial', 'NumericMaterial', 'timeseries']
