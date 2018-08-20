@@ -2,9 +2,7 @@
 .DS_Store
 *.npy
 *.pyc
-temp/
 *.pdf
 *.mp4
-webapp/
 *.npz
-.idea/
+.idea
