@@ -98,19 +98,14 @@ else:
     vis.timeseries(s, z, iunit='um')
     # Export and save arrays
     hls, els, hrls, erls = s.export_ifields()
-    dchi = drude_material.get_dchi()
-    chi0 = drude_material.get_chi0()
-    np.savez('numeric_material.npz', t=t, els=els, erls=erls, hls=hls, hrls=hrls, dchi=dchi, chi0=chi0)
+    chi = drude_material.export_chi()
+    np.savez('numeric_material.npz', t=t, els=els, erls=erls, hls=hls, hrls=hrls, chi=chi)
 
 # ---
 # Chi
 # ---
-chi = np.zeros(nlen)
-chi[0] = chi0[material_ind_start]
-for n in range(nlen-1):
-    chi[n+1] = chi[n] - dchi[n]
 plt.plot(t*1e12, chi)
-#plt.show()
+plt.show()
 
 # ------
 # Fields
