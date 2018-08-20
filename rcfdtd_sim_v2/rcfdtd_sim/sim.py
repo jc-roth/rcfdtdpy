@@ -573,10 +573,6 @@ class StaticMaterial(Material):
         else:
             self._jlen = 1
             material_i1 = material_i0 + np.shape(a1)[0]
-        # Check for error
-        if material_i0 < 0 or material_i1 > ilen:
-            raise ValueError("Material cannot start at i=" + str(material_i0) + " and end at i=" + str(material_i1)
-                             + " as this exceeds the dimensions of the simulation.")
         # Call super
         super().__init__(di, dn, ilen, nlen, material_i0, material_i1, 0, nlen)
         # If opacity is unspecified, set equal to opaque for all time, else save provided opacity
@@ -828,3 +824,123 @@ class NumericMaterial(Material):
         for n in range(self._nlen - 1):
             chi[n + 1] = chi[n] - self._dchi_m[n, 0]
         return chi
+
+
+class TwoStateMaterial(Material):
+    r"""
+    The TwoStateMaterial class represents a material that has a non-constant definition of electric susceptibility in
+    time. This material is represents the same material proposed in Beard and Schmuttenmaer 2001
+    (www.doi.org/10.1063/1.1338526). The ground state electric susceptibility oscillator is defined by
+
+    :math:`\chi_{g,j}(t)=e^{-\gamma_{g,j}t}\left[A_{g,1,j}e^{\beta_{g,j}t}+A_{g,2,j}e^{-\beta_{g,j}t}\right]`
+
+    and the excited state electric susceptibility oscillator is defined by
+
+    :math:`\chi_{e,j}(t)=e^{-\gamma_{e,j}t}\left[A_{e,1,j}e^{\beta_{e,j}t}+A_{e,2,j}e^{-\beta_{e,j}t}\right]`
+
+    There is also an visual electric susceptibility oscillator that represents any susceptibility change resulting
+    directly from the incident visual pulse. This is defined by
+
+    :math:`\chi_{\text{vis},j}(t)=e^{-\gamma_{\text{vis},j}t}\left[A_{\text{vis},1,j}e^{\beta_{\text{vis},j}t}+A_{\text{vis},2,j}e^{-\beta_{\text{vis},j}t}\right]`
+
+    The total susceptibility is defined as
+
+    :math:`\chi(t,t'',z)=\sum_j\left[f_e(t,t'',z)\chi_{e,j}(t)+(1-f_e(t,t'',z))\chi_{g,j}(t)+g(t,t'',z)\chi_{\text{vis},j}(t)\right]`
+
+    where :math:`f_e(t,t'',z)` the the fraction of excited oscillators and :math:`g(t,t'',z)` is the incident visual
+    pulse. We define :math:`f_e(t,t'',z)` as a decay as a function of distance into the material times the convolution
+    of the visual pulse and the excited state decay
+
+    :math:`f_e(t,t'',z)=\exp{\left(-\alpha z\right)}\int_0^t\exp{\left[-\left(\frac{t''-t'}{\Gamma}\right)^2\right]}\left(\exp{\left[-\frac{t'}{\tau}\right]}+b\right)\text{d}t'`
+
+    where :math:`\alpha` is the spatial decay of the visual pulse in the material, :math:`\Gamma` is the width of the
+    visual pulse, :math:`t''` is the time delay between the visual and simulation pulses, :math:`\tau` is the time decay
+    of an excited oscillator, :math:`b` is the offset that the excited oscillators have (used if not all excited
+    oscillators ultimately de-excite), and :math:`t'=t-zv_\text{vis}`. We define :math:`g(t,t'',z)` as the visual pulse
+    multiplied by the spatial decay of the pulse in the material
+
+    :math:`g(t,t'',z)=\exp{\left(-\alpha z\right)}\exp{\left[-\left(\frac{t''-t'}{\Gamma}\right)^2\right]}`
+
+    The user supplies :math:`\alpha`, :math:`\Gamma`, :math:`t''`, :math:`\tau`, and :math:`b` at the simulation
+    initialization to define :math:`f_e(t,t'',z)` and :math:`g(t,t'',z)`. The user must also supply the constants that
+    define the ground, excited, and visual oscillators. Initializing the material will trigger the computation of the
+    fraction of excited oscillators followed by the computation of the discretized electric susceptibility.
+
+    :param di: The spatial time step of the simulation
+    :param dn: The temporal step size of the simulation
+    :param ilen: The number of spatial indices in the simulation
+    :param nlen: The number of temporal indices in the simulation
+    :param material_i0: The starting spatial index of the material
+    :param e_a1: The excited state oscillator :math:`A_{e,1}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
+    :param e_a2: The excited state oscillator :math:`A_{e,2}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
+    :param e_b: The excited state oscillator :math:`\beta_{e,1}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
+    :param e_g: The excited state oscillator :math:`\gamma_{e,1}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
+    :param g_a1: The ground state oscillator :math:`A_{e,1}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
+    :param g_a2: The ground state oscillator :math:`A_{e,2}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
+    :param g_b: The ground state oscillator :math:`\beta_{e,1}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
+    :param g_g: The ground state oscillator :math:`\gamma_{e,1}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
+    :param v_a1: The visual oscillator :math:`A_{e,1}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
+    :param v_a2: The visual oscillator :math:`A_{e,2}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
+    :param v_b: The visual oscillator :math:`\beta_{e,1}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
+    :param v_g: The visual oscillator :math:`\gamma_{e,1}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
+    :param alpha: The spatial decay constant :math:`\alpha` in meters
+    :param Gamma: The visual pulse width :math:`\Gamma` in seconds
+    :param t_diff: The spatial decay constant :math:`t''`
+    :param tau: The oscillator time decay constant :math:`\tau` in seconds
+    :param b: The excited oscillator decay offset :math:`\b`
+    :param epsiloninf: The :math:`\epsilon_\infty` of the material, which is constant over space and time.
+    :param tqdmarg: The arguments to pass the tdqm iterator (lookup arguments on the tqdm documentation).
+    """
+
+    def __init__(self, di, dn, ilen, nlen, material_i0, e_a1, e_a2, e_b, e_g, g_a1, g_a2, g_b, g_g, v_a1, v_a2, v_b, v_g, alpha, Gamma, t_diff, tau, b, epsiloninf, tqdmarg={}):
+        # -------------
+        # INITIAL SETUP
+        # -------------
+        # Check for errors
+        shape = np.shape(e_a1)
+        if shape != np.shape(e_a2) or shape != np.shape(e_b) or shape != np.shape(e_g) or shape != np.shape(g_a1) or shape != np.shape(g_a2) or shape != np.shape(g_g) or shape != np.shape(g_b) or shape != np.shape(v_a1) or shape != np.shape(v_a2) or shape != np.shape(v_g) or shape != np.shape(v_b):
+            raise ValueError("e_a1, e_a2, e_b, e_g, g_a1, g_a2, g_b, g_g, v_a1, v_a2, v_b, v_g must all have the same dimensions")
+        # Get and save material dimension info
+        if len(shape) > 1:
+            self._jlen = shape[0]
+            material_i1 = material_i0 + shape[1]
+        else:
+            self._jlen = 1
+            material_i1 = material_i0 + shape[0]
+        # Call super
+        super().__init__(di, dn, ilen, nlen, material_i0, material_i1, 0, nlen)
+        # -----------------------------------
+        # COMPUTE EXCITED OSCILLATOR FRACTION
+        # -----------------------------------
+        def integrand(tp):
+            p1 = np.exp(-np.square(np.divide(t_diff - tp, Gamma)))
+            p2 = np.add(np.exp(-np.divide(tp, tau)), b)
+            return np.multiply(p1, p2)
+
+        print(integrate.quad(integrand, 0, dn*1000))
+        print(integrate.quad(integrand, -np.inf, np.inf))
+        # -------------------------------------------
+        # COMPUTE DISCRETIZED ELECTRIC SUSCEPTIBILITY
+        # -------------------------------------------
+
+    def reset_material(self):
+        pass
+
+    def update_material(self, n, efield):
+        # Save the current efield value
+        self._efield[n] = efield[self._material_i0:self._material_i0 + self._material_ilen]
+        # Trim dchi_m to length n, transpose, flip, and repeat to the length of the material
+        dchi = np.tile(np.flip(self._dchi_m[:n], 0), (1, self._material_ilen))
+        # Trim the efield to length n (shifted by one as specified by update equations)
+        e = self._efield[1:n+1]
+        # Multiply e and dchi and sum to determine psi
+        self._psi = np.sum(np.multiply(e, dchi), axis=0, dtype=np.complex64)
+
+    def get_chi0(self):
+        pass
+
+    def get_epsiloninf(self):
+        pass
+
+    def get_psi(self):
+        pass

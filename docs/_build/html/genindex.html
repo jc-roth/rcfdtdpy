@@ -79,9 +79,8 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="beg_tutorial.html">Beginner Tutorial</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fourier_tutorial.html">Fourier Analysis Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sim.html">sim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="materials.html">materials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="vis.html">vis</a></li>
 </ul>
 
@@ -150,10 +149,10 @@
 
 <div class="genindex-jumpbox">
  <a href="#C"><strong>C</strong></a>
- | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
@@ -174,27 +173,21 @@
   </ul></td>
 </tr></table>
 
-<h2 id="D">D</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="sim.html#rcfdtd_sim.sim.DynamicMaterial">NumericMaterial (class in rcfdtd_sim.sim)</a>
-</li>
-  </ul></td>
-</tr></table>
-
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="sim.html#rcfdtd_sim.sim.EmptyMaterial">EmptyMaterial (class in rcfdtd_sim.sim)</a>
 </li>
+      <li><a href="materials.html#rcfdtd_sim.sim.NumericMaterial.export_chi">export_chi() (rcfdtd_sim.sim.NumericMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.NumericMaterial.export_chi">[1]</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="sim.html#rcfdtd_sim.sim.Simulation.export_ifields">export_ifields() (rcfdtd_sim.sim.Simulation method)</a>
 
       <ul>
-        <li><a href="sim.html#rcfdtd_sim.sim.StaticMaterial.export_ifields">(rcfdtd_sim.sim.StaticMaterial method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.StaticMaterial.export_ifields">(rcfdtd_sim.sim.StaticMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.StaticMaterial.export_ifields">[1]</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="sim.html#rcfdtd_sim.sim.Simulation.export_nfields">export_nfields() (rcfdtd_sim.sim.Simulation method)</a>
 </li>
   </ul></td>
@@ -203,42 +196,48 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="sim.html#rcfdtd_sim.sim.DynamicMaterial.get_chi0">get_chi0() (rcfdtd_sim.sim.NumericMaterial method)</a>
+      <li><a href="sim.html#rcfdtd_sim.sim.EmptyMaterial.get_chi0">get_chi0() (rcfdtd_sim.sim.EmptyMaterial method)</a>
 
       <ul>
-        <li><a href="sim.html#rcfdtd_sim.sim.EmptyMaterial.get_chi0">(rcfdtd_sim.sim.EmptyMaterial method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.Material.get_chi0">(rcfdtd_sim.sim.Material method)</a>, <a href="sim.html#rcfdtd_sim.sim.Material.get_chi0">[1]</a>
 </li>
-        <li><a href="sim.html#rcfdtd_sim.sim.Material.get_chi0">(rcfdtd_sim.sim.Material method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.NumericMaterial.get_chi0">(rcfdtd_sim.sim.NumericMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.NumericMaterial.get_chi0">[1]</a>
 </li>
-        <li><a href="sim.html#rcfdtd_sim.sim.StaticMaterial.get_chi0">(rcfdtd_sim.sim.StaticMaterial method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.StaticMaterial.get_chi0">(rcfdtd_sim.sim.StaticMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.StaticMaterial.get_chi0">[1]</a>
+</li>
+        <li><a href="materials.html#rcfdtd_sim.sim.TwoStateMaterial.get_chi0">(rcfdtd_sim.sim.TwoStateMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.TwoStateMaterial.get_chi0">[1]</a>
 </li>
       </ul></li>
       <li><a href="sim.html#rcfdtd_sim.sim.Current.get_current">get_current() (rcfdtd_sim.sim.Current method)</a>
 </li>
       <li><a href="sim.html#rcfdtd_sim.sim.Simulation.get_dims">get_dims() (rcfdtd_sim.sim.Simulation method)</a>
 </li>
-      <li><a href="sim.html#rcfdtd_sim.sim.DynamicMaterial.get_epsiloninf">get_epsiloninf() (rcfdtd_sim.sim.NumericMaterial method)</a>
+      <li><a href="sim.html#rcfdtd_sim.sim.EmptyMaterial.get_epsiloninf">get_epsiloninf() (rcfdtd_sim.sim.EmptyMaterial method)</a>
 
       <ul>
-        <li><a href="sim.html#rcfdtd_sim.sim.EmptyMaterial.get_epsiloninf">(rcfdtd_sim.sim.EmptyMaterial method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.Material.get_epsiloninf">(rcfdtd_sim.sim.Material method)</a>, <a href="sim.html#rcfdtd_sim.sim.Material.get_epsiloninf">[1]</a>
 </li>
-        <li><a href="sim.html#rcfdtd_sim.sim.Material.get_epsiloninf">(rcfdtd_sim.sim.Material method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.NumericMaterial.get_epsiloninf">(rcfdtd_sim.sim.NumericMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.NumericMaterial.get_epsiloninf">[1]</a>
 </li>
-        <li><a href="sim.html#rcfdtd_sim.sim.StaticMaterial.get_epsiloninf">(rcfdtd_sim.sim.StaticMaterial method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.StaticMaterial.get_epsiloninf">(rcfdtd_sim.sim.StaticMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.StaticMaterial.get_epsiloninf">[1]</a>
+</li>
+        <li><a href="materials.html#rcfdtd_sim.sim.TwoStateMaterial.get_epsiloninf">(rcfdtd_sim.sim.TwoStateMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.TwoStateMaterial.get_epsiloninf">[1]</a>
 </li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="sim.html#rcfdtd_sim.sim.Simulation.get_materials">get_materials() (rcfdtd_sim.sim.Simulation method)</a>
 </li>
-      <li><a href="sim.html#rcfdtd_sim.sim.DynamicMaterial.get_psi">get_psi() (rcfdtd_sim.sim.NumericMaterial method)</a>
+      <li><a href="sim.html#rcfdtd_sim.sim.EmptyMaterial.get_psi">get_psi() (rcfdtd_sim.sim.EmptyMaterial method)</a>
 
       <ul>
-        <li><a href="sim.html#rcfdtd_sim.sim.EmptyMaterial.get_psi">(rcfdtd_sim.sim.EmptyMaterial method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.Material.get_psi">(rcfdtd_sim.sim.Material method)</a>, <a href="sim.html#rcfdtd_sim.sim.Material.get_psi">[1]</a>
 </li>
-        <li><a href="sim.html#rcfdtd_sim.sim.Material.get_psi">(rcfdtd_sim.sim.Material method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.NumericMaterial.get_psi">(rcfdtd_sim.sim.NumericMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.NumericMaterial.get_psi">[1]</a>
 </li>
-        <li><a href="sim.html#rcfdtd_sim.sim.StaticMaterial.get_psi">(rcfdtd_sim.sim.StaticMaterial method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.StaticMaterial.get_psi">(rcfdtd_sim.sim.StaticMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.StaticMaterial.get_psi">[1]</a>
+</li>
+        <li><a href="materials.html#rcfdtd_sim.sim.TwoStateMaterial.get_psi">(rcfdtd_sim.sim.TwoStateMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.TwoStateMaterial.get_psi">[1]</a>
 </li>
       </ul></li>
   </ul></td>
@@ -247,7 +246,15 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="sim.html#rcfdtd_sim.sim.Material">Material (class in rcfdtd_sim.sim)</a>
+      <li><a href="materials.html#rcfdtd_sim.sim.Material">Material (class in rcfdtd_sim.sim)</a>, <a href="sim.html#rcfdtd_sim.sim.Material">[1]</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="materials.html#rcfdtd_sim.sim.NumericMaterial">NumericMaterial (class in rcfdtd_sim.sim)</a>, <a href="sim.html#rcfdtd_sim.sim.NumericMaterial">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -259,14 +266,16 @@
 </li>
       <li><a href="vis.html#module-rcfdtd_sim.vis">rcfdtd_sim.vis (module)</a>
 </li>
-      <li><a href="sim.html#rcfdtd_sim.sim.DynamicMaterial.reset_material">reset_material() (rcfdtd_sim.sim.NumericMaterial method)</a>
+      <li><a href="sim.html#rcfdtd_sim.sim.EmptyMaterial.reset_material">reset_material() (rcfdtd_sim.sim.EmptyMaterial method)</a>
 
       <ul>
-        <li><a href="sim.html#rcfdtd_sim.sim.EmptyMaterial.reset_material">(rcfdtd_sim.sim.EmptyMaterial method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.Material.reset_material">(rcfdtd_sim.sim.Material method)</a>, <a href="sim.html#rcfdtd_sim.sim.Material.reset_material">[1]</a>
 </li>
-        <li><a href="sim.html#rcfdtd_sim.sim.Material.reset_material">(rcfdtd_sim.sim.Material method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.NumericMaterial.reset_material">(rcfdtd_sim.sim.NumericMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.NumericMaterial.reset_material">[1]</a>
 </li>
-        <li><a href="sim.html#rcfdtd_sim.sim.StaticMaterial.reset_material">(rcfdtd_sim.sim.StaticMaterial method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.StaticMaterial.reset_material">(rcfdtd_sim.sim.StaticMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.StaticMaterial.reset_material">[1]</a>
+</li>
+        <li><a href="materials.html#rcfdtd_sim.sim.TwoStateMaterial.reset_material">(rcfdtd_sim.sim.TwoStateMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.TwoStateMaterial.reset_material">[1]</a>
 </li>
       </ul></li>
   </ul></td>
@@ -281,7 +290,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="sim.html#rcfdtd_sim.sim.Simulation">Simulation (class in rcfdtd_sim.sim)</a>
 </li>
-      <li><a href="sim.html#rcfdtd_sim.sim.StaticMaterial">StaticMaterial (class in rcfdtd_sim.sim)</a>
+      <li><a href="materials.html#rcfdtd_sim.sim.StaticMaterial">StaticMaterial (class in rcfdtd_sim.sim)</a>, <a href="sim.html#rcfdtd_sim.sim.StaticMaterial">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -292,19 +301,25 @@
       <li><a href="vis.html#rcfdtd_sim.vis.timeseries">timeseries() (in module rcfdtd_sim.vis)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="materials.html#rcfdtd_sim.sim.TwoStateMaterial">TwoStateMaterial (class in rcfdtd_sim.sim)</a>, <a href="sim.html#rcfdtd_sim.sim.TwoStateMaterial">[1]</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="U">U</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="sim.html#rcfdtd_sim.sim.DynamicMaterial.update_material">update_material() (rcfdtd_sim.sim.NumericMaterial method)</a>
+      <li><a href="sim.html#rcfdtd_sim.sim.EmptyMaterial.update_material">update_material() (rcfdtd_sim.sim.EmptyMaterial method)</a>
 
       <ul>
-        <li><a href="sim.html#rcfdtd_sim.sim.EmptyMaterial.update_material">(rcfdtd_sim.sim.EmptyMaterial method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.Material.update_material">(rcfdtd_sim.sim.Material method)</a>, <a href="sim.html#rcfdtd_sim.sim.Material.update_material">[1]</a>
 </li>
-        <li><a href="sim.html#rcfdtd_sim.sim.Material.update_material">(rcfdtd_sim.sim.Material method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.NumericMaterial.update_material">(rcfdtd_sim.sim.NumericMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.NumericMaterial.update_material">[1]</a>
 </li>
-        <li><a href="sim.html#rcfdtd_sim.sim.StaticMaterial.update_material">(rcfdtd_sim.sim.StaticMaterial method)</a>
+        <li><a href="materials.html#rcfdtd_sim.sim.StaticMaterial.update_material">(rcfdtd_sim.sim.StaticMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.StaticMaterial.update_material">[1]</a>
+</li>
+        <li><a href="materials.html#rcfdtd_sim.sim.TwoStateMaterial.update_material">(rcfdtd_sim.sim.TwoStateMaterial method)</a>, <a href="sim.html#rcfdtd_sim.sim.TwoStateMaterial.update_material">[1]</a>
 </li>
       </ul></li>
   </ul></td>

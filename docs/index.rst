@@ -10,9 +10,8 @@ Welcome to RCFDTD.py's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   beg_tutorial
-   fourier_tutorial
    sim
+   materials
    vis
 
 Indices and tables
