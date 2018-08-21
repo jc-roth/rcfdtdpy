@@ -163,7 +163,7 @@ material = StaticMat(di, dn, ilen, nlen, m_s_ind, inf_perm, ma1, ma2, mgamma, mb
 
 
 # Create Sim object
-tqdmarg = {'desc': 'Executing simulation', 'leave': False}
+tqdmarg = {'desc': 'Executing simulation', 'leave': True}
 s = Sim(i0, i1, di, n0, n1, dn, epsilon0, mu0, 'absorbing', current, material, nstore=np.arange(0, nlen, 50), istore=[5,ilen-6])
 # Run simulation if simulation save doesn't exist
 sim_file = Path(fsave)

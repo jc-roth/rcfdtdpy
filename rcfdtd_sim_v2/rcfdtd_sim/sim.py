@@ -760,20 +760,20 @@ class NumericMaterial(Material):
         # Call super
         super().__init__(di, dn, ilen, nlen, material_i0, material_i1, 0, nlen)
         # Create an array to hold chi values at specific values of m
-        chi_m = np.zeros(nlen, dtype=np.complex64)
+        self._chi_m = np.zeros(nlen, dtype=np.complex64)
         # Create an array to hold dchi values at specific values of m
         self._dchi_m = np.zeros((nlen - 1, 1), dtype=np.complex64)
         # Calculate chi_m at m=0 and store
-        chi_m[0], chi_m0_err = integrate.quad(chi_func, 0, dn)
-        chi0_repeat = np.repeat(chi_m[0], self._material_ilen)
+        self._chi_m[0], chi_m0_err = integrate.quad(chi_func, 0, dn)
+        chi0_repeat = np.repeat(self._chi_m[0], self._material_ilen)
         # chi is zero in vacuum, so pad chi0 in the material by zero outside of the material
         self._chi0 = np.pad(chi0_repeat, (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
                             'constant', constant_values=0)
         # Iterate over all m and integrate at each to find dchi_m
         for m in tqdm(range(1, nlen), **tqdmarg):
             area, area_err = integrate.quad(chi_func, m * dn, (m + 1) * dn)
-            chi_m[m] = area
-            self._dchi_m[m - 1] = chi_m[m - 1] - chi_m[m]
+            self._chi_m[m] = area
+            self._dchi_m[m - 1] = self._chi_m[m - 1] - self._chi_m[m]
         # Create a 2D Numpy array to hold previous values of the electric field
         self._efield = np.zeros((nlen, self._material_ilen), dtype=np.complex64)
         # Create a 1D Numpy array to hold the current value of psi
@@ -819,11 +819,7 @@ class NumericMaterial(Material):
 
         :return: The electric susceptibility :math:`\chi`
         """
-        chi = np.zeros(self._nlen)
-        chi[0] = self._chi0[self._material_i0]
-        for n in range(self._nlen - 1):
-            chi[n + 1] = chi[n] - self._dchi_m[n, 0]
-        return chi
+        return self._chi_m
 
 
 class TwoStateMaterial(Material):
@@ -870,6 +866,7 @@ class TwoStateMaterial(Material):
     :param dn: The temporal step size of the simulation
     :param ilen: The number of spatial indices in the simulation
     :param nlen: The number of temporal indices in the simulation
+    :param n_ref_ind: The time index to use as a reference for the the `t_diff` argument
     :param material_i0: The starting spatial index of the material
     :param e_a1: The excited state oscillator :math:`A_{e,1}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
     :param e_a2: The excited state oscillator :math:`A_{e,2}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
@@ -885,14 +882,15 @@ class TwoStateMaterial(Material):
     :param v_g: The visual oscillator :math:`\gamma_{e,1}`, where axis=0 represents the :math:`j` th oscillator and axis=1 represents the :math:`i` th spatial oscillator in the material.
     :param alpha: The spatial decay constant :math:`\alpha` in meters
     :param Gamma: The visual pulse width :math:`\Gamma` in seconds
-    :param t_diff: The spatial decay constant :math:`t''`
+    :param t_diff: The time difference :math:`t''` in seconds between the visual pulse and index `n_ref_ind`
     :param tau: The oscillator time decay constant :math:`\tau` in seconds
     :param b: The excited oscillator decay offset :math:`\b`
     :param epsiloninf: The :math:`\epsilon_\infty` of the material, which is constant over space and time.
-    :param tqdmarg: The arguments to pass the tdqm iterator (lookup arguments on the tqdm documentation).
+    :param tqdmarg_f: The arguments to pass the tdqm iterator during the fraction of excited oscillators calculation (lookup arguments on the tqdm documentation).
+    :param tqdmarg_c: The arguments to pass the tdqm iterator during the electric susceptibility calculation (lookup arguments on the tqdm documentation).
     """
 
-    def __init__(self, di, dn, ilen, nlen, material_i0, e_a1, e_a2, e_b, e_g, g_a1, g_a2, g_b, g_g, v_a1, v_a2, v_b, v_g, alpha, Gamma, t_diff, tau, b, epsiloninf, tqdmarg={}):
+    def __init__(self, di, dn, ilen, nlen, n_ref_ind, material_i0, e_a1, e_a2, e_b, e_g, g_a1, g_a2, g_b, g_g, v_a1, v_a2, v_b, v_g, alpha, Gamma, t_diff, tau, b, epsiloninf, tqdmarg_f={}, tqdmarg_c={}):
         # -------------
         # INITIAL SETUP
         # -------------
@@ -900,6 +898,8 @@ class TwoStateMaterial(Material):
         shape = np.shape(e_a1)
         if shape != np.shape(e_a2) or shape != np.shape(e_b) or shape != np.shape(e_g) or shape != np.shape(g_a1) or shape != np.shape(g_a2) or shape != np.shape(g_g) or shape != np.shape(g_b) or shape != np.shape(v_a1) or shape != np.shape(v_a2) or shape != np.shape(v_g) or shape != np.shape(v_b):
             raise ValueError("e_a1, e_a2, e_b, e_g, g_a1, g_a2, g_b, g_g, v_a1, v_a2, v_b, v_g must all have the same dimensions")
+        elif n_ref_ind > nlen:
+            raise ValueError("n_ref_ind cannot be larger then nlen, the length of the simulation")
         # Get and save material dimension info
         if len(shape) > 1:
             self._jlen = shape[0]
@@ -912,16 +912,60 @@ class TwoStateMaterial(Material):
         # -----------------------------------
         # COMPUTE EXCITED OSCILLATOR FRACTION
         # -----------------------------------
+
+        # Define the integrand (i.e. gaussian multiplied by exponential decay)
         def integrand(tp):
             p1 = np.exp(-np.square(np.divide(t_diff - tp, Gamma)))
             p2 = np.add(np.exp(-np.divide(tp, tau)), b)
             return np.multiply(p1, p2)
-
-        print(integrate.quad(integrand, 0, dn*1000))
-        print(integrate.quad(integrand, -np.inf, np.inf))
+        # Create an array to hold the fraction of excited oscillators
+        f_e = np.zeros((nlen, 1))
+        # Calculate the fraction of excited oscillators at each time
+        for i in tqdm(range(nlen), **tqdmarg_f):
+            vis_time = (i - n_ref_ind) * dn
+            area, err = integrate.quad(integrand, -nlen * dn, vis_time)
+            f_e[i] = area
+        # Tile f_e along spatial extent of material
+        f_e = np.tile(f_e, (1, ilen))
+        # Compute spatial decay coefficient for each location
+        spatial_locs = np.arange(0, self._material_ilen * di, di)
+        spatial_coeffs = np.exp(-np.divide(spatial_locs, tau))
+        spatial_coeffs = np.tile(spatial_coeffs, (1, nlen))
+        # Multiply each term in f_e by the spatial coefficients to apply the spatial absorption decay
+        self._f_e = np.multiply(spatial_coeffs, f_e)
         # -------------------------------------------
         # COMPUTE DISCRETIZED ELECTRIC SUSCEPTIBILITY
         # -------------------------------------------
+
+        # Define the excited state oscillator electric susceptibility function
+        def e_chi(t):
+            return np.multiply(np.exp(-e_g * t), np.add(e_a1*np.exp(e_b*t), e_a2*np.exp(-e_b*t)))
+
+        # Define the ground state oscillator electric susceptibility function
+        def g_chi(t):
+            return np.multiply(np.exp(-g_g * t), np.add(g_a1*np.exp(g_b*t), g_a2*np.exp(-g_b*t)))
+
+        # Define the visual oscillator electric susceptibility function
+        def v_chi(t):
+            return np.multiply(np.exp(-v_g * t), np.add(v_a1*np.exp(v_b*t), v_a2*np.exp(-v_b*t)))
+
+        # Create an array to hold chi values at specific values of m
+        chi_m = np.zeros((self._jlen, self._material_ilen, nlen), dtype=np.complex64)
+        # Create an array to hold dchi values at specific values of m
+        self._dchi_m = np.zeros((self._jlen, self._material_ilen, nlen - 1), dtype=np.complex64)
+        # TODO PICKUP FROM HERE WITH THE CALCULATION OF CHI0
+        # Calculate chi_m at m=0 and store
+        chi_m[0], chi_m0_err = integrate.quad(chi_func, 0, dn)
+        chi0_repeat = np.repeat(chi_m[0], self._material_ilen)
+        # chi is zero in vacuum, so pad chi0 in the material by zero outside of the material
+        self._chi0 = np.pad(chi0_repeat, (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
+                            'constant', constant_values=0)
+        # Iterate over all m and integrate at each to find dchi_m
+        for m in tqdm(range(1, nlen), **tqdmarg_c):
+            area, area_err = integrate.quad(chi_func, m * dn, (m + 1) * dn)
+            chi_m[m] = area
+            self._dchi_m[m - 1] = chi_m[m - 1] - chi_m[m]
+
 
     def reset_material(self):
         pass

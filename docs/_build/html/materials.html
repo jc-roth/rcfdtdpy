@@ -477,7 +477,7 @@ the simulation to their initial values.</p>
 
 <dl class="class">
 <dt id="rcfdtd_sim.sim.TwoStateMaterial">
-<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">TwoStateMaterial</code><span class="sig-paren">(</span><em>di</em>, <em>dn</em>, <em>ilen</em>, <em>nlen</em>, <em>material_i0</em>, <em>e_a1</em>, <em>e_a2</em>, <em>e_b</em>, <em>e_g</em>, <em>g_a1</em>, <em>g_a2</em>, <em>g_b</em>, <em>g_g</em>, <em>v_a1</em>, <em>v_a2</em>, <em>v_b</em>, <em>v_g</em>, <em>alpha</em>, <em>Gamma</em>, <em>t_diff</em>, <em>tau</em>, <em>b</em>, <em>epsiloninf</em>, <em>tqdmarg={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#TwoStateMaterial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.TwoStateMaterial" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">rcfdtd_sim.sim.</code><code class="descname">TwoStateMaterial</code><span class="sig-paren">(</span><em>di</em>, <em>dn</em>, <em>ilen</em>, <em>nlen</em>, <em>n_ref_ind</em>, <em>material_i0</em>, <em>e_a1</em>, <em>e_a2</em>, <em>e_b</em>, <em>e_g</em>, <em>g_a1</em>, <em>g_a2</em>, <em>g_b</em>, <em>g_g</em>, <em>v_a1</em>, <em>v_a2</em>, <em>v_b</em>, <em>v_g</em>, <em>alpha</em>, <em>Gamma</em>, <em>t_diff</em>, <em>tau</em>, <em>b</em>, <em>epsiloninf</em>, <em>tqdmarg_f={}</em>, <em>tqdmarg_c={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/sim.html#TwoStateMaterial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.sim.TwoStateMaterial" title="Permalink to this definition">¶</a></dt>
 <dd><p>The TwoStateMaterial class represents a material that has a non-constant definition of electric susceptibility in
 time. This material is represents the same material proposed in Beard and Schmuttenmaer 2001
 (www.doi.org/10.1063/1.1338526). The ground state electric susceptibility oscillator is defined by</p>
@@ -512,6 +512,7 @@ fraction of excited oscillators followed by the computation of the discretized e
 <li><strong>dn</strong> – The temporal step size of the simulation</li>
 <li><strong>ilen</strong> – The number of spatial indices in the simulation</li>
 <li><strong>nlen</strong> – The number of temporal indices in the simulation</li>
+<li><strong>n_ref_ind</strong> – The time index to use as a reference for the the <cite>t_diff</cite> argument</li>
 <li><strong>material_i0</strong> – The starting spatial index of the material</li>
 <li><strong>e_a1</strong> – The excited state oscillator <span class="math notranslate nohighlight">\(A_{e,1}\)</span>, where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial oscillator in the material.</li>
 <li><strong>e_a2</strong> – The excited state oscillator <span class="math notranslate nohighlight">\(A_{e,2}\)</span>, where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial oscillator in the material.</li>
@@ -527,11 +528,12 @@ fraction of excited oscillators followed by the computation of the discretized e
 <li><strong>v_g</strong> – The visual oscillator <span class="math notranslate nohighlight">\(\gamma_{e,1}\)</span>, where axis=0 represents the <span class="math notranslate nohighlight">\(j\)</span> th oscillator and axis=1 represents the <span class="math notranslate nohighlight">\(i\)</span> th spatial oscillator in the material.</li>
 <li><strong>alpha</strong> – The spatial decay constant <span class="math notranslate nohighlight">\(\alpha\)</span> in meters</li>
 <li><strong>Gamma</strong> – The visual pulse width <span class="math notranslate nohighlight">\(\Gamma\)</span> in seconds</li>
-<li><strong>t_diff</strong> – The spatial decay constant <span class="math notranslate nohighlight">\(t''\)</span></li>
+<li><strong>t_diff</strong> – The time difference <span class="math notranslate nohighlight">\(t''\)</span> in seconds between the visual pulse and index <cite>n_ref_ind</cite></li>
 <li><strong>tau</strong> – The oscillator time decay constant <span class="math notranslate nohighlight">\(\tau\)</span> in seconds</li>
 <li><strong>b</strong> – The excited oscillator decay offset <span class="math notranslate nohighlight">\(\b\)</span></li>
 <li><strong>epsiloninf</strong> – The <span class="math notranslate nohighlight">\(\epsilon_\infty\)</span> of the material, which is constant over space and time.</li>
-<li><strong>tqdmarg</strong> – The arguments to pass the tdqm iterator (lookup arguments on the tqdm documentation).</li>
+<li><strong>tqdmarg_f</strong> – The arguments to pass the tdqm iterator during the fraction of excited oscillators calculation (lookup arguments on the tqdm documentation).</li>
+<li><strong>tqdmarg_c</strong> – The arguments to pass the tdqm iterator during the electric susceptibility calculation (lookup arguments on the tqdm documentation).</li>
 </ul>
 </td>
 </tr>

@@ -94,7 +94,7 @@ t_trim = t[t_trim_ind:]
 # FIGURE OUT HOW TO NORMALIZE THIS!!!
 ints = np.zeros(len(t_trim))
 for i in tqdm(range(len(t_trim))):
-    area, err = quad(integrand, -10e-12, t_trim[i], limit=500)
+    area, err = quad(integrand, 0, t_trim[i], limit=500)
     ints[i] = area
 
 plt.plot(t_trim * 1e15, ints)
