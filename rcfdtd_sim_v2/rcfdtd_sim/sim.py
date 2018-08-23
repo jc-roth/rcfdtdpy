@@ -769,19 +769,32 @@ class NumericMaterial(Material):
         # --------------------
         # Setup susceptibility
         # --------------------
+        # Wrap chi_func to account for real and imaginary parts
+        def chi_func_real(t):
+            return np.real(chi_func(t))
+        def chi_func_imag(t):
+            return np.imag(chi_func(t))
         # Create an array to hold chi values at specific values of m
         self._chi_m = np.zeros(nlen, dtype=np.complex64)
         # Create an array to hold dchi values at specific values of m
         self._dchi_m = np.zeros((nlen - 1, 1), dtype=np.complex64)
         # Calculate chi_m at m=0 and store
-        self._chi_m[0], chi_m0_err = integrate.quad(chi_func, 0, dn)
+        real_area, real_area_err = integrate.quad(chi_func_real, 0, dn)
+        imag_area, imag_area_err = integrate.quad(chi_func_imag, 0, dn)
+        # Combine real and imaginary parts
+        self._chi_m[0] = real_area + 1j*imag_area
         chi0_repeat = np.repeat(self._chi_m[0], self._material_ilen)
         # chi is zero in vacuum, so pad chi0 in the material by zero outside of the material
         self._chi0 = np.pad(chi0_repeat, (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
                             'constant', constant_values=0)
         # Iterate over all m and integrate at each to find dchi_m
         for m in tqdm(range(1, nlen), **tqdmarg):
-            area, area_err = integrate.quad(chi_func, m * dn, (m + 1) * dn)
+            # Integrate real and imaginary parts
+            real_area, real_area_err = integrate.quad(chi_func_real, m * dn, (m + 1) * dn)
+            imag_area, imag_area_err = integrate.quad(chi_func_imag, m * dn, (m + 1) * dn)
+            # Combine real and imaginary parts
+            area = real_area + 1j*imag_area
+            # Store
             self._chi_m[m] = area
             self._dchi_m[m - 1] = self._chi_m[m - 1] - self._chi_m[m]
         # Create a 2D Numpy array to hold previous values of the electric field
