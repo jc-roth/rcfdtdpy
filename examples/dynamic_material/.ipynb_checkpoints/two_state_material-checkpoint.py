@@ -6,7 +6,8 @@ from pathlib import Path
 from matplotlib import pyplot as plt
 from rcfdtd_sim import Simulation as Sim
 from rcfdtd_sim import Current
-from rcfdtd_sim import NumericMaterial as Mat
+from tqdm import tqdm
+from rcfdtd_sim import TwoStateMaterial as Mat
 from rcfdtd_sim import vis
 
 # ----------------------------
@@ -66,12 +67,43 @@ material_ind_len = material_ind_end - material_ind_start
 #  Set constants
 a = np.complex64(1e16)
 gamma = np.complex64(1e12 * 2 * np.pi)
-def chi(t):
-    return a*(1-np.exp(-2*gamma*t))
+inf_perm = np.complex64(1e0)
+alpha = 5 / 1e9 # 5 / nm
+Gamma = 100e-15 # 100 fs
+t_diff = 0
+tau = 30e-15 # 30 fs
+b = 0
 
-def inf_perm(t):
-    return 1
+# Create matrices
+m = np.ones((1, material_ind_len), dtype=np.complex64)
+mgamma = m * gamma
+mbeta = m * gamma
+ma1 = m * a
+ma2 = -1 * m * a
 
+from scipy.integrate import quad
+
+def integrand(tp):
+    p1 = np.exp(-np.square(np.divide(t_diff - tp, Gamma)))
+    p2 = np.add(np.exp(-np.divide(tp, tau)), b)
+    return np.multiply(p1, p2)
+
+t_trim_ind = np.argmin(np.abs(np.subtract(t, 0)))
+t_trim = t[t_trim_ind:]
+
+# FIGURE OUT HOW TO NORMALIZE THIS!!!
+ints = np.zeros(len(t_trim))
+for i in tqdm(range(len(t_trim))):
+    area, err = quad(integrand, 0, t_trim[i], limit=500)
+    ints[i] = area
+
+plt.plot(t_trim * 1e15, ints)
+plt.xlabel('t [fs]')
+plt.show()
+
+#drude_material = Mat(di, dn, ilen, nlen, material_ind_start, ma1, ma2, mbeta, mgamma, ma1, ma2, mbeta, mgamma, ma1, ma2, mbeta, mgamma, alpha, Gamma, t_diff, tau, b, inf_perm)
+
+"""
 # --------------------------
 # Run or load the simulation
 # --------------------------
@@ -277,3 +309,4 @@ plt.tight_layout()
 
 plt.savefig('numeric_material.pdf', format='pdf')
 plt.show()
+"""

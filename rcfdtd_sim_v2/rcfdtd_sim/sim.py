@@ -752,13 +752,23 @@ class NumericMaterial(Material):
     :param material_i0: The starting spatial index of the material
     :param material_i1: The ending spatial index of the material
     :param chi_func: A function representing the electric susceptibility :math:`\chi` as a function of time. The function should accept a single argument n corresponding to the time index.
-    :param epsiloninf: The :math:`\epsilon_\infty` of the material, which is constant over space and time.
+    :param epsiloninf: A function representing the :math:`\epsilon_\infty` of the material as a function of time. The function should accept a single argument n corresponding to the time index.
     :param tqdmarg: The arguments to pass the tdqm iterator (lookup arguments on the tqdm documentation).
     """
 
-    def __init__(self, di, dn, ilen, nlen, material_i0, material_i1, chi_func, epsiloninf, tqdmarg={}):
+    def __init__(self, di, dn, ilen, nlen, material_i0, material_i1, chi_func, epsiloninf_func, tqdmarg={}):
+        # -------------
+        # Initial setup
+        # -------------
         # Call super
         super().__init__(di, dn, ilen, nlen, material_i0, material_i1, 0, nlen)
+        # Save the infinity permittivity function
+        self._epsiloninf_func = epsiloninf_func
+        # Set self._epsiloninf to a zero valued array
+        self._epsiloninf = np.zeros(self._ilen, dtype=np.complex64)
+        # --------------------
+        # Setup susceptibility
+        # --------------------
         # Create an array to hold chi values at specific values of m
         self._chi_m = np.zeros(nlen, dtype=np.complex64)
         # Create an array to hold dchi values at specific values of m
@@ -778,11 +788,6 @@ class NumericMaterial(Material):
         self._efield = np.zeros((nlen, self._material_ilen), dtype=np.complex64)
         # Create a 1D Numpy array to hold the current value of psi
         self._psi = np.zeros(self._material_ilen, dtype=np.complex64)
-        # Epsilon_infinity is equal to one in vacuum, so only set self._epsiloninf equal to epsiloninf in the material
-        epsiloninf_repeat = np.repeat(epsiloninf, self._material_ilen)
-        self._epsiloninf = np.pad(epsiloninf_repeat,
-                                  (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
-                                  'constant', constant_values=1)
 
     def reset_material(self):
         # Clear the electric field
@@ -791,6 +796,9 @@ class NumericMaterial(Material):
         self._psi = np.zeros(self._material_ilen, dtype=np.complex64)
 
     def update_material(self, n, efield):
+        # ------------------------------
+        # Electric susceptibility update
+        # ------------------------------
         # Save the current efield value
         self._efield[n] = efield[self._material_i0:self._material_i0 + self._material_ilen]
         # Trim dchi_m to length n, transpose, flip, and repeat to the length of the material
@@ -799,6 +807,16 @@ class NumericMaterial(Material):
         e = self._efield[1:n+1]
         # Multiply e and dchi and sum to determine psi
         self._psi = np.sum(np.multiply(e, dchi), axis=0, dtype=np.complex64)
+        # ----------------------------
+        # Infinite permittivity update
+        # ----------------------------
+        # Calculate epsiloninf at the current time
+        epsiloninf = self._epsiloninf_func(self._dn * (n + 0.5))
+        # Epsilon_infinity is equal to one in vacuum, so only set self._epsiloninf equal to epsiloninf in the material
+        epsiloninf_repeat = np.repeat(epsiloninf, self._material_ilen)
+        self._epsiloninf = np.pad(epsiloninf_repeat,
+                                  (self._material_i0, self._ilen - (self._material_i0 + self._material_ilen)),
+                                  'constant', constant_values=1)
 
     def get_chi0(self):
         return self._chi0
