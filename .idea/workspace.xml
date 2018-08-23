@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="cbd1a98a-191d-477a-8b37-cee00282655e" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/time_varying_material/.ipynb_checkpoints/time_varying_material-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/time_varying_material/.ipynb_checkpoints/time_varying_material-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/examples/time_varying_material/time_varying_material.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/examples/time_varying_material/time_varying_material.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/overlapping_materials_v2/.ipynb_checkpoints/overlapping_materials-checkpoint.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/overlapping_materials_v2/.ipynb_checkpoints/overlapping_materials-checkpoint.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/examples/overlapping_materials_v2/overlapping_materials.py" beforeDir="false" afterPath="$PROJECT_DIR$/examples/overlapping_materials_v2/overlapping_materials.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/sim.py" beforeDir="false" afterPath="$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/sim.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -22,22 +22,22 @@
     <session id="1181050043">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="3" />
+          <entry key="project.closed" value="5" />
           <entry key="project.open.time.1" value="1" />
-          <entry key="project.open.time.7" value="1" />
+          <entry key="project.open.time.7" value="2" />
           <entry key="project.open.time.9" value="2" />
-          <entry key="project.opened" value="4" />
+          <entry key="project.opened" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="8414" />
+          <entry key="py" value="8718" />
           <entry key="rst" value="230" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="8414" />
+          <entry key="Python" value="8718" />
           <entry key="ReST" value="230" />
         </counts>
       </usages-collector>
@@ -62,12 +62,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/sim.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="448">
-              <caret line="824" column="31" lean-forward="true" selection-start-line="824" selection-start-column="31" selection-end-line="824" selection-end-column="31" />
+            <state relative-caret-position="128">
+              <caret line="772" column="29" lean-forward="true" selection-start-line="772" selection-start-column="29" selection-end-line="772" selection-end-column="29" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
-                <marker date="1535059350247" expanded="true" signature="48673:48682" ph="..." />
-                <marker date="1535059350247" expanded="true" signature="49427:49437" ph="..." />
+                <marker date="1535068286738" expanded="true" signature="36409:36528" ph="..." />
+                <marker date="1535068286738" expanded="true" signature="49311:49320" ph="..." />
+                <marker date="1535068286738" expanded="true" signature="50065:50075" ph="..." />
               </folding>
             </state>
           </provider>
@@ -277,8 +278,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1680" height="1027" extended-state="6" />
-    <editor active="true" />
+    <frame x="0" y="23" width="1680" height="1027" extended-state="0" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.119349" />
       <window_info active="true" id="Structure" order="1" visible="true" weight="0.24894515" />
@@ -368,12 +368,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/rcfdtd_sim_v2/rcfdtd_sim/sim.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="448">
-          <caret line="824" column="31" lean-forward="true" selection-start-line="824" selection-start-column="31" selection-end-line="824" selection-end-column="31" />
+        <state relative-caret-position="128">
+          <caret line="772" column="29" lean-forward="true" selection-start-line="772" selection-start-column="29" selection-end-line="772" selection-end-column="29" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
-            <marker date="1535059350247" expanded="true" signature="48673:48682" ph="..." />
-            <marker date="1535059350247" expanded="true" signature="49427:49437" ph="..." />
+            <marker date="1535068286738" expanded="true" signature="36409:36528" ph="..." />
+            <marker date="1535068286738" expanded="true" signature="49311:49320" ph="..." />
+            <marker date="1535068286738" expanded="true" signature="50065:50075" ph="..." />
           </folding>
         </state>
       </provider>
