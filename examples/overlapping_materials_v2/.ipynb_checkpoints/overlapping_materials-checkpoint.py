@@ -36,7 +36,8 @@ n1 = 2.5e-12 # 2.5 ps
 ilen, nlen = Sim.calc_dims(i0, i1, di, n0, n1, dn)
 z, t = Sim.calc_arrays(i0, i1, di, n0, n1, dn)
 # Print simulation bounds
-print('nlen=%i, ilen=%i' % (nlen, ilen))
+if development:
+    print('nlen=%i, ilen=%i' % (nlen, ilen))
 
 # -------------
 # Setup current
@@ -90,6 +91,7 @@ else:
 thz_incident_n_ind = np.argmax(np.real(els))
 thz_incident_n_val = t[thz_incident_n_ind]
 
+# Plot
 if development:
     # Plot
     plt.plot(t * 1e12, np.real(els))
@@ -135,7 +137,7 @@ def inf_perm(t):
     return 1
 
 # Define the t_diffs to test
-t_diffs = np.arange(-400e-15, 400e-15, 100e-15)
+t_diffs = np.arange(-400e-15, 400e-15, 10e-15)
 
 # --------------------------
 # Run or load the simulation
@@ -188,10 +190,37 @@ else:
     chi_ars = chi_ars[1:,:]
     np.savez('overlapping_material.npz', t=t, inc_ars=inc_ars, trans_ars=trans_ars, refl_ars=refl_ars, chi_ars=chi_ars)
 
+# -----------------------
+# Export tables and plots
+# -----------------------
+    
+def number_formatter(num):
+    num_str = '{0:.3e}'.format(np.real(num))
+    e_ind = num_str.rfind('e')
+    num_pre = num_str[:e_ind]
+    num_pm = num_str[e_ind+1:e_ind+2]
+    num_exp = num_str[e_ind+2:].strip('0')
+    if num_pm == '-':
+        num_exp = '-' + num_exp
+    return '$' + num_pre + '\\times10^{' + num_exp + '}$' + 'SET UNITS!'
+
+print('drude_metal simulation values')
+latex_table_vals = ''
+latex_table_vals += '$\\epsilon_\\infty$ & %s \\\\\n' % number_formatter(1)
+latex_table_vals += '$A_{e,1}, -A_{e,2}$ & %s \\\\\n' % number_formatter(a_e)
+latex_table_vals += '$A_{g,1}, -A_{g,2}$ & %s \\\\\n' % number_formatter(a_g)
+latex_table_vals += '$\\gamma_e$ & %s \\\\\n' % number_formatter(gamma_e/(2*np.pi))
+latex_table_vals += '$\\gamma_g$ & %s \\\\\n' % number_formatter(gamma_g/(2*np.pi))
+latex_table_vals += '$\\Gamma$ & %s \\\\\n' % number_formatter(vis_fwhm)
+latex_table_vals += '$\\tau_0$ & %s \\\\\n' % number_formatter(tau_decay)
+latex_table_vals += '$\\tau_e$ & %s \\\\\n' % number_formatter(np.pi/gamma_e)
+latex_table_vals += '$\\tau_g$ & %s \\\\\n' % number_formatter(np.pi/gamma_g)
+print(latex_table_vals)
+    
 # Clear figure
 plt.clf()
 # Setup grid
-cfig = plt.figure()
+cfig = plt.figure(figsize=(6.5, 4))
 widths = [20, 1]
 heights = [2, 1]
 spec = gridspec.GridSpec(ncols=2, nrows=2, width_ratios=widths, height_ratios=heights)
@@ -200,41 +229,49 @@ axs = cfig.add_subplot(spec[1,0])
 axc = cfig.add_subplot(spec[0,0], sharex=axs)
 axcc = cfig.add_subplot(spec[0,1])
 # Formatting
-axc.set_ylabel('$t$ [ps]', fontsize=15)
-axs.set_ylabel('$E_t(t)$', fontsize=15)
-axs.set_xlabel('$\Delta t$ [fs]', fontsize=15)
-axc.set_title('Material Bleed Method', fontsize=15)
-axc.tick_params(labelsize=12, bottom=False, labelbottom=False)
-axs.tick_params(labelsize=12)
-axcc.tick_params(labelsize=12)
-axs.set_xlim(-400, 400)
-axc.set_ylim(-0.2, 0.2)
+axc.set_ylabel('$t$ [ps]', fontsize=12)
+axs.set_ylabel('$E_t(t)$', fontsize=12)
+axs.set_xlabel('$\Delta t$ [fs]', fontsize=12)
+axc.tick_params(labelsize=10, bottom=False, labelbottom=False)
+axs.tick_params(labelsize=10)
+axcc.tick_params(labelsize=10)
+axs.set_xlim(-390, 390)
+axc.set_ylim(-0.2, 0.6)
 # Define variables to plot
-trans_ars_to_plot = np.real(trans_ars.T)
+trans_ars_to_plot = np.real(trans_ars.T)[:20000]
+t_to_plot = t[:20000]
 ddn = np.diff(t_diffs)[0]
-time_grid, dtime_grid = np.mgrid[slice(t[0], t[-1] + dn, dn),
+time_grid, dtime_grid = np.mgrid[slice(t_to_plot[0], t_to_plot[-1] + dn, dn),
                 slice(t_diffs[0],t_diffs[-1] + ddn, ddn)]
 # Define colorbar
 min_max = np.max(np.abs([trans_ars_to_plot.min(), trans_ars_to_plot.max()]))
-cmap = plt.get_cmap('PiYG')
+cmap = plt.get_cmap('bwr')
 levels = MaxNLocator(nbins=500).tick_values(-min_max, min_max)
 norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
 # Plot colormesh and colorbar
 im = axc.pcolormesh(dtime_grid*1e15, time_grid*1e12, trans_ars_to_plot, cmap=cmap, norm=norm)
 cb = plt.colorbar(im, cax=axcc)
-cb.set_label('$E_t$', fontsize=15)
+cb.set_label('$E_t$', fontsize=12)
 
 # Plot lineout
-zero_ind = np.argmin(np.abs(np.subtract(t, 0)))
-tf = np.argmin(np.abs(np.subtract(t, 25e-15)))
-ntf = np.argmin(np.abs(np.subtract(t, -25e-15)))
-axs.plot(t_diffs*1e15, np.real(trans_ars.T)[zero_ind], label='$\Delta t=0$', marker='o', linestyle='None')
-axs.plot(t_diffs*1e15, np.real(trans_ars.T)[tf], label='$\Delta t=25$fs', marker='o', linestyle='None')
-axs.plot(t_diffs*1e15, np.real(trans_ars.T)[ntf], label='$\Delta t=-25$fs', marker='o', linestyle='None')
-axs.legend()
+n200 = np.argmin(np.abs(np.subtract(t_to_plot, -200e-15)))
+n100 = np.argmin(np.abs(np.subtract(t_to_plot, -100e-15)))
+zero = np.argmin(np.abs(np.subtract(t_to_plot, 0)))
+p100 = np.argmin(np.abs(np.subtract(t_to_plot, 100e-15)))
+p200 = np.argmin(np.abs(np.subtract(t_to_plot, 200e-15)))
+axs.plot(t_diffs*1e15, np.real(trans_ars.T)[n200], label='$\Delta t=-200$fs')
+axs.plot(t_diffs*1e15, np.real(trans_ars.T)[n100], label='$\Delta t=-100$fs')
+axs.plot(t_diffs*1e15, np.real(trans_ars.T)[zero], label='$\Delta t=0$')
+axs.plot(t_diffs*1e15, np.real(trans_ars.T)[p100], label='$\Delta t=100$fs')
+axs.plot(t_diffs*1e15, np.real(trans_ars.T)[p200], label='$\Delta t=200$fs')
+axs.legend(bbox_to_anchor=(1.01, 0.95), loc=2, borderaxespad=0., fontsize=8)
 
 # Final plotting things
 plt.tight_layout()
 plt.subplots_adjust(hspace=0, wspace=0)
-#plt.savefig(fname='mat_bleed.png', format='png', dpi=600)
-plt.show()
+
+# Save figure
+if not development:
+    plt.savefig(fname='mat_bleed.png', format='png', dpi=600)
+else:
+    plt.show()
