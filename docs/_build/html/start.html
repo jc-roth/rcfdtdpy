@@ -29,7 +29,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="RC-FDTD Simulations" href="rcfdtd.html" />
-    <link rel="prev" title="Welcome to rcfdtdpys documentation!" href="index.html" /> 
+    <link rel="prev" title="Welcome to rcfdtdpy’s documentation!" href="index.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -254,6 +254,7 @@ expected form of electric susceptibility in time. We plot the electric susceptib
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<a class="reference internal image-reference" href="_images/start_chi_plot.png"><img alt="_images/start_chi_plot.png" class="align-center" src="_images/start_chi_plot.png" style="width: 320.0px; height: 240.0px;" /></a>
 <p>The analytic and simulated values of <span class="math notranslate nohighlight">\(\chi(t)\)</span> are in agreement. We must now specify what field values our
 simulation will record.</p>
 <p>We would like to view our simulation evolving in time, meaning that we must store field values at each step in time.
@@ -279,6 +280,7 @@ function</p>
 <span class="n">vis</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">z</span><span class="o">*</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">iunit</span><span class="o">=</span><span class="s1">&#39;um&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+<a class="reference internal image-reference" href="images/start_timeseries.gif"><img alt="images/start_timeseries.gif" class="align-center" src="images/start_timeseries.gif" /></a>
 <p>We also export the fields stored by the <code class="code docutils literal notranslate"><span class="pre">Simulation</span></code> object. The <code class="code docutils literal notranslate"><span class="pre">Simulation</span></code> object simulates two sets of
 electric and magnetic fields: a field that interacts with materials and one that does not. This provides every
 simulation with a reference set of field values. We export the stored field values as well as the electric
@@ -301,8 +303,8 @@ electric susceptibility.</p>
 
 <span class="c1"># Calculate Fourier transforms</span>
 <span class="n">freq</span> <span class="o">=</span> <span class="n">fftfreq</span><span class="p">(</span><span class="n">nlen</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span> <span class="c1"># in Hz</span>
-<span class="n">trans</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">efield</span><span class="p">))</span>
-<span class="n">ref</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">efield_ref</span><span class="p">))</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">efield</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">ref</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">efield_ref</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))</span>
 
 <span class="c1"># Remove unwanted frequencies</span>
 <span class="n">freq</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">nlen</span><span class="o">/</span><span class="mi">2</span><span class="p">)]</span>
@@ -318,111 +320,88 @@ electric susceptibility.</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>ISSUE! FOR SOME REASON THE FFT IS NOT WORKING, IT IS RETURNING THE FIELDS IN TIME…</p>
-<p>Discuss conductivity from transmission in thin sample limit.</p>
-<p># ————
-# Transmission
-# ————
-# Remove zero indicies from all arrays
-nonzero_ind = np.nonzero(incf)
-freq = freq[nonzero_ind]
-incf = incf[nonzero_ind]
-transf = transf[nonzero_ind]
-reflf = reflf[nonzero_ind]</p>
-<p># Calculate spectrum in frequency
-spec = np.divide(transf, incf)</p>
-<p># Remove zero indicies from all arrays
-nonzero_ind = np.nonzero(spec)
-freq = freq[nonzero_ind]
-incf = incf[nonzero_ind]
-transf = transf[nonzero_ind]
-spec = spec[nonzero_ind]</p>
-<p># Extract phase and magnitude
-spec_m = np.absolute(spec)
-spec_a = np.abs(np.unwrap(np.angle(spec)))</p>
-<p># Plot
-fig, (ax0, ax1) = plt.subplots(nrows=2, sharex=True, dpi=100)
-ax0.plot(freq * 1e-12, spec_m)
-ax1.plot(freq * 1e-12, spec_a)
-ax1.set_xlim(0, 15)
-ax0.set_ylim(0, 2)
-ax1.set_ylim(0, 0.5)
-ax0.set_ylabel(r’$left|E_t(omega)/E_i(omega)right|$’)
-ax1.set_ylabel(r’$phi$ [radians]’)
-ax1.set_xlabel(r’frequency [THz]’)
-plt.show()</p>
-<p># ————
-# Conductivity
-# ————
-# Set constants
-Z0 = np.multiply(mu0, c0) # Ohms (impedance of free space)</p>
-<p># Calculate the angular frequency
-ang_freq = 2 * np.pi * freq # THz * 2pi</p>
-<p># Calculate conductivity
-conductivity = np.multiply(np.divide(2, Z0*material_length), np.subtract(np.divide(1, spec), 1))</p>
-<p># Calculate index of refraction
-#n_complex = np.sqrt(inf_perm + np.divide(np.multiply(1j, conductivity), np.multiply(ang_freq, epsilon0)))</p>
-<p># Calculate the imaginary part of the index of refraction
-#n1 = np.real(n_complex)
-#kappa1 = np.imag(n_complex)</p>
-<p># Setup plot
-fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True, dpi=100)
-ax0.set_ylabel(r’$sigma_1$’)
-ax1.set_ylabel(r’$sigma_2$’)
-ax1.set_xlabel(r’$omega$ [THz]’)
-ax1.set_xlim(0, 15)
-ax0.ticklabel_format(style=’sci’, scilimits=(0,0), axis=’y’)
-ax0.set_ylim(0, 1.1e5)
-ax1.ticklabel_format(style=’sci’, scilimits=(0,0), axis=’y’)
-ax1.set_ylim(-6e4, 0)</p>
-<p># Plot conductivity
-ax0.plot(freq * 1e-12, np.real(conductivity), ‘b-‘)
-ax1.plot(freq * 1e-12, np.imag(conductivity), ‘b-‘)</p>
-<p># ——–
-# Plotting
-# ——–
-# Find max frequency
-freq_max = np.argmin(np.abs(np.subtract(14e12, freq)))</p>
-<p># Define fit functions
-def cond_real(omega, sigma0, tau):</p>
-<blockquote>
-<div>return sigma0/(1+(tau*omega)**2)</div></blockquote>
-<dl class="docutils">
-<dt>def cond_imag(omega, sigma0, tau):</dt>
-<dd>return (-omega*tau*sigma0)/(1+(tau*omega)**2)</dd>
-</dl>
-<p># Take real and imaginary parts
-cfreq = freq[:freq_max]
-creal = np.real(conductivity)[:freq_max]
-cimag = np.imag(conductivity)[:freq_max]</p>
-<p># Run curve fit
-popt_real, pcov_real = curve_fit(cond_real, cfreq, creal, p0=[1e5, 0.4e-12])
-popt_imag, pcov_imag = curve_fit(cond_imag, cfreq, cimag, p0=[1e5, 0.2e-12])</p>
-<p>fit_real = cond_real(freq, <a href="#id1"><span class="problematic" id="id2">*</span></a>popt_real)
-fit_imag = cond_imag(freq, <a href="#id3"><span class="problematic" id="id4">*</span></a>popt_imag)</p>
-<p># Setup plot
-fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True, dpi=100)
-ax0.set_ylabel(r’$sigma_1$’, fontsize=15)
-ax1.set_ylabel(r’$sigma_2$’, fontsize=15)
-ax1.set_xlabel(r’$omega$ [THz]’, fontsize=15)
-ax0.set_title(r’Drude Model (numeric)’, fontsize=15)
-ax1.set_xlim(0, 15)
-ax0.ticklabel_format(style=’sci’, scilimits=(0,0), axis=’y’)
-ax0.tick_params(labelsize=15)
-ax0.set_ylim(0, 1.1e5)
-ax1.ticklabel_format(style=’sci’, scilimits=(0,0), axis=’y’)
-ax1.tick_params(labelsize=15)
-ax1.set_ylim(-6e4, 0)</p>
-<p># Plot simulated conductivity
-ax0.plot(freq*1e-12, np.real(conductivity), ‘b-‘, label=’simulation’)
-ax1.plot(freq*1e-12, np.imag(conductivity), ‘b-‘, label=’simulation’)</p>
-<p># Plot analytic conductivity
-ax0.plot(freq*1e-12, fit_real, ‘r–’, label=’analytic’)
-ax1.plot(freq*1e-12, fit_imag, ‘r–’, label=’analytic’)</p>
-<p>ax0.legend()
-ax1.legend()</p>
-<p>plt.tight_layout()</p>
-<p>plt.show()</p>
+<a class="reference internal image-reference" href="_images/start_time_fields.png"><img alt="_images/start_time_fields.png" class="align-center" src="_images/start_time_fields.png" style="width: 320.0px; height: 240.0px;" /></a>
+<a class="reference internal image-reference" href="_images/start_frequency_fields.png"><img alt="_images/start_frequency_fields.png" class="align-center" src="_images/start_frequency_fields.png" style="width: 320.0px; height: 240.0px;" /></a>
+<p>In the thin sample limit the conductivity of a material can be calculated via</p>
+<div class="math notranslate nohighlight">
+\[\sigma(\omega)=\frac{2}{Z_0d}\left(\frac{1}{t(\omega)}-1\right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(Z_0\)</span> is the impedance of free space and <span class="math notranslate nohighlight">\(t(\omega)=\frac{E_{t}(\omega)}{E_{ref}(\omega)}\)</span>. We next
+extract the conductivity of our simulated material and compare it to the analytical form of the conductivity of a Drude
+metal</p>
+<div class="math notranslate nohighlight">
+\[\sigma(\omega)=\frac{\sigma_0}{1+i\omega\tau}\]</div>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Remove zero indicies from all arrays</span>
+<span class="n">nonzero_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
+<span class="n">freq</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[</span><span class="n">nonzero_ind</span><span class="p">]</span>
+<span class="n">ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">[</span><span class="n">nonzero_ind</span><span class="p">]</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="p">[</span><span class="n">nonzero_ind</span><span class="p">]</span>
+
+<span class="c1"># Calculate t</span>
+<span class="n">spec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">trans</span><span class="p">,</span> <span class="n">ref</span><span class="p">)</span>
+
+<span class="c1"># Set constants</span>
+<span class="n">Z0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">mu0</span><span class="p">,</span> <span class="n">c0</span><span class="p">)</span> <span class="c1"># Ohms (impedance of free space)</span>
+
+<span class="c1"># Calculate the angular frequency</span>
+<span class="n">ang_freq</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">freq</span> <span class="c1"># THz * 2pi</span>
+
+<span class="c1"># Calculate conductivity</span>
+<span class="n">conductivity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">Z0</span><span class="o">*</span><span class="n">material_length</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">spec</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="c1"># Only fit to frequencies below 14THz, as the terahertz pulse has approximately zero amplitude above 14THz</span>
+<span class="n">freq_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="mf">14e12</span><span class="p">,</span> <span class="n">freq</span><span class="p">)))</span>
+
+<span class="c1"># Define fit functions</span>
+<span class="k">def</span> <span class="nf">cond_real</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">sigma0</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">sigma0</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">tau</span><span class="o">*</span><span class="n">omega</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">cond_imag</span><span class="p">(</span><span class="n">omega</span><span class="p">,</span> <span class="n">sigma0</span><span class="p">,</span> <span class="n">tau</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">omega</span><span class="o">*</span><span class="n">tau</span><span class="o">*</span><span class="n">sigma0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">tau</span><span class="o">*</span><span class="n">omega</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Take real and imaginary parts</span>
+<span class="n">cfreq</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[:</span><span class="n">freq_max</span><span class="p">]</span>
+<span class="n">creal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">conductivity</span><span class="p">)[:</span><span class="n">freq_max</span><span class="p">]</span>
+<span class="n">cimag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">conductivity</span><span class="p">)[:</span><span class="n">freq_max</span><span class="p">]</span>
+
+<span class="c1"># Run curve fit</span>
+<span class="n">popt_real</span><span class="p">,</span> <span class="n">pcov_real</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">cond_real</span><span class="p">,</span> <span class="n">cfreq</span><span class="p">,</span> <span class="n">creal</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="mf">1e5</span><span class="p">,</span> <span class="mf">0.4e-12</span><span class="p">])</span>
+<span class="n">popt_imag</span><span class="p">,</span> <span class="n">pcov_imag</span> <span class="o">=</span> <span class="n">curve_fit</span><span class="p">(</span><span class="n">cond_imag</span><span class="p">,</span> <span class="n">cfreq</span><span class="p">,</span> <span class="n">cimag</span><span class="p">,</span> <span class="n">p0</span><span class="o">=</span><span class="p">[</span><span class="mf">1e5</span><span class="p">,</span> <span class="mf">0.2e-12</span><span class="p">])</span>
+
+<span class="n">fit_real</span> <span class="o">=</span> <span class="n">cond_real</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="o">*</span><span class="n">popt_real</span><span class="p">)</span>
+<span class="n">fit_imag</span> <span class="o">=</span> <span class="n">cond_imag</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="o">*</span><span class="n">popt_imag</span><span class="p">)</span>
+
+<span class="c1"># Setup plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax0</span><span class="p">,</span> <span class="n">ax1</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\sigma_1$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\sigma_2$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$\omega$ [THz]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Drude Model (numeric)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.1e5</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">ticklabel_format</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;sci&#39;</span><span class="p">,</span> <span class="n">scilimits</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">6e4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Plot simulated conductivity</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freq</span><span class="o">*</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">conductivity</span><span class="p">),</span> <span class="s1">&#39;b-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freq</span><span class="o">*</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">conductivity</span><span class="p">),</span> <span class="s1">&#39;b-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;simulation&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plot analytic conductivity</span>
+<span class="n">ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freq</span><span class="o">*</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">fit_real</span><span class="p">,</span> <span class="s1">&#39;r--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;analytic&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freq</span><span class="o">*</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">fit_imag</span><span class="p">,</span> <span class="s1">&#39;r--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;analytic&#39;</span><span class="p">)</span>
+
+<span class="n">ax0</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="_images/start_conductivity_fit.png"><img alt="_images/start_conductivity_fit.png" class="align-center" src="_images/start_conductivity_fit.png" style="width: 320.0px; height: 240.0px;" /></a>
+<p>That’s it! We have successfully simulated a Drude metal and examined how simulations are run with rcfdtdpy!</p>
 </div>
 
 
@@ -436,7 +415,7 @@ ax1.legend()</p>
         <a href="rcfdtd.html" class="btn btn-neutral float-right" title="RC-FDTD Simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Welcome to rcfdtdpys documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral" title="Welcome to rcfdtdpy’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

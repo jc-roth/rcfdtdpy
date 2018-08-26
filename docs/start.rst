@@ -127,6 +127,10 @@ expected form of electric susceptibility in time. We plot the electric susceptib
     plt.ylabel('$\chi(t)$')
     plt.show()
 
+.. image:: images/start_chi_plot.png
+   :align: center
+   :scale: 50
+
 The analytic and simulated values of :math:`\chi(t)` are in agreement. We must now specify what field values our
 simulation will record.
 
@@ -160,6 +164,10 @@ function
     # View timeseries
     vis.timeseries(s, z*1e6, iunit='um')
 
+.. image:: images/start_timeseries.gif
+   :align: center
+   :scale: 50
+
 We also export the fields stored by the :code:`Simulation` object. The :code:`Simulation` object simulates two sets of
 electric and magnetic fields: a field that interacts with materials and one that does not. This provides every
 simulation with a reference set of field values. We export the stored field values as well as the electric
@@ -187,8 +195,8 @@ We proceed to produce plots of the transmitted and reference fields in time and 
 
     # Calculate Fourier transforms
     freq = fftfreq(nlen, dt) # in Hz
-    trans = fft(np.real(efield))
-    ref = fft(np.real(efield_ref))
+    trans = fft(np.real(efield[:,0]))
+    ref = fft(np.real(efield_ref[:,0]))
 
     # Remove unwanted frequencies
     freq = freq[1:int(nlen/2)]
@@ -203,132 +211,101 @@ We proceed to produce plots of the transmitted and reference fields in time and 
     plt.legend()
     plt.show()
 
+.. image:: images/start_time_fields.png
+   :align: center
+   :scale: 50
 
-ISSUE! FOR SOME REASON THE FFT IS NOT WORKING, IT IS RETURNING THE FIELDS IN TIME...
+.. image:: images/start_frequency_fields.png
+   :align: center
+   :scale: 50
 
+In the thin sample limit the conductivity of a material can be calculated via
 
-Discuss conductivity from transmission in thin sample limit.
+.. math::
 
-# ------------
-# Transmission
-# ------------
-# Remove zero indicies from all arrays
-nonzero_ind = np.nonzero(incf)
-freq = freq[nonzero_ind]
-incf = incf[nonzero_ind]
-transf = transf[nonzero_ind]
-reflf = reflf[nonzero_ind]
+    \sigma(\omega)=\frac{2}{Z_0d}\left(\frac{1}{t(\omega)}-1\right)
 
-# Calculate spectrum in frequency
-spec = np.divide(transf, incf)
+where :math:`Z_0` is the impedance of free space and :math:`t(\omega)=\frac{E_{t}(\omega)}{E_{ref}(\omega)}`. We next
+extract the conductivity of our simulated material and compare it to the analytical form of the conductivity of a Drude
+metal
 
-# Remove zero indicies from all arrays
-nonzero_ind = np.nonzero(spec)
-freq = freq[nonzero_ind]
-incf = incf[nonzero_ind]
-transf = transf[nonzero_ind]
-spec = spec[nonzero_ind]
+.. math::
 
-# Extract phase and magnitude
-spec_m = np.absolute(spec)
-spec_a = np.abs(np.unwrap(np.angle(spec)))
+    \sigma(\omega)=\frac{\sigma_0}{1+i\omega\tau}
 
-# Plot
-fig, (ax0, ax1) = plt.subplots(nrows=2, sharex=True, dpi=100)
-ax0.plot(freq * 1e-12, spec_m)
-ax1.plot(freq * 1e-12, spec_a)
-ax1.set_xlim(0, 15)
-ax0.set_ylim(0, 2)
-ax1.set_ylim(0, 0.5)
-ax0.set_ylabel(r'$\left|E_t(\omega)/E_i(\omega)\right|$')
-ax1.set_ylabel(r'$\phi$ [radians]')
-ax1.set_xlabel(r'frequency [THz]')
-plt.show()
+.. code::
 
-# ------------
-# Conductivity
-# ------------
-# Set constants
-Z0 = np.multiply(mu0, c0) # Ohms (impedance of free space)
+    # Remove zero indicies from all arrays
+    nonzero_ind = np.nonzero(ref)
+    freq = freq[nonzero_ind]
+    ref = ref[nonzero_ind]
+    trans = trans[nonzero_ind]
 
-# Calculate the angular frequency
-ang_freq = 2 * np.pi * freq # THz * 2pi
+    # Calculate t
+    spec = np.divide(trans, ref)
 
-# Calculate conductivity
-conductivity = np.multiply(np.divide(2, Z0*material_length), np.subtract(np.divide(1, spec), 1))
+    # Set constants
+    Z0 = np.multiply(mu0, c0) # Ohms (impedance of free space)
 
-# Calculate index of refraction
-#n_complex = np.sqrt(inf_perm + np.divide(np.multiply(1j, conductivity), np.multiply(ang_freq, epsilon0)))
+    # Calculate the angular frequency
+    ang_freq = 2 * np.pi * freq # THz * 2pi
 
-# Calculate the imaginary part of the index of refraction
-#n1 = np.real(n_complex)
-#kappa1 = np.imag(n_complex)
+    # Calculate conductivity
+    conductivity = np.multiply(np.divide(2, Z0*material_length), np.subtract(np.divide(1, spec), 1))
 
-# Setup plot
-fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True, dpi=100)
-ax0.set_ylabel(r'$\sigma_1$')
-ax1.set_ylabel(r'$\sigma_2$')
-ax1.set_xlabel(r'$\omega$ [THz]')
-ax1.set_xlim(0, 15)
-ax0.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
-ax0.set_ylim(0, 1.1e5)
-ax1.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
-ax1.set_ylim(-6e4, 0)
+    # Only fit to frequencies below 14THz, as the terahertz pulse has approximately zero amplitude above 14THz
+    freq_max = np.argmin(np.abs(np.subtract(14e12, freq)))
 
-# Plot conductivity
-ax0.plot(freq * 1e-12, np.real(conductivity), 'b-')
-ax1.plot(freq * 1e-12, np.imag(conductivity), 'b-')
+    # Define fit functions
+    def cond_real(omega, sigma0, tau):
+        return sigma0/(1+(tau*omega)**2)
 
-# --------
-# Plotting
-# --------
-# Find max frequency
-freq_max = np.argmin(np.abs(np.subtract(14e12, freq)))
+    def cond_imag(omega, sigma0, tau):
+        return (-omega*tau*sigma0)/(1+(tau*omega)**2)
 
-# Define fit functions
-def cond_real(omega, sigma0, tau):
-    return sigma0/(1+(tau*omega)**2)
+    # Take real and imaginary parts
+    cfreq = freq[:freq_max]
+    creal = np.real(conductivity)[:freq_max]
+    cimag = np.imag(conductivity)[:freq_max]
 
-def cond_imag(omega, sigma0, tau):
-    return (-omega*tau*sigma0)/(1+(tau*omega)**2)
+    # Run curve fit
+    popt_real, pcov_real = curve_fit(cond_real, cfreq, creal, p0=[1e5, 0.4e-12])
+    popt_imag, pcov_imag = curve_fit(cond_imag, cfreq, cimag, p0=[1e5, 0.2e-12])
 
-# Take real and imaginary parts
-cfreq = freq[:freq_max]
-creal = np.real(conductivity)[:freq_max]
-cimag = np.imag(conductivity)[:freq_max]
+    fit_real = cond_real(freq, *popt_real)
+    fit_imag = cond_imag(freq, *popt_imag)
 
-# Run curve fit
-popt_real, pcov_real = curve_fit(cond_real, cfreq, creal, p0=[1e5, 0.4e-12])
-popt_imag, pcov_imag = curve_fit(cond_imag, cfreq, cimag, p0=[1e5, 0.2e-12])
+    # Setup plot
+    fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True, dpi=100)
+    ax0.set_ylabel(r'$\sigma_1$', fontsize=15)
+    ax1.set_ylabel(r'$\sigma_2$', fontsize=15)
+    ax1.set_xlabel(r'$\omega$ [THz]', fontsize=15)
+    ax0.set_title(r'Drude Model (numeric)', fontsize=15)
+    ax1.set_xlim(0, 15)
+    ax0.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
+    ax0.tick_params(labelsize=15)
+    ax0.set_ylim(0, 1.1e5)
+    ax1.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
+    ax1.tick_params(labelsize=15)
+    ax1.set_ylim(-6e4, 0)
 
-fit_real = cond_real(freq, *popt_real)
-fit_imag = cond_imag(freq, *popt_imag)
+    # Plot simulated conductivity
+    ax0.plot(freq*1e-12, np.real(conductivity), 'b-', label='simulation')
+    ax1.plot(freq*1e-12, np.imag(conductivity), 'b-', label='simulation')
 
-# Setup plot
-fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True, dpi=100)
-ax0.set_ylabel(r'$\sigma_1$', fontsize=15)
-ax1.set_ylabel(r'$\sigma_2$', fontsize=15)
-ax1.set_xlabel(r'$\omega$ [THz]', fontsize=15)
-ax0.set_title(r'Drude Model (numeric)', fontsize=15)
-ax1.set_xlim(0, 15)
-ax0.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
-ax0.tick_params(labelsize=15)
-ax0.set_ylim(0, 1.1e5)
-ax1.ticklabel_format(style='sci', scilimits=(0,0), axis='y')
-ax1.tick_params(labelsize=15)
-ax1.set_ylim(-6e4, 0)
+    # Plot analytic conductivity
+    ax0.plot(freq*1e-12, fit_real, 'r--', label='analytic')
+    ax1.plot(freq*1e-12, fit_imag, 'r--', label='analytic')
 
-# Plot simulated conductivity
-ax0.plot(freq*1e-12, np.real(conductivity), 'b-', label='simulation')
-ax1.plot(freq*1e-12, np.imag(conductivity), 'b-', label='simulation')
+    ax0.legend()
+    ax1.legend()
 
-# Plot analytic conductivity
-ax0.plot(freq*1e-12, fit_real, 'r--', label='analytic')
-ax1.plot(freq*1e-12, fit_imag, 'r--', label='analytic')
+    plt.tight_layout()
 
-ax0.legend()
-ax1.legend()
+    plt.show()
 
-plt.tight_layout()
+.. image:: images/start_conductivity_fit.png
+   :align: center
+   :scale: 50
 
-plt.show()
+That's it! We have successfully simulated a Drude metal and examined how simulations are run with rcfdtdpy!
