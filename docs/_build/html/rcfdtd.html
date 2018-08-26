@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>rcfdtd &mdash; RCFDTD.py  documentation</title>
+  <title>RC-FDTD Simulations &mdash; rcfdtdpy  documentation</title>
   
 
   
@@ -28,8 +28,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="sim" href="sim.html" />
-    <link rel="prev" title="Welcome to RCFDTD.py’s documentation!" href="index.html" /> 
+    <link rel="next" title="Reference" href="reference.html" />
+    <link rel="prev" title="Getting Started" href="start.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -48,7 +48,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> RCFDTD.py
+            <a href="index.html" class="icon icon-home"> rcfdtdpy
           
 
           
@@ -80,8 +80,9 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">rcfdtd</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sim.html">sim</a></li>
+<li class="toctree-l1"><a class="reference internal" href="start.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">RC-FDTD Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
 </ul>
 
             
@@ -96,7 +97,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">RCFDTD.py</a>
+          <a href="index.html">rcfdtdpy</a>
         
       </nav>
 
@@ -127,7 +128,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>rcfdtd</li>
+      <li>RC-FDTD Simulations</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -146,8 +147,120 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="rcfdtd">
-<h1>rcfdtd<a class="headerlink" href="#rcfdtd" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="rc-fdtd-simulations">
+<h1>RC-FDTD Simulations<a class="headerlink" href="#rc-fdtd-simulations" title="Permalink to this headline">¶</a></h1>
+<p>Recursive convolution finite difference time domain (RC-FDTD) simulations have long been used to numerically solve
+Maxwell’s equations. This simulation technique discretizes the time domain and evolves the electric and magnetic fields
+in time using a set of update equations. Within the simulation, space is discretized into intervals of length
+<span class="math notranslate nohighlight">\(\Delta z\)</span> and time into intervals of length <span class="math notranslate nohighlight">\(\Delta t\)</span>. A specific point in time and space is accessed via
+<span class="math notranslate nohighlight">\(z=i\Delta z\)</span> and <span class="math notranslate nohighlight">\(t=n\Delta t\)</span>. The simulation relies on a number of assumptions:</p>
+<ul class="simple">
+<li>All materials are linear dielectrics such that <span class="math notranslate nohighlight">\(P(z,\omega)=\epsilon_0\chi E(z,\omega)\)</span>.</li>
+<li>The electric and magnetic fields are plane waves propagating along spatial coordinate <span class="math notranslate nohighlight">\(z\)</span>.</li>
+<li>Materials are uniform along spatial coordinates <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>.</li>
+<li>The electric and magnetic fields are zero for all time prior to the start of the simulation (<span class="math notranslate nohighlight">\(E(z,t)=0\)</span> for all <span class="math notranslate nohighlight">\(t&lt;0\)</span>).</li>
+<li>The electric field <span class="math notranslate nohighlight">\(E(z,t)\)</span> is approximately constant over all time intervals of duration <span class="math notranslate nohighlight">\(\Delta t\)</span>.</li>
+<li>The magnetization of all materials is zero (<span class="math notranslate nohighlight">\(\vec{M}=\vec{0}\)</span>).</li>
+</ul>
+<p>These assumptions allow the derivation of the discretized displacement field <span class="math notranslate nohighlight">\(D^{i,n}\)</span>. The displacement field
+<span class="math notranslate nohighlight">\(\vec{D}(\vec{r},\omega)\)</span>, with the requirement that simulated materials are linear dielectrics such that
+<span class="math notranslate nohighlight">\(P(z,\omega)=\epsilon_0\chi(z,\omega) E(z,\omega)\)</span> and the requirement that the field varies over only the spatial
+coordinate <span class="math notranslate nohighlight">\(z\)</span> we find that <span class="math notranslate nohighlight">\(D(z,\omega)\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[D(z,\omega)=\epsilon_0\left[1+\chi (z,\omega)\right]E(z,\omega)\]</div>
+<p>The displacement field <span class="math notranslate nohighlight">\(D(z,\omega)\)</span> can be transformed to the time domain via</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}D(z,t)=&amp;\mathcal{F}^{-1}\left\{D(z,\omega)\right\} \\
+=&amp;\mathcal{F}^{-1}\left\{\epsilon_0\left[1+\chi (\omega)\right]E(z,\omega)\right\} \\
+=&amp;\mathcal{F}^{-1}\left\{\epsilon_0\mathcal{F}\left\{1+\chi (t)\right\}\mathcal{F}\left\{E(z,t)\right\}\right\}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{F}\left\{a(t)\right\}\)</span> and <span class="math notranslate nohighlight">\(\mathcal{F}^{-1}\left\{a(\nu)\right\}\)</span> to denote Fourier and
+inverse Fourier transforms. Thus via the convolution theorem</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}D(z,t)&amp;=\mathcal{F}^{-1}\left\{\epsilon_0\mathcal{F}\left\{1+\chi (t)\right\}\mathcal{F}\left\{E(z,t)\right\}\right\} \\
+&amp;=\epsilon_0\left[1+\chi (t)\right]*\left[E(z,t)\right] \\
+&amp;=\epsilon_0\left[\epsilon_\infty E(z,t)+\int_0^t\chi (\tau)E(z,t-\tau) d\tau\right]\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(*\)</span> denotes a convolution. It is assumed that <span class="math notranslate nohighlight">\(E(z,t)=0\)</span> for all <span class="math notranslate nohighlight">\(t&lt;0\)</span>. We discretize this
+result by replacing the <span class="math notranslate nohighlight">\(z\)</span> and <span class="math notranslate nohighlight">\(t\)</span> coordinates via <span class="math notranslate nohighlight">\(z=i\Delta z\)</span> and <span class="math notranslate nohighlight">\(t=n\Delta t\)</span> where
+<span class="math notranslate nohighlight">\(i,n\in\mathbb{R}\)</span>, yielding</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}D(i\Delta z,n\Delta t)=&amp;\epsilon_0\epsilon_\infty E(i\Delta z,n\Delta t) \\
+&amp;+\epsilon_0\int_0^{n\Delta t}\chi (\tau)E(i\Delta z,n\Delta -\tau) d\tau\end{split}\]</div>
+<p>Assuming that <span class="math notranslate nohighlight">\(E(i\Delta z,n\Delta -\tau)\)</span> is constant over all time intervals of duration <span class="math notranslate nohighlight">\(\Delta t\)</span> the
+integral is replaced with a sum</p>
+<div class="math notranslate nohighlight">
+\[D^{i,n}=\epsilon_0\epsilon_\infty E^{i,n}+\epsilon_0\sum^{n-1}_{m=0}E^{i,n-m}\chi ^m \label{eq:disp}\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\chi ^m=\int_{m\Delta t}^{(m+1)\Delta t}\chi (\tau) d\tau\]</div>
+<p>It is <em>not</em> assumed <span class="math notranslate nohighlight">\(\chi(t)\)</span> is constant over any time interval. This result is consistent with the result
+derived in Luebbers et al. and Beard et al..</p>
+<div class="math notranslate nohighlight">
+\[D^{i,n}=\epsilon_0\epsilon_\infty E^{i,n}+\epsilon_0\sum^{n-1}_{m=0}E^{i,n-m}\chi ^m\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\chi ^m=\int_{m\Delta t}^{(m+1)\Delta t}\chi (\tau) d\tau \label{eq:chi_conv}\]</div>
+<p>This result is significant for the RC-FDTD simulation framework implmented here as it means a material can be simulated
+as long as one can define $chi(t)$ for that material.</p>
+<p>We proceed by deriving the update equations for the electric and magnetic fields. With the requirement that
+<span class="math notranslate nohighlight">\(\vec{M}=\vec{0}\)</span> and the requirement that the electric and magnetic fields are uniform in spatial coordinates
+<span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>, Faraday’s law of induction and Ampere’s law with Maxwell’s addition reduce to</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial E}{\partial z}=-\mu_0\frac{\partial H}{\partial t} \qquad -\frac{\partial H}{\partial z}=I_f+\frac{\partial D}{\partial t}\]</div>
+<p>where <span class="math notranslate nohighlight">\(I_f\)</span> is along <span class="math notranslate nohighlight">\(\hat{z}\)</span>. Noting the definition of a derivative we find</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\lim_{\Delta z\to0}\frac{E(z+\Delta z,t)-E(z,t)}{\Delta z}=-\mu_0\lim_{\Delta t\to0}\frac{H(z,t+\Delta t)-H(z,t)}{\Delta t} \\
+-\lim_{\Delta z\to0}\frac{H(z+\Delta z,t)-H(z,t)}{\Delta z}=I_f+\lim_{\Delta t\to0}\frac{D(z,t+\Delta t)-D(z,t)}{\Delta t}\end{split}\]</div>
+<p>From here the discretization process is simple. We simply remove each limit from the equations, define an appropriate
+value of <span class="math notranslate nohighlight">\(\Delta z\)</span> and <span class="math notranslate nohighlight">\(\Delta t\)</span>, and replace the fields with their discretized forms.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\frac{E^{i+1,n}-E^{i,n}}{\Delta z}=-\mu_0\frac{H^{i,n+1}-H^{i,n}}{\Delta t} \label{eq:faraday} \\
+-\frac{H^{i+1,n}-H^{i,n}}{\Delta z}=I_f+\frac{D^{i,n+1}-D^{i,n}}{\Delta t} \label{eq:ampere}\end{split}\]</div>
+<p>If <span class="math notranslate nohighlight">\(\Delta z\)</span> and <span class="math notranslate nohighlight">\(\Delta t\)</span> aren’t small enough such that the derivative is accurate then the RC-FDTD
+simulation will break down.</p>
+<p>We solve Eq.(ref{eq:faraday}) for <span class="math notranslate nohighlight">\(H^{i,n+1}\)</span>, finding the following update equation</p>
+<div class="math notranslate nohighlight">
+\[H^{i,n+1}=H^{i,n}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right]\]</div>
+<p>In order to solve Eq.(ref{eq:ampere}) we use the result of Eq.(ref{eq:disp}) to determine <span class="math notranslate nohighlight">\(D^{i,n+1}-D^{i,n}\)</span> in
+terms of <span class="math notranslate nohighlight">\(E^{i+1,n}\)</span> and <span class="math notranslate nohighlight">\(E^{i,n}\)</span></p>
+<div class="math notranslate nohighlight">
+\[\begin{split}D^{i,n+1}-D^{i,n}&amp;=\epsilon_0\epsilon_\infty E^{i,n+1}+\epsilon_0\sum^{n}_{m=0}E^{i,n+1-m}\chi ^m-\epsilon_0\epsilon_\infty E^{i,n}-\epsilon_0\sum^{n-1}_{m=0}E^{i,n-m}\chi ^m \\
+&amp;=\epsilon_0\epsilon_\infty\left[E^{i,n+1}-E^{i,n}\right]+\epsilon_0\left[\sum^{n}_{m=0}E^{i,n+1-m}\chi ^m-\sum^{n-1}_{m=0}E^{i,n-m}\chi ^m\right]\end{split}\]</div>
+<p>Noting that</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\sum^{n}_{m=0}E^{i,n+1-m}\chi ^m-\sum^{n-1}_{m=0}E^{i,n-m}\chi ^m&amp;=E^{i,n+1}\chi ^0+\sum^{n}_{m=1}E^{i,n+1-m}\chi ^m-\sum^{n-1}_{m=0}E^{i,n-m}\chi ^m \\
+&amp;=E^{i,n+1}\chi ^0+\sum^{n-1}_{m=0}E^{i,n+1-(m+1)}\chi ^{m+1}-\sum^{n-1}_{m=0}E^{i,n-m}\chi ^m \\
+&amp;=E^{i,n+1}\chi ^0+\sum^{n-1}_{m=0}E^{i,n-m}\left[\chi ^{m+1}-\chi ^m\right] \\\end{split}\]</div>
+<p>and letting</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\Delta\chi^m&amp;=\chi^m-\chi^{m+1} \\
+\psi^n&amp;=\sum^{n-1}_{m=0}E^{i,n-m}\Delta\chi^m\end{split}\]</div>
+<p>we find</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}D^{i,n+1}-D^{i,n}&amp;=\epsilon_0\epsilon_\infty\left[E^{i,n+1}-E^{i,n}\right]+\epsilon_0\left[E^{i,n+1}\chi^0-\psi^n\right] \\
+&amp;=\epsilon_0\left[\epsilon_\infty+\chi^0\right]E^{i,n+1}-\epsilon_0\epsilon_\infty E^{i,n}-\epsilon_0\psi^n\end{split}\]</div>
+<p>Substituting this result into Eq.(ref{eq:ampere}) and solving for <span class="math notranslate nohighlight">\(E^{i,n+1}\)</span> we find</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}E^{i,n+1}=&amp;\frac{\epsilon_\infty}{\epsilon_\infty+\chi^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi^0}\psi^n-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi^0\right]} \\
+&amp;-\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1,n}-H^{i,n}\right]\end{split}\]</div>
+<p>We then implement the Yee cell in the simulation by offsetting the electric and magnetic field cells by half a spatial
+and temporal incrementcite{beard}, producing</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}H^{i+1/2,n+1/2}=&amp;H^{i+1/2,n-1/2}-\frac{1}{\mu_0}\frac{\Delta t}{\Delta z}\left[E^{i+1,n}-E^{i,n}\right] \label{eq:hup} \\
+E^{i,n+1}=&amp;\frac{\epsilon_\infty}{\epsilon_\infty+\chi^0}E^{i,n}+\frac{1}{\epsilon_\infty+\chi^0}\psi^n-\frac{\Delta tI_f}{\epsilon_0\left[\epsilon_\infty+\chi^0\right]} \\
+&amp;-\frac{1}{\epsilon_0\left[\epsilon_\infty+\chi^0\right]}\frac{\Delta t}{\Delta z}\left[H^{i+1/2,n+1/2}-H^{i-1/2,n+1/2}\right]\end{split}\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\Delta\chi^m&amp;=\chi^m-\chi^{m+1} \nonumber \\
+\psi^n&amp;=\sum^{n-1}_{m=0}E^{i,n-m}\Delta\chi^m \label{eq:psi}\end{split}\]</div>
+<p>The accuracy of the derivative approximation inherent to these update equations relies on choosing some <span class="math notranslate nohighlight">\(\Delta z\)</span>
+and <span class="math notranslate nohighlight">\(\Delta t\)</span> small enough such that the electric and magnetic fields are approximately linear over spatial
+intervals <span class="math notranslate nohighlight">\(\Delta z\)</span> and time intervals <span class="math notranslate nohighlight">\(\Delta t\)</span>. If this condition is not met then the accuracy of the
+derivative approximation breaks down. The update equations derived here are significant as they reveal that any linear
+dielectric can be accurately simulated via the RC-FDTD method as long as the electric susceptibility of the material
+<span class="math notranslate nohighlight">\(\chi(t)\)</span> is well defined. We turn our attention to modeling the electric susceptibility of materials in section
+ref{sec:susceptibility}.</p>
+<p>rcfdtdpy provides a framework in which the user need only provide the electric susceptibility <span class="math notranslate nohighlight">\(\chi(t)\)</span> to run a
+simulation.</p>
 </div>
 
 
@@ -158,10 +271,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="sim.html" class="btn btn-neutral float-right" title="sim" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="reference.html" class="btn btn-neutral float-right" title="Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral" title="Welcome to RCFDTD.py’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="start.html" class="btn btn-neutral" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

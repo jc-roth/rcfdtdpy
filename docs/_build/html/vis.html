@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>vis &mdash; RCFDTD.py  documentation</title>
+  <title>vis &mdash; rcfdtdpy  documentation</title>
   
 
   
@@ -27,8 +27,7 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="materials" href="materials.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -47,7 +46,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> RCFDTD.py
+            <a href="index.html" class="icon icon-home"> rcfdtdpy
           
 
           
@@ -78,10 +77,10 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="sim.html">sim</a></li>
-<li class="toctree-l1"><a class="reference internal" href="materials.html">materials</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">vis</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rcfdtd.html">RC-FDTD Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
 </ul>
 
             
@@ -96,7 +95,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">RCFDTD.py</a>
+          <a href="index.html">rcfdtdpy</a>
         
       </nav>
 
@@ -149,32 +148,6 @@
   <div class="section" id="vis">
 <h1>vis<a class="headerlink" href="#vis" title="Permalink to this headline">¶</a></h1>
 <p>The visualization class provides a number of ways to easily visualize simulation results.</p>
-<span class="target" id="module-rcfdtd_sim.vis"></span><p>Used to quickly visualize results from the sim module, should not be used for production quality plots</p>
-<dl class="function">
-<dt id="rcfdtd_sim.vis.timeseries">
-<code class="descclassname">rcfdtd_sim.vis.</code><code class="descname">timeseries</code><span class="sig-paren">(</span><em>sim</em>, <em>i</em>, <em>fname=None</em>, <em>interval=10</em>, <em>iscale=1</em>, <em>escale=1</em>, <em>hscale=1</em>, <em>iunit='NA'</em>, <em>eunit='NA'</em>, <em>hunit='NA'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/rcfdtd_sim/vis.html#timeseries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rcfdtd_sim.vis.timeseries" title="Permalink to this definition">¶</a></dt>
-<dd><p>Animates the E and H-fields in time.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>sim</strong> – The simulation to visualize</li>
-<li><strong>interval</strong> – The interval between timesteps in milliseconds</li>
-<li><strong>fname</strong> – The filename to export to, does not export if blank</li>
-<li><strong>iscale</strong> – The scalar factor that the x-axis is scaled by</li>
-<li><strong>escale</strong> – The scalar factor that the y-axis of the E-field is scaled by</li>
-<li><strong>hscale</strong> – The scalar factor that the y-axis of the H-field is scaled by</li>
-<li><strong>iunit</strong> – The units given to the x-label</li>
-<li><strong>eunit</strong> – The units given to the y-label for the E-field axis</li>
-<li><strong>hunit</strong> – The units given to the y-label for the H-field axis</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 </div>
 
 
@@ -182,13 +155,6 @@
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-      
-        <a href="materials.html" class="btn btn-neutral" title="materials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

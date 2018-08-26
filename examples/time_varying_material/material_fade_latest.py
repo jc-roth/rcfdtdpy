@@ -7,7 +7,7 @@
 
 
 # Imports
-from rcfdtd_sim import Sim, Current, Mat, vis
+from rcfdtdpy import Sim, Current, Mat, vis
 import numpy as np
 from scipy.fftpack import fft, fftfreq, fftshift
 from scipy.special import erf

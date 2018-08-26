@@ -1,0 +1,494 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Getting Started &mdash; rcfdtdpy  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="RC-FDTD Simulations" href="rcfdtd.html" />
+    <link rel="prev" title="Welcome to rcfdtdpys documentation!" href="index.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> rcfdtdpy
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rcfdtd.html">RC-FDTD Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">rcfdtdpy</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Getting Started</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/start.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>rcfdtdpy can be installed into an Anaconda 3.6 environment via</p>
+<p><cite>include conda install command</cite></p>
+<p>From here it is easy to start one’s first simulation. Perhaps we want to simulate a terahertz spectroscopy conductivity
+measurement of a Drude metal using the <code class="code docutils literal notranslate"><span class="pre">NumericMaterial</span></code> class. We must first import the required libraries and
+define our simulation parameters.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports</span>
+<span class="kn">from</span> <span class="nn">rcfdtdpy</span> <span class="k">import</span> <span class="n">Simulation</span><span class="p">,</span> <span class="n">Current</span><span class="p">,</span> <span class="n">NumericMaterial</span><span class="p">,</span> <span class="n">vis</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.fftpack</span> <span class="k">import</span> <span class="n">fft</span><span class="p">,</span> <span class="n">fftfreq</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">curve_fit</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="c1"># Speed of light</span>
+<span class="n">c0</span> <span class="o">=</span> <span class="mf">3e8</span>  <span class="c1"># m/s</span>
+<span class="c1"># Spatial step size</span>
+<span class="n">di</span> <span class="o">=</span> <span class="mf">0.03e-6</span>  <span class="c1"># 0.03 um</span>
+<span class="c1"># Temporal step size</span>
+<span class="n">dn</span> <span class="o">=</span> <span class="n">di</span> <span class="o">/</span> <span class="n">c0</span>  <span class="c1"># (0.03 um) / (3e8 m/s) = 0.1 fs</span>
+<span class="c1"># Permittivity of free space</span>
+<span class="n">epsilon0</span> <span class="o">=</span> <span class="mf">8.854187e-12</span>
+<span class="c1"># Permeability of free space</span>
+<span class="n">mu0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">epsilon0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">c0</span><span class="p">)))</span>
+<span class="c1"># Define simulation bounds</span>
+<span class="n">i0</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e-6</span>  <span class="c1"># -1 um</span>
+<span class="n">i1</span> <span class="o">=</span> <span class="mf">1e-6</span>  <span class="c1"># 1 um</span>
+<span class="n">n0</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5e-12</span>  <span class="c1"># -0.5 ps</span>
+<span class="n">n1</span> <span class="o">=</span> <span class="mf">2.5e-12</span>  <span class="c1"># 2.5 ps</span>
+<span class="c1"># Calculate simulation dimensions</span>
+<span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span> <span class="o">=</span> <span class="n">Simulation</span><span class="o">.</span><span class="n">calc_dims</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">)</span>
+<span class="c1"># Calculate arrays that provide the spatial and temporal value of each cell</span>
+<span class="n">z</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">Simulation</span><span class="o">.</span><span class="n">calc_arrays</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We next need to define the current present in our simulation. We do this by defining the location of the current pulse
+and the time at which the center of the current pulse occurs and then determining the spatial and temporal indices at
+which these space and time values correspond to.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define current pulse location and time</span>
+<span class="n">thz_loc</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5e-6</span>  <span class="c1"># -0.5 um</span>
+<span class="n">thz_time</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 0 fs</span>
+<span class="c1"># Find the corresponding location and time indices</span>
+<span class="n">thz_loc_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">thz_loc</span><span class="p">)))</span>
+<span class="n">thz_time_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">thz_time</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>We will define the terahertz pulse time profile as the second derivative of a Gaussian with FWHM of 90fs. We define this
+pulse as follows</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">thzshape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(((</span><span class="n">t</span> <span class="o">-</span> <span class="n">thz_time</span><span class="p">)</span><span class="o">/</span><span class="mf">90e-15</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)))),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>We can now create our <code class="code docutils literal notranslate"><span class="pre">Current</span></code> object</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">thzpulse</span> <span class="o">=</span> <span class="n">Current</span><span class="p">(</span><span class="n">thz_loc_ind</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="n">thzshape</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that the length of the <code class="code docutils literal notranslate"><span class="pre">thzshape</span></code> Numpy array is the same as the length of the simulation in time
+<code class="code docutils literal notranslate"><span class="pre">nlen</span></code>. For this reason the starting spatial index of the <code class="code docutils literal notranslate"><span class="pre">Current</span></code> object must be set to <code class="code docutils literal notranslate"><span class="pre">0</span></code>. However
+the length of the <code class="code docutils literal notranslate"><span class="pre">thzshape</span></code> Numpy array can be less then the length of the simulation in time. If the user is
+worried about the <code class="code docutils literal notranslate"><span class="pre">Current</span></code> object taking up too much space in memory they might choose to define <code class="code docutils literal notranslate"><span class="pre">thzshape</span></code>
+over a small number of indices and simply define its starting index in space and time.</p>
+<p>We are now prepared to define our material. Like with the <code class="code docutils literal notranslate"><span class="pre">Current</span></code> object we begin by defining the location and
+spatial and temporal extent of our material. We specify that our material starts at location <span class="math notranslate nohighlight">\(0\)</span> nm and is
+<span class="math notranslate nohighlight">\(50\)</span> nm thick.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set material length</span>
+<span class="n">material_length</span> <span class="o">=</span> <span class="mf">0.050e-6</span>  <span class="c1"># 50 nm</span>
+<span class="c1"># Set locations</span>
+<span class="n">material_start</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">material_end</span> <span class="o">=</span> <span class="n">material_start</span> <span class="o">+</span> <span class="n">material_length</span>
+<span class="c1"># Find the corresponding location and time indices</span>
+<span class="n">material_ind_start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">material_start</span><span class="p">)))</span>
+<span class="n">material_ind_end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">material_end</span><span class="p">)))</span>
+<span class="c1"># Determine matrix length in indices</span>
+<span class="n">material_ind_len</span> <span class="o">=</span> <span class="n">material_ind_end</span> <span class="o">-</span> <span class="n">material_ind_start</span>
+</pre></div>
+</div>
+<p>The electric susceptibility of a Drude metal in time is given by</p>
+<div class="math notranslate nohighlight">
+\[\chi(t)=A\left(1-\exp{\left[-2\gamma t\right]}\right)\]</div>
+<p>If you have no idea where this definition of susceptibility comes from, read up on the Lorentz oscillator. It is very
+easy to implement this material into our simulation.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define constants</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">(</span><span class="mf">1e16</span><span class="p">)</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">(</span><span class="mf">1e12</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+<span class="c1"># Define electric susceptibility in time</span>
+<span class="k">def</span> <span class="nf">chi</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">gamma</span><span class="o">*</span><span class="n">t</span><span class="p">))</span>
+
+<span class="c1"># Define the high frequency permittivity in time (simply a constant)</span>
+<span class="k">def</span> <span class="nf">inf_perm</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span>
+
+<span class="c1"># Create our material!</span>
+<span class="n">drude</span> <span class="o">=</span> <span class="n">NumericMaterial</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="n">material_ind_start</span><span class="p">,</span> <span class="n">material_ind_end</span><span class="p">,</span> <span class="n">chi</span><span class="p">,</span> <span class="n">inf_perm</span><span class="p">)</span>
+
+<span class="c1"># Export the susceptibility of the material</span>
+<span class="n">drude_chi</span> <span class="o">=</span> <span class="n">drude</span><span class="o">.</span><span class="n">export_chi</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now that <span class="math notranslate nohighlight">\(\chi^m\)</span> has been calculated for each simulation time step, we can check that our Drude material has the
+expected form of electric susceptibility in time. We plot the electric susceptibility versus time</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="o">*</span><span class="mf">1e12</span><span class="p">,</span> <span class="n">drude_chi</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time [ps]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$\chi(t)$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The analytic and simulated values of <span class="math notranslate nohighlight">\(\chi(t)\)</span> are in agreement. We must now specify what field values our
+simulation will record.</p>
+<p>We would like to view our simulation evolving in time, meaning that we must store field values at each step in time.
+Lets say we would like to view the first third of the simulation.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nstore</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">nlen</span><span class="o">/</span><span class="mi">3</span><span class="p">),</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We choose to record the field values every 100 simulation steps for the first third of the simulation. We also would
+like to be able to calculate the transmission of our material in time. Therefore we wish to record the field value at
+every time step at the opposite side of the material from the current pulse. Since the material is <span class="math notranslate nohighlight">\(50\)</span> nm in
+length and starts at location <span class="math notranslate nohighlight">\(0\)</span> nm, recording the field value near the end of the simulation space will provide
+us with the transmitted field.</p>
+<p>We specify that the simulation will have absorbing boundaries. The <code class="code docutils literal notranslate"><span class="pre">Simulation</span></code> object is initialized and the
+simulation is run.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">Simulation</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">epsilon0</span><span class="p">,</span> <span class="n">mu0</span><span class="p">,</span> <span class="s1">&#39;absorbing&#39;</span><span class="p">,</span> <span class="n">thzpulse</span><span class="p">,</span> <span class="n">drude</span><span class="p">,</span> <span class="n">nstore</span><span class="o">=</span><span class="n">nstore</span><span class="p">,</span> <span class="n">istore</span><span class="o">=</span><span class="p">[</span><span class="n">ilen</span><span class="o">-</span><span class="mi">6</span><span class="p">])</span>
+<span class="c1"># Run simulation</span>
+<span class="n">s</span><span class="o">.</span><span class="n">simulate</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Now that the simulation has been run a timeseries of the simulation can be viewed via the <code class="code docutils literal notranslate"><span class="pre">vis.timeseries</span></code>
+function</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># View timeseries</span>
+<span class="n">vis</span><span class="o">.</span><span class="n">timeseries</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">z</span><span class="o">*</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">iunit</span><span class="o">=</span><span class="s1">&#39;um&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We also export the fields stored by the <code class="code docutils literal notranslate"><span class="pre">Simulation</span></code> object. The <code class="code docutils literal notranslate"><span class="pre">Simulation</span></code> object simulates two sets of
+electric and magnetic fields: a field that interacts with materials and one that does not. This provides every
+simulation with a reference set of field values. We export the stored field values as well as the electric
+electric susceptibility.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Export field values</span>
+<span class="n">hfield</span><span class="p">,</span> <span class="n">efield</span><span class="p">,</span> <span class="n">hfield_ref</span><span class="p">,</span> <span class="n">efield_ref</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">export_ifields</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We proceed to produce plots of the transmitted and reference fields in time and frequency.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot in time</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">efield</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$E_</span><span class="si">{t}</span><span class="s1">(t)$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">efield_ref</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$E_</span><span class="si">{ref}</span><span class="s1">(t)$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Amplitude [?]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time [s]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Calculate time difference</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">t</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># Calculate time step difference in fs</span>
+
+<span class="c1"># Calculate Fourier transforms</span>
+<span class="n">freq</span> <span class="o">=</span> <span class="n">fftfreq</span><span class="p">(</span><span class="n">nlen</span><span class="p">,</span> <span class="n">dt</span><span class="p">)</span> <span class="c1"># in Hz</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">efield</span><span class="p">))</span>
+<span class="n">ref</span> <span class="o">=</span> <span class="n">fft</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">efield_ref</span><span class="p">))</span>
+
+<span class="c1"># Remove unwanted frequencies</span>
+<span class="n">freq</span> <span class="o">=</span> <span class="n">freq</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">nlen</span><span class="o">/</span><span class="mi">2</span><span class="p">)]</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">trans</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">nlen</span><span class="o">/</span><span class="mi">2</span><span class="p">)]</span>
+<span class="n">ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">nlen</span><span class="o">/</span><span class="mi">2</span><span class="p">)]</span>
+
+<span class="c1"># Plot transformed fields</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freq</span> <span class="o">*</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">trans</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$E_</span><span class="si">{t}</span><span class="s1">(\omega)$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">freq</span> <span class="o">*</span> <span class="mf">1e-12</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">ref</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$E_</span><span class="si">{ref}</span><span class="s1">(\omega)$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;frequency [THz]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>ISSUE! FOR SOME REASON THE FFT IS NOT WORKING, IT IS RETURNING THE FIELDS IN TIME…</p>
+<p>Discuss conductivity from transmission in thin sample limit.</p>
+<p># ————
+# Transmission
+# ————
+# Remove zero indicies from all arrays
+nonzero_ind = np.nonzero(incf)
+freq = freq[nonzero_ind]
+incf = incf[nonzero_ind]
+transf = transf[nonzero_ind]
+reflf = reflf[nonzero_ind]</p>
+<p># Calculate spectrum in frequency
+spec = np.divide(transf, incf)</p>
+<p># Remove zero indicies from all arrays
+nonzero_ind = np.nonzero(spec)
+freq = freq[nonzero_ind]
+incf = incf[nonzero_ind]
+transf = transf[nonzero_ind]
+spec = spec[nonzero_ind]</p>
+<p># Extract phase and magnitude
+spec_m = np.absolute(spec)
+spec_a = np.abs(np.unwrap(np.angle(spec)))</p>
+<p># Plot
+fig, (ax0, ax1) = plt.subplots(nrows=2, sharex=True, dpi=100)
+ax0.plot(freq * 1e-12, spec_m)
+ax1.plot(freq * 1e-12, spec_a)
+ax1.set_xlim(0, 15)
+ax0.set_ylim(0, 2)
+ax1.set_ylim(0, 0.5)
+ax0.set_ylabel(r’$left|E_t(omega)/E_i(omega)right|$’)
+ax1.set_ylabel(r’$phi$ [radians]’)
+ax1.set_xlabel(r’frequency [THz]’)
+plt.show()</p>
+<p># ————
+# Conductivity
+# ————
+# Set constants
+Z0 = np.multiply(mu0, c0) # Ohms (impedance of free space)</p>
+<p># Calculate the angular frequency
+ang_freq = 2 * np.pi * freq # THz * 2pi</p>
+<p># Calculate conductivity
+conductivity = np.multiply(np.divide(2, Z0*material_length), np.subtract(np.divide(1, spec), 1))</p>
+<p># Calculate index of refraction
+#n_complex = np.sqrt(inf_perm + np.divide(np.multiply(1j, conductivity), np.multiply(ang_freq, epsilon0)))</p>
+<p># Calculate the imaginary part of the index of refraction
+#n1 = np.real(n_complex)
+#kappa1 = np.imag(n_complex)</p>
+<p># Setup plot
+fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True, dpi=100)
+ax0.set_ylabel(r’$sigma_1$’)
+ax1.set_ylabel(r’$sigma_2$’)
+ax1.set_xlabel(r’$omega$ [THz]’)
+ax1.set_xlim(0, 15)
+ax0.ticklabel_format(style=’sci’, scilimits=(0,0), axis=’y’)
+ax0.set_ylim(0, 1.1e5)
+ax1.ticklabel_format(style=’sci’, scilimits=(0,0), axis=’y’)
+ax1.set_ylim(-6e4, 0)</p>
+<p># Plot conductivity
+ax0.plot(freq * 1e-12, np.real(conductivity), ‘b-‘)
+ax1.plot(freq * 1e-12, np.imag(conductivity), ‘b-‘)</p>
+<p># ——–
+# Plotting
+# ——–
+# Find max frequency
+freq_max = np.argmin(np.abs(np.subtract(14e12, freq)))</p>
+<p># Define fit functions
+def cond_real(omega, sigma0, tau):</p>
+<blockquote>
+<div>return sigma0/(1+(tau*omega)**2)</div></blockquote>
+<dl class="docutils">
+<dt>def cond_imag(omega, sigma0, tau):</dt>
+<dd>return (-omega*tau*sigma0)/(1+(tau*omega)**2)</dd>
+</dl>
+<p># Take real and imaginary parts
+cfreq = freq[:freq_max]
+creal = np.real(conductivity)[:freq_max]
+cimag = np.imag(conductivity)[:freq_max]</p>
+<p># Run curve fit
+popt_real, pcov_real = curve_fit(cond_real, cfreq, creal, p0=[1e5, 0.4e-12])
+popt_imag, pcov_imag = curve_fit(cond_imag, cfreq, cimag, p0=[1e5, 0.2e-12])</p>
+<p>fit_real = cond_real(freq, <a href="#id1"><span class="problematic" id="id2">*</span></a>popt_real)
+fit_imag = cond_imag(freq, <a href="#id3"><span class="problematic" id="id4">*</span></a>popt_imag)</p>
+<p># Setup plot
+fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True, dpi=100)
+ax0.set_ylabel(r’$sigma_1$’, fontsize=15)
+ax1.set_ylabel(r’$sigma_2$’, fontsize=15)
+ax1.set_xlabel(r’$omega$ [THz]’, fontsize=15)
+ax0.set_title(r’Drude Model (numeric)’, fontsize=15)
+ax1.set_xlim(0, 15)
+ax0.ticklabel_format(style=’sci’, scilimits=(0,0), axis=’y’)
+ax0.tick_params(labelsize=15)
+ax0.set_ylim(0, 1.1e5)
+ax1.ticklabel_format(style=’sci’, scilimits=(0,0), axis=’y’)
+ax1.tick_params(labelsize=15)
+ax1.set_ylim(-6e4, 0)</p>
+<p># Plot simulated conductivity
+ax0.plot(freq*1e-12, np.real(conductivity), ‘b-‘, label=’simulation’)
+ax1.plot(freq*1e-12, np.imag(conductivity), ‘b-‘, label=’simulation’)</p>
+<p># Plot analytic conductivity
+ax0.plot(freq*1e-12, fit_real, ‘r–’, label=’analytic’)
+ax1.plot(freq*1e-12, fit_imag, ‘r–’, label=’analytic’)</p>
+<p>ax0.legend()
+ax1.legend()</p>
+<p>plt.tight_layout()</p>
+<p>plt.show()</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="rcfdtd.html" class="btn btn-neutral float-right" title="RC-FDTD Simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to rcfdtdpys documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Jack Roth.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

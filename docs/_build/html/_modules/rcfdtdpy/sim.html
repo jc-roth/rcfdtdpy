@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>rcfdtd_sim.sim &mdash; RCFDTD.py  documentation</title>
+  <title>rcfdtdpy.sim &mdash; rcfdtdpy  documentation</title>
   
 
   
@@ -46,7 +46,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> RCFDTD.py
+            <a href="../../index.html" class="icon icon-home"> rcfdtdpy
           
 
           
@@ -78,9 +78,9 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../sim.html">sim</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../materials.html">materials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../vis.html">vis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rcfdtd.html">RC-FDTD Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference.html">Reference</a></li>
 </ul>
 
             
@@ -95,7 +95,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">RCFDTD.py</a>
+          <a href="../../index.html">rcfdtdpy</a>
         
       </nav>
 
@@ -128,7 +128,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>rcfdtd_sim.sim</li>
+      <li>rcfdtdpy.sim</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -143,7 +143,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for rcfdtd_sim.sim</h1><div class="highlight"><pre>
+  <h1>Source code for rcfdtdpy.sim</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">integrate</span>
@@ -154,7 +154,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="Simulation"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Simulation">[docs]</a><span class="k">class</span> <span class="nc">Simulation</span><span class="p">:</span>
+<div class="viewcode-block" id="Simulation"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Simulation">[docs]</a><span class="k">class</span> <span class="nc">Simulation</span><span class="p">:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Represents a single simulation. Field is initialized to all zeros.</span>
 
 <span class="sd">    :param i0: The spatial value at which the field starts</span>
@@ -275,7 +275,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_istore_efieldr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_len</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_istore_hfieldr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_len</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Simulation.simulate"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Simulation.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tqdmarg</span><span class="o">=</span><span class="p">{}):</span>
+<div class="viewcode-block" id="Simulation.simulate"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Simulation.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tqdmarg</span><span class="o">=</span><span class="p">{}):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Executes the simulation.</span>
 
@@ -426,7 +426,7 @@
         <span class="k">for</span> <span class="n">mat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_materials</span><span class="p">:</span>
             <span class="n">mat</span><span class="o">.</span><span class="n">update_material</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Simulation.get_dims"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Simulation.get_dims">[docs]</a>    <span class="k">def</span> <span class="nf">get_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Simulation.get_dims"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Simulation.get_dims">[docs]</a>    <span class="k">def</span> <span class="nf">get_dims</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the dimensions of the simulation.</span>
 
@@ -434,7 +434,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span></div>
 
-<div class="viewcode-block" id="Simulation.get_materials"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Simulation.get_materials">[docs]</a>    <span class="k">def</span> <span class="nf">get_materials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Simulation.get_materials"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Simulation.get_materials">[docs]</a>    <span class="k">def</span> <span class="nf">get_materials</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the list of Material objects present in the simulation.</span>
 
@@ -442,7 +442,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_materials</span></div>
 
-<div class="viewcode-block" id="Simulation.export_nfields"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Simulation.export_nfields">[docs]</a>    <span class="k">def</span> <span class="nf">export_nfields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Simulation.export_nfields"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Simulation.export_nfields">[docs]</a>    <span class="k">def</span> <span class="nf">export_nfields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exports the field values at temporal indices specified by nstore at the Simulation object&#39;s initialization,</span>
 <span class="sd">        where an index along axis=0 corresponds to the corresponding temporal index in nstore. Values along axis=1</span>
@@ -455,7 +455,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstore_hfield</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstore_efield</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstore_hfieldr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nstore_efieldr</span></div>
 
-<div class="viewcode-block" id="Simulation.export_ifields"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Simulation.export_ifields">[docs]</a>    <span class="k">def</span> <span class="nf">export_ifields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Simulation.export_ifields"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Simulation.export_ifields">[docs]</a>    <span class="k">def</span> <span class="nf">export_ifields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exports the field values at spatial indices specified by istore at the Simulation object&#39;s initialization,</span>
 <span class="sd">        where an index along axis=1 corresponds to the corresponding spatial index in istore. Values along axis=0</span>
@@ -468,7 +468,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_hfield</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_efield</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_hfieldr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_efieldr</span></div>
 
-<div class="viewcode-block" id="Simulation.calc_dims"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Simulation.calc_dims">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Simulation.calc_dims"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Simulation.calc_dims">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">calc_dims</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the dimensions of the simulation in cells.</span>
@@ -485,7 +485,7 @@
         <span class="n">ilen</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">i1</span> <span class="o">-</span> <span class="n">i0</span><span class="p">)</span> <span class="o">/</span> <span class="n">di</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Add two to account for boundary conditions</span>
         <span class="k">return</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span></div>
 
-<div class="viewcode-block" id="Simulation.calc_arrays"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Simulation.calc_arrays">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Simulation.calc_arrays"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Simulation.calc_arrays">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">calc_arrays</span><span class="p">(</span><span class="n">i0</span><span class="p">,</span> <span class="n">i1</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">n0</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">dn</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates spatial and time arrays of the same dimensions of the simulation. Array values are populated by their</span>
@@ -508,7 +508,7 @@
         <span class="k">return</span> <span class="n">z</span><span class="p">,</span> <span class="n">t</span></div></div>
 
 
-<div class="viewcode-block" id="Current"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Current">[docs]</a><span class="k">class</span> <span class="nc">Current</span><span class="p">:</span>
+<div class="viewcode-block" id="Current"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Current">[docs]</a><span class="k">class</span> <span class="nc">Current</span><span class="p">:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Current class is used to represent a current in the simulation.</span>
 
@@ -545,7 +545,7 @@
         <span class="c1"># Reshape the current array so that it can be indexed correctly</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cnlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cilen</span><span class="p">))</span>
 
-<div class="viewcode-block" id="Current.get_current"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Current.get_current">[docs]</a>    <span class="k">def</span> <span class="nf">get_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="Current.get_current"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Current.get_current">[docs]</a>    <span class="k">def</span> <span class="nf">get_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the current at time index :math:`n` as an array the length of the simulation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -560,7 +560,7 @@
         <span class="k">return</span> <span class="n">current_padded</span></div></div>
 
 
-<div class="viewcode-block" id="Material"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Material">[docs]</a><span class="k">class</span> <span class="nc">Material</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="Material"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Material">[docs]</a><span class="k">class</span> <span class="nc">Material</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The Material class is an abstract class that defines the minimum requirements for a Material object to have in the</span>
 <span class="sd">    simulation. All Materials in the simulation must inherit Material.</span>
@@ -602,7 +602,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span> <span class="o">=</span> <span class="n">material_i1</span> <span class="o">-</span> <span class="n">material_i0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_material_nlen</span> <span class="o">=</span> <span class="n">material_n1</span> <span class="o">-</span> <span class="n">material_n0</span>
 
-<div class="viewcode-block" id="Material.reset_material"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Material.reset_material">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Material.reset_material"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Material.reset_material">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">reset_material</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function is called before each simulation. It should reset any material values that are calculated during</span>
@@ -610,7 +610,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Material.update_material"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Material.update_material">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Material.update_material"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Material.update_material">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">update_material</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function is called at the start of each simulation time step. It should update the :math:`\chi` and</span>
@@ -621,7 +621,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Material.get_chi0"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Material.get_chi0">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Material.get_chi0"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Material.get_chi0">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_chi0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the value of :math:`\chi_0` at the current time step in the simulation at each spatial location in the</span>
@@ -631,7 +631,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Material.get_epsiloninf"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Material.get_epsiloninf">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Material.get_epsiloninf"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Material.get_epsiloninf">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the value of :math:`\epsilon_\infty` at the current time step in the simulation at each spatial location</span>
@@ -641,7 +641,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Material.get_psi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.Material.get_psi">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Material.get_psi"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.Material.get_psi">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the value of :math:`\psi` at the current time step in the simulation at each spatial location in the</span>
@@ -652,7 +652,7 @@
         <span class="k">pass</span></div></div>
 
 
-<div class="viewcode-block" id="EmptyMaterial"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.EmptyMaterial">[docs]</a><span class="k">class</span> <span class="nc">EmptyMaterial</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
+<div class="viewcode-block" id="EmptyMaterial"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.EmptyMaterial">[docs]</a><span class="k">class</span> <span class="nc">EmptyMaterial</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents an empty Material, i.e. vacuum</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -661,31 +661,33 @@
         <span class="c1"># Call super</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-<div class="viewcode-block" id="EmptyMaterial.update_material"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.EmptyMaterial.update_material">[docs]</a>    <span class="k">def</span> <span class="nf">update_material</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
+<div class="viewcode-block" id="EmptyMaterial.update_material"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.EmptyMaterial.update_material">[docs]</a>    <span class="k">def</span> <span class="nf">update_material</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
         <span class="c1"># Do nothing</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="EmptyMaterial.get_chi0"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.EmptyMaterial.get_chi0">[docs]</a>    <span class="k">def</span> <span class="nf">get_chi0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EmptyMaterial.get_chi0"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.EmptyMaterial.get_chi0">[docs]</a>    <span class="k">def</span> <span class="nf">get_chi0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Simply return 0</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="EmptyMaterial.get_epsiloninf"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.EmptyMaterial.get_epsiloninf">[docs]</a>    <span class="k">def</span> <span class="nf">get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EmptyMaterial.get_epsiloninf"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.EmptyMaterial.get_epsiloninf">[docs]</a>    <span class="k">def</span> <span class="nf">get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Simply return 1</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="EmptyMaterial.get_psi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.EmptyMaterial.get_psi">[docs]</a>    <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EmptyMaterial.get_psi"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.EmptyMaterial.get_psi">[docs]</a>    <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Simply return 0</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="EmptyMaterial.reset_material"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.EmptyMaterial.reset_material">[docs]</a>    <span class="k">def</span> <span class="nf">reset_material</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EmptyMaterial.reset_material"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.EmptyMaterial.reset_material">[docs]</a>    <span class="k">def</span> <span class="nf">reset_material</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Do nothing</span>
         <span class="k">pass</span></div></div>
 
 
-<div class="viewcode-block" id="StaticMaterial"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial">[docs]</a><span class="k">class</span> <span class="nc">StaticMaterial</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticMaterial"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.StaticMaterial">[docs]</a><span class="k">class</span> <span class="nc">StaticMaterial</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The StaticMaterial class allows for the simulation of a static material, that is a material that has a constant</span>
 <span class="sd">    definition of electric susceptibility in time. The electric susceptibility is modeled using a harmonic oscillator.</span>
+<span class="sd">    This material is more computationally efficient than NumericMaterial, and uses the update equations specified in</span>
+<span class="sd">    Beard et al..</span>
 
 <span class="sd">    :param di: The spatial time step of the simulation</span>
 <span class="sd">    :param dn: The temporal step size of the simulation</span>
@@ -786,7 +788,7 @@
             <span class="c1"># Create arrays to store the field values in each location</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_istore_chi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_len</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
 
-<div class="viewcode-block" id="StaticMaterial.reset_material"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.reset_material">[docs]</a>    <span class="k">def</span> <span class="nf">reset_material</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticMaterial.reset_material"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.StaticMaterial.reset_material">[docs]</a>    <span class="k">def</span> <span class="nf">reset_material</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Reset psi</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_psi_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_psi_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
@@ -798,7 +800,7 @@
             <span class="c1"># Create arrays to store the field values in each location</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_istore_chi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_len</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="StaticMaterial.update_material"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.update_material">[docs]</a>    <span class="k">def</span> <span class="nf">update_material</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticMaterial.update_material"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.StaticMaterial.update_material">[docs]</a>    <span class="k">def</span> <span class="nf">update_material</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Updates the values of :math:`\psi` and :math:`\chi` Saves the values of :math:`chi` requested via the `istore`</span>
 <span class="sd">        parameter.</span>
@@ -838,7 +840,7 @@
         <span class="c1"># Update psi opacity values</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_psi_opacity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opacity</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
 
-<div class="viewcode-block" id="StaticMaterial.get_chi0"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.get_chi0">[docs]</a>    <span class="k">def</span> <span class="nf">get_chi0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticMaterial.get_chi0"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.StaticMaterial.get_chi0">[docs]</a>    <span class="k">def</span> <span class="nf">get_chi0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the value of :math:`\chi^0` at all spatial indices resulting from the material.</span>
 
@@ -846,7 +848,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi0</span></div>
 
-<div class="viewcode-block" id="StaticMaterial.get_epsiloninf"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.get_epsiloninf">[docs]</a>    <span class="k">def</span> <span class="nf">get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticMaterial.get_epsiloninf"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.StaticMaterial.get_epsiloninf">[docs]</a>    <span class="k">def</span> <span class="nf">get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the value of :math:`\epsilon_\infty` at all spatial indices resulting from the material.</span>
 
@@ -854,7 +856,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epsiloninf</span></div>
 
-<div class="viewcode-block" id="StaticMaterial.get_psi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.get_psi">[docs]</a>    <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticMaterial.get_psi"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.StaticMaterial.get_psi">[docs]</a>    <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates psi at all points in the simulation using the current value of psi_1 and psi_2. Scaled by the</span>
 <span class="sd">        `opacity` array passed in at initialization.</span>
@@ -871,7 +873,7 @@
         <span class="c1"># Return the real part as specified in Beard</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">psi_padded</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_psi_opacity</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="StaticMaterial.export_ifields"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.StaticMaterial.export_ifields">[docs]</a>    <span class="k">def</span> <span class="nf">export_ifields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StaticMaterial.export_ifields"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.StaticMaterial.export_ifields">[docs]</a>    <span class="k">def</span> <span class="nf">export_ifields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exports the :math:`\chi` values at spatial indices specified by istore at the Material object&#39;s initialization,</span>
 <span class="sd">        where an index along axis=1 corresponds to the corresponding spatial index in istore. Values along axis=0</span>
@@ -885,7 +887,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_istore_chi</span></div></div>
 
 
-<div class="viewcode-block" id="NumericMaterial"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.NumericMaterial">[docs]</a><span class="k">class</span> <span class="nc">NumericMaterial</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
+<div class="viewcode-block" id="NumericMaterial"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.NumericMaterial">[docs]</a><span class="k">class</span> <span class="nc">NumericMaterial</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The NumericMaterial class represents a material that has a non-constant definition of electric susceptibility in</span>
 <span class="sd">    time. Currently this Material can only represent materials that have a constant definition of electric</span>
@@ -898,45 +900,66 @@
 <span class="sd">    :param material_i0: The starting spatial index of the material</span>
 <span class="sd">    :param material_i1: The ending spatial index of the material</span>
 <span class="sd">    :param chi_func: A function representing the electric susceptibility :math:`\chi` as a function of time. The function should accept a single argument n corresponding to the time index.</span>
-<span class="sd">    :param epsiloninf: The :math:`\epsilon_\infty` of the material, which is constant over space and time.</span>
+<span class="sd">    :param epsiloninf: A function representing the :math:`\epsilon_\infty` of the material as a function of time. The function should accept a single argument n corresponding to the time index.</span>
 <span class="sd">    :param tqdmarg: The arguments to pass the tdqm iterator (lookup arguments on the tqdm documentation).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="n">material_i0</span><span class="p">,</span> <span class="n">material_i1</span><span class="p">,</span> <span class="n">chi_func</span><span class="p">,</span> <span class="n">epsiloninf</span><span class="p">,</span> <span class="n">tqdmarg</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">di</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="n">material_i0</span><span class="p">,</span> <span class="n">material_i1</span><span class="p">,</span> <span class="n">chi_func</span><span class="p">,</span> <span class="n">epsiloninf_func</span><span class="p">,</span> <span class="n">tqdmarg</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="c1"># -------------</span>
+        <span class="c1"># Initial setup</span>
+        <span class="c1"># -------------</span>
         <span class="c1"># Call super</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">dn</span><span class="p">,</span> <span class="n">ilen</span><span class="p">,</span> <span class="n">nlen</span><span class="p">,</span> <span class="n">material_i0</span><span class="p">,</span> <span class="n">material_i1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nlen</span><span class="p">)</span>
+        <span class="c1"># Save the infinity permittivity function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epsiloninf_func</span> <span class="o">=</span> <span class="n">epsiloninf_func</span>
+        <span class="c1"># Set self._epsiloninf to a zero valued array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epsiloninf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
+        <span class="c1"># --------------------</span>
+        <span class="c1"># Setup susceptibility</span>
+        <span class="c1"># --------------------</span>
+        <span class="c1"># Wrap chi_func to account for real and imaginary parts</span>
+        <span class="k">def</span> <span class="nf">chi_func_real</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">chi_func</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="k">def</span> <span class="nf">chi_func_imag</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">chi_func</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
         <span class="c1"># Create an array to hold chi values at specific values of m</span>
-        <span class="n">chi_m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nlen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chi_m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nlen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
         <span class="c1"># Create an array to hold dchi values at specific values of m</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dchi_m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nlen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
         <span class="c1"># Calculate chi_m at m=0 and store</span>
-        <span class="n">chi_m</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">chi_m0_err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">chi_func</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dn</span><span class="p">)</span>
-        <span class="n">chi0_repeat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">chi_m</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">)</span>
+        <span class="n">real_area</span><span class="p">,</span> <span class="n">real_area_err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">chi_func_real</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dn</span><span class="p">)</span>
+        <span class="n">imag_area</span><span class="p">,</span> <span class="n">imag_area_err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">chi_func_imag</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dn</span><span class="p">)</span>
+        <span class="c1"># Combine real and imaginary parts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chi_m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">real_area</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">imag_area</span>
+        <span class="n">chi0_repeat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chi_m</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">)</span>
         <span class="c1"># chi is zero in vacuum, so pad chi0 in the material by zero outside of the material</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_chi0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">chi0_repeat</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">)),</span>
                             <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="c1"># Iterate over all m and integrate at each to find dchi_m</span>
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nlen</span><span class="p">),</span> <span class="o">**</span><span class="n">tqdmarg</span><span class="p">):</span>
-            <span class="n">area</span><span class="p">,</span> <span class="n">area_err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">chi_func</span><span class="p">,</span> <span class="n">m</span> <span class="o">*</span> <span class="n">dn</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dn</span><span class="p">)</span>
-            <span class="n">chi_m</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">area</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_dchi_m</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">chi_m</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">chi_m</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+            <span class="c1"># Integrate real and imaginary parts</span>
+            <span class="n">real_area</span><span class="p">,</span> <span class="n">real_area_err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">chi_func_real</span><span class="p">,</span> <span class="n">m</span> <span class="o">*</span> <span class="n">dn</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dn</span><span class="p">)</span>
+            <span class="n">imag_area</span><span class="p">,</span> <span class="n">imag_area_err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">chi_func_imag</span><span class="p">,</span> <span class="n">m</span> <span class="o">*</span> <span class="n">dn</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dn</span><span class="p">)</span>
+            <span class="c1"># Combine real and imaginary parts</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="n">real_area</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span><span class="o">*</span><span class="n">imag_area</span>
+            <span class="c1"># Store</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_chi_m</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">area</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dchi_m</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi_m</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi_m</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
         <span class="c1"># Create a 2D Numpy array to hold previous values of the electric field</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
         <span class="c1"># Create a 1D Numpy array to hold the current value of psi</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
-        <span class="c1"># Epsilon_infinity is equal to one in vacuum, so only set self._epsiloninf equal to epsiloninf in the material</span>
-        <span class="n">epsiloninf_repeat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">epsiloninf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_epsiloninf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">epsiloninf_repeat</span><span class="p">,</span>
-                                  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">)),</span>
-                                  <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-<div class="viewcode-block" id="NumericMaterial.reset_material"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.NumericMaterial.reset_material">[docs]</a>    <span class="k">def</span> <span class="nf">reset_material</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="NumericMaterial.reset_material"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.NumericMaterial.reset_material">[docs]</a>    <span class="k">def</span> <span class="nf">reset_material</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Clear the electric field</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
         <span class="c1"># Clear the psi array</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="NumericMaterial.update_material"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.NumericMaterial.update_material">[docs]</a>    <span class="k">def</span> <span class="nf">update_material</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
+<div class="viewcode-block" id="NumericMaterial.update_material"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.NumericMaterial.update_material">[docs]</a>    <span class="k">def</span> <span class="nf">update_material</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
+        <span class="c1"># ------------------------------</span>
+        <span class="c1"># Electric susceptibility update</span>
+        <span class="c1"># ------------------------------</span>
         <span class="c1"># Save the current efield value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">efield</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">]</span>
         <span class="c1"># Trim dchi_m to length n, transpose, flip, and repeat to the length of the material</span>
@@ -944,35 +967,41 @@
         <span class="c1"># Trim the efield to length n (shifted by one as specified by update equations)</span>
         <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="c1"># Multiply e and dchi and sum to determine psi</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">dchi</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">dchi</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
+        <span class="c1"># ----------------------------</span>
+        <span class="c1"># Infinite permittivity update</span>
+        <span class="c1"># ----------------------------</span>
+        <span class="c1"># Calculate epsiloninf at the current time</span>
+        <span class="n">epsiloninf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epsiloninf_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dn</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">))</span>
+        <span class="c1"># Epsilon_infinity is equal to one in vacuum, so only set self._epsiloninf equal to epsiloninf in the material</span>
+        <span class="n">epsiloninf_repeat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">epsiloninf</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_epsiloninf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">epsiloninf_repeat</span><span class="p">,</span>
+                                  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">)),</span>
+                                  <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="NumericMaterial.get_chi0"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.NumericMaterial.get_chi0">[docs]</a>    <span class="k">def</span> <span class="nf">get_chi0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="NumericMaterial.get_chi0"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.NumericMaterial.get_chi0">[docs]</a>    <span class="k">def</span> <span class="nf">get_chi0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi0</span></div>
 
-<div class="viewcode-block" id="NumericMaterial.get_epsiloninf"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.NumericMaterial.get_epsiloninf">[docs]</a>    <span class="k">def</span> <span class="nf">get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="NumericMaterial.get_epsiloninf"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.NumericMaterial.get_epsiloninf">[docs]</a>    <span class="k">def</span> <span class="nf">get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_epsiloninf</span></div>
 
-<div class="viewcode-block" id="NumericMaterial.get_psi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.NumericMaterial.get_psi">[docs]</a>    <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="NumericMaterial.get_psi"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.NumericMaterial.get_psi">[docs]</a>    <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Pad the psi array so that it spans the length of the simulation</span>
         <span class="n">psi_padded</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_psi</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">)),</span>
                             <span class="s1">&#39;constant&#39;</span><span class="p">)</span>
         <span class="c1"># Return the real part as specified in Beard</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">psi_padded</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="NumericMaterial.export_chi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.NumericMaterial.export_chi">[docs]</a>    <span class="k">def</span> <span class="nf">export_chi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="NumericMaterial.export_chi"><a class="viewcode-back" href="../../reference.html#rcfdtdpy.sim.NumericMaterial.export_chi">[docs]</a>    <span class="k">def</span> <span class="nf">export_chi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Exports the electric susceptibility :math:`\chi` at each time index.</span>
 
 <span class="sd">        :return: The electric susceptibility :math:`\chi`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">chi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span><span class="p">)</span>
-        <span class="n">chi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi0</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nlen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">chi</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">chi</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dchi_m</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">chi</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chi_m</span></div></div>
 
 
-<div class="viewcode-block" id="TwoStateMaterial"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.TwoStateMaterial">[docs]</a><span class="k">class</span> <span class="nc">TwoStateMaterial</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">TwoStateMaterial</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The TwoStateMaterial class represents a material that has a non-constant definition of electric susceptibility in</span>
 <span class="sd">    time. This material is represents the same material proposed in Beard and Schmuttenmaer 2001</span>
@@ -1069,24 +1098,58 @@
             <span class="n">p2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">tau</span><span class="p">)),</span> <span class="n">b</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">)</span>
         <span class="c1"># Create an array to hold the fraction of excited oscillators</span>
-        <span class="n">f_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nlen</span> <span class="o">-</span> <span class="n">n_ref_ind</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">f_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nlen</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
         <span class="c1"># Calculate the fraction of excited oscillators at each time</span>
-        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">f_e</span><span class="p">)),</span> <span class="o">**</span><span class="n">tqdmarg_f</span><span class="p">):</span>
-            <span class="n">area</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dn</span><span class="o">*</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nlen</span><span class="p">),</span> <span class="o">**</span><span class="n">tqdmarg_f</span><span class="p">):</span>
+            <span class="n">vis_time</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="o">-</span> <span class="n">n_ref_ind</span><span class="p">)</span> <span class="o">*</span> <span class="n">dn</span>
+            <span class="n">area</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">integrand</span><span class="p">,</span> <span class="o">-</span><span class="n">nlen</span> <span class="o">*</span> <span class="n">dn</span><span class="p">,</span> <span class="n">vis_time</span><span class="p">)</span>
             <span class="n">f_e</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">area</span>
         <span class="c1"># Tile f_e along spatial extent of material</span>
         <span class="n">f_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">f_e</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ilen</span><span class="p">))</span>
         <span class="c1"># Compute spatial decay coefficient for each location</span>
         <span class="n">spatial_locs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span> <span class="o">*</span> <span class="n">di</span><span class="p">,</span> <span class="n">di</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">spatial_locs</span><span class="p">,</span> <span class="n">tau</span><span class="p">))</span>
+        <span class="n">spatial_coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">spatial_locs</span><span class="p">,</span> <span class="n">tau</span><span class="p">))</span>
+        <span class="n">spatial_coeffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">spatial_coeffs</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nlen</span><span class="p">))</span>
+        <span class="c1"># Multiply each term in f_e by the spatial coefficients to apply the spatial absorption decay</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_f_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">spatial_coeffs</span><span class="p">,</span> <span class="n">f_e</span><span class="p">)</span>
         <span class="c1"># -------------------------------------------</span>
         <span class="c1"># COMPUTE DISCRETIZED ELECTRIC SUSCEPTIBILITY</span>
         <span class="c1"># -------------------------------------------</span>
 
-<div class="viewcode-block" id="TwoStateMaterial.reset_material"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.TwoStateMaterial.reset_material">[docs]</a>    <span class="k">def</span> <span class="nf">reset_material</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+        <span class="c1"># Define the excited state oscillator electric susceptibility function</span>
+        <span class="k">def</span> <span class="nf">e_chi</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">e_g</span> <span class="o">*</span> <span class="n">t</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">e_a1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">e_b</span><span class="o">*</span><span class="n">t</span><span class="p">),</span> <span class="n">e_a2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">e_b</span><span class="o">*</span><span class="n">t</span><span class="p">)))</span>
 
-<div class="viewcode-block" id="TwoStateMaterial.update_material"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.TwoStateMaterial.update_material">[docs]</a>    <span class="k">def</span> <span class="nf">update_material</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
+        <span class="c1"># Define the ground state oscillator electric susceptibility function</span>
+        <span class="k">def</span> <span class="nf">g_chi</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">g_g</span> <span class="o">*</span> <span class="n">t</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">g_a1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">g_b</span><span class="o">*</span><span class="n">t</span><span class="p">),</span> <span class="n">g_a2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">g_b</span><span class="o">*</span><span class="n">t</span><span class="p">)))</span>
+
+        <span class="c1"># Define the visual oscillator electric susceptibility function</span>
+        <span class="k">def</span> <span class="nf">v_chi</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">v_g</span> <span class="o">*</span> <span class="n">t</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">v_a1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">v_b</span><span class="o">*</span><span class="n">t</span><span class="p">),</span> <span class="n">v_a2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">v_b</span><span class="o">*</span><span class="n">t</span><span class="p">)))</span>
+
+        <span class="c1"># Create an array to hold chi values at specific values of m</span>
+        <span class="n">chi_m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">,</span> <span class="n">nlen</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
+        <span class="c1"># Create an array to hold dchi values at specific values of m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dchi_m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_jlen</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">,</span> <span class="n">nlen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
+        <span class="c1"># TODO PICKUP FROM HERE WITH THE CALCULATION OF CHI0</span>
+        <span class="c1"># Calculate chi_m at m=0 and store</span>
+        <span class="n">chi_m</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">chi_m0_err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">chi_func</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dn</span><span class="p">)</span>
+        <span class="n">chi0_repeat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">chi_m</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">)</span>
+        <span class="c1"># chi is zero in vacuum, so pad chi0 in the material by zero outside of the material</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chi0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">chi0_repeat</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ilen</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">)),</span>
+                            <span class="s1">&#39;constant&#39;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Iterate over all m and integrate at each to find dchi_m</span>
+        <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nlen</span><span class="p">),</span> <span class="o">**</span><span class="n">tqdmarg_c</span><span class="p">):</span>
+            <span class="n">area</span><span class="p">,</span> <span class="n">area_err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">chi_func</span><span class="p">,</span> <span class="n">m</span> <span class="o">*</span> <span class="n">dn</span><span class="p">,</span> <span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dn</span><span class="p">)</span>
+            <span class="n">chi_m</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">area</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dchi_m</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">chi_m</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">chi_m</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+
+
+    <span class="k">def</span> <span class="nf">reset_material</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">update_material</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">efield</span><span class="p">):</span>
         <span class="c1"># Save the current efield value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">efield</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">_material_i0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_material_ilen</span><span class="p">]</span>
         <span class="c1"># Trim dchi_m to length n, transpose, flip, and repeat to the length of the material</span>
@@ -1094,16 +1157,16 @@
         <span class="c1"># Trim the efield to length n (shifted by one as specified by update equations)</span>
         <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_efield</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
         <span class="c1"># Multiply e and dchi and sum to determine psi</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">dchi</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">dchi</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TwoStateMaterial.get_chi0"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.TwoStateMaterial.get_chi0">[docs]</a>    <span class="k">def</span> <span class="nf">get_chi0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+    <span class="k">def</span> <span class="nf">get_chi0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
 
-<div class="viewcode-block" id="TwoStateMaterial.get_epsiloninf"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.TwoStateMaterial.get_epsiloninf">[docs]</a>    <span class="k">def</span> <span class="nf">get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div>
+    <span class="k">def</span> <span class="nf">get_epsiloninf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
 
-<div class="viewcode-block" id="TwoStateMaterial.get_psi"><a class="viewcode-back" href="../../sim.html#rcfdtd_sim.sim.TwoStateMaterial.get_psi">[docs]</a>    <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">pass</span></div></div>
+    <span class="k">def</span> <span class="nf">get_psi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
 </pre></div>
 
            </div>

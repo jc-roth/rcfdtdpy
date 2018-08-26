@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome to RCFDTD.py’s documentation! &mdash; RCFDTD.py  documentation</title>
+  <title>Welcome to rcfdtdpy’s documentation! &mdash; rcfdtdpy  documentation</title>
   
 
   
@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="sim" href="sim.html" /> 
+    <link rel="next" title="Getting Started" href="start.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -47,7 +47,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> RCFDTD.py
+            <a href="#" class="icon icon-home"> rcfdtdpy
           
 
           
@@ -79,9 +79,9 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="sim.html">sim</a></li>
-<li class="toctree-l1"><a class="reference internal" href="materials.html">materials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vis.html">vis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rcfdtd.html">RC-FDTD Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a></li>
 </ul>
 
             
@@ -96,7 +96,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">RCFDTD.py</a>
+          <a href="#">rcfdtdpy</a>
         
       </nav>
 
@@ -127,7 +127,7 @@
     
       <li><a href="#">Docs</a> &raquo;</li>
         
-      <li>Welcome to RCFDTD.py’s documentation!</li>
+      <li>Welcome to rcfdtdpy’s documentation!</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -146,14 +146,35 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="welcome-to-rcfdtd-py-s-documentation">
-<h1>Welcome to RCFDTD.py’s documentation!<a class="headerlink" href="#welcome-to-rcfdtd-py-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="welcome-to-rcfdtdpy-s-documentation">
+<h1>Welcome to rcfdtdpy’s documentation!<a class="headerlink" href="#welcome-to-rcfdtdpy-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>RC-FDTD simulations are a staple of electromagnetic field simulations, and can be found in many fields and applications.
+This package provides a framework for performing RC-FDTD simulations aimed at investigating a particular problem: the
+simulation of materials that have rapidly evolving electric susceptibilities.</p>
+<p>The scope of this problem is such that a few assumptions have been made that simplify the implementation of the
+simulation as well as the computational complexity of the simulation. These are as follows</p>
+<ul class="simple">
+<li>All materials are linear dielectrics such that <span class="math notranslate nohighlight">\(P(z,\omega)=\epsilon_0\chi E(z,\omega)\)</span>.</li>
+<li>The electric and magnetic fields are plane waves propagating along spatial coordinate <span class="math notranslate nohighlight">\(z\)</span>.</li>
+<li>Materials are uniform along spatial coordinates <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>.</li>
+<li>The electric and magnetic fields are zero for all time prior to the start of the simulation (<span class="math notranslate nohighlight">\(E(z,t)=0\)</span> for all <span class="math notranslate nohighlight">\(t&lt;0\)</span>).</li>
+<li>The electric field <span class="math notranslate nohighlight">\(E(z,t)\)</span> is approximately constant over all time intervals of duration <span class="math notranslate nohighlight">\(\Delta t\)</span>.</li>
+<li>The magnetization of all materials is zero (<span class="math notranslate nohighlight">\(\vec{M}=\vec{0}\)</span>).</li>
+</ul>
+<p>Refer to the RC-FDTD Simulations page in order to learn more about how RC-FDTD simulations work and how simulation
+parameters might be tweaked to produce more accurate results. For a description of various simulations run with this
+package refer to <cite>LINK FINAL DOE REPORT PDF</cite>.</p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="sim.html">sim</a></li>
-<li class="toctree-l1"><a class="reference internal" href="materials.html">materials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="vis.html">vis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rcfdtd.html">RC-FDTD Simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#simulation">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#current">Current</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html#materials">Materials</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -174,7 +195,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="sim.html" class="btn btn-neutral float-right" title="sim" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="start.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>

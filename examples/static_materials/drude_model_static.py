@@ -22,10 +22,10 @@
 # In[1]:
 
 # Imports
-from rcfdtd_sim import Simulation as Sim
-from rcfdtd_sim import Material as Mat
-from rcfdtd_sim import StaticMaterial as StaticMat
-from rcfdtd_sim import Current, vis
+from rcfdtdpy import Simulation as Sim
+from rcfdtdpy import Material as Mat
+from rcfdtdpy import StaticMaterial as StaticMat
+from rcfdtdpy import Current, vis
 import numpy as np
 from scipy.fftpack import fft, fftfreq, fftshift
 from scipy.optimize import curve_fit

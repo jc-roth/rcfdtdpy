@@ -1,8 +1,8 @@
 # Imports
-from rcfdtd_sim import Simulation as Sim
-from rcfdtd_sim import Current as Current
-from rcfdtd_sim import NumericMaterial as Mat
-from rcfdtd_sim import vis
+from rcfdtdpy import Simulation as Sim
+from rcfdtdpy import Current as Current
+from rcfdtdpy import NumericMaterial as Mat
+from rcfdtdpy import vis
 import numpy as np
 from scipy.fftpack import fft, fftfreq, fftshift
 from scipy.special import erf

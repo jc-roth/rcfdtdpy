@@ -4,10 +4,10 @@ from scipy.fftpack import fft, fftfreq
 from scipy.optimize import curve_fit
 from pathlib import Path
 from matplotlib import pyplot as plt
-from rcfdtd_sim import Simulation as Sim
-from rcfdtd_sim import Current
-from rcfdtd_sim import NumericMaterial as Mat
-from rcfdtd_sim import vis
+from rcfdtdpy import Simulation as Sim
+from rcfdtdpy import Current
+from rcfdtdpy import NumericMaterial as Mat
+from rcfdtdpy import vis
 
 # ----------------------------
 # Define simulation parameters
