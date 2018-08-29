@@ -137,7 +137,7 @@ def inf_perm(t):
     return 1
 
 # Define the t_diffs to test
-t_diffs = np.arange(-400e-15, 400e-15, 10e-15)
+t_diffs = np.arange(-1000e-15, 1000e-15, 50e-15)
 
 # --------------------------
 # Run or load the simulation
@@ -217,6 +217,10 @@ latex_table_vals += '$\\tau_e$ & %s \\\\\n' % number_formatter(np.pi/gamma_e)
 latex_table_vals += '$\\tau_g$ & %s \\\\\n' % number_formatter(np.pi/gamma_g)
 print(latex_table_vals)
     
+# =================
+# Plot standard fig
+# =================
+
 # Clear figure
 plt.clf()
 # Setup grid
@@ -235,11 +239,76 @@ axs.set_xlabel('$\Delta t$ [fs]', fontsize=12)
 axc.tick_params(labelsize=10, bottom=False, labelbottom=False)
 axs.tick_params(labelsize=10)
 axcc.tick_params(labelsize=10)
-axs.set_xlim(-390, 390)
-axc.set_ylim(-0.2, 0.6)
+axs.set_xlim(-1000, 1000)
+axc.set_ylim(-0.2, 1)
 # Define variables to plot
 trans_ars_to_plot = np.real(trans_ars.T)[:20000]
 t_to_plot = t[:20000]
+ddn = np.diff(t_diffs)[0]
+time_grid, dtime_grid = np.mgrid[slice(t_to_plot[0], t_to_plot[-1] + dn, dn),
+                slice(t_diffs[0],t_diffs[-1] + ddn, ddn)]
+# Define colorbar
+min_max = np.max(np.abs([trans_ars_to_plot.min(), trans_ars_to_plot.max()]))
+cmap = plt.get_cmap('bwr')
+levels = MaxNLocator(nbins=500).tick_values(-min_max, min_max)
+norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
+# Plot colormesh and colorbar
+im = axc.pcolormesh(dtime_grid*1e15, time_grid*1e12, trans_ars_to_plot, cmap=cmap, norm=norm)
+cb = plt.colorbar(im, cax=axcc)
+cb.set_label('$E_t$', fontsize=12)
+
+# Plot lineout
+n200 = np.argmin(np.abs(np.subtract(t_to_plot, -200e-15)))
+n100 = np.argmin(np.abs(np.subtract(t_to_plot, -100e-15)))
+zero = np.argmin(np.abs(np.subtract(t_to_plot, 0)))
+p100 = np.argmin(np.abs(np.subtract(t_to_plot, 100e-15)))
+p200 = np.argmin(np.abs(np.subtract(t_to_plot, 200e-15)))
+axs.plot(t_diffs*1e15, np.real(trans_ars.T)[n200], label='$\Delta t=-200$fs')
+axs.plot(t_diffs*1e15, np.real(trans_ars.T)[n100], label='$\Delta t=-100$fs')
+axs.plot(t_diffs*1e15, np.real(trans_ars.T)[zero], label='$\Delta t=0$')
+axs.plot(t_diffs*1e15, np.real(trans_ars.T)[p100], label='$\Delta t=100$fs')
+axs.plot(t_diffs*1e15, np.real(trans_ars.T)[p200], label='$\Delta t=200$fs')
+axs.legend(bbox_to_anchor=(1.01, 0.95), loc=2, borderaxespad=0., fontsize=8)
+
+# Final plotting things
+plt.tight_layout()
+plt.subplots_adjust(hspace=0, wspace=0)
+
+# Show
+plt.show()
+
+# ===================
+# Plot difference fig
+# ===================
+# Clear figure
+plt.clf()
+# Setup grid
+cfig = plt.figure(figsize=(6.5, 4))
+widths = [20, 1]
+heights = [2, 1]
+spec = gridspec.GridSpec(ncols=2, nrows=2, width_ratios=widths, height_ratios=heights)
+# Add axes
+axs = cfig.add_subplot(spec[1,0])
+axc = cfig.add_subplot(spec[0,0], sharex=axs)
+axcc = cfig.add_subplot(spec[0,1])
+# Formatting
+axc.set_ylabel('$t$ [ps]', fontsize=12)
+axs.set_ylabel('$E_t(t)$', fontsize=12)
+axs.set_xlabel('$\Delta t$ [fs]', fontsize=12)
+axc.tick_params(labelsize=10, bottom=False, labelbottom=False)
+axs.tick_params(labelsize=10)
+axcc.tick_params(labelsize=10)
+axs.set_xlim(-1000, 1000)
+axc.set_ylim(-0.2, 1)
+# Define variables to plot
+trans_ars_to_plot = np.real(trans_ars.T)[:20000]
+t_to_plot = t[:20000]
+
+# Convert to difference plot
+trans_ars_sub = trans_ars_to_plot[:,0]
+trans_ars_sub = np.tile(np.reshape(trans_ars_sub, (20000,1)), (1,len(t_diffs)))
+trans_ars_to_plot = trans_ars_to_plot - trans_ars_sub
+
 ddn = np.diff(t_diffs)[0]
 time_grid, dtime_grid = np.mgrid[slice(t_to_plot[0], t_to_plot[-1] + dn, dn),
                 slice(t_diffs[0],t_diffs[-1] + ddn, ddn)]

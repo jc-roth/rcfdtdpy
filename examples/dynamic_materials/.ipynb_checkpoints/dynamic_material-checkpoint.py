@@ -137,7 +137,7 @@ def inf_perm(t):
     return 1
 
 # Define the t_diffs to test
-t_diffs = np.arange(-400e-15, 400e-15, 10e-15)
+t_diffs = np.arange(-1000e-15, 1000e-15, 50e-15)
 
 # --------------------------
 # Run or load the simulation
