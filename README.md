@@ -1,14 +1,10 @@
-RC-FDTD
+rcfdtdpy
 =======
 
-Ideas
-----
-* For a slight speedup, consider making the `_get_current()` function dynamic, so that the current does not need to be calculated twice, once for the reference E-field and once for the normal E-field
-* Replace the Numpy arrays with h5py datasets, which can store much larger files locally.
+This package provides a framework for performing RC-FDTD simulations aimed at investigating a particular problem: the simulation of materials that have rapidly evolving electric susceptibilities.
 
-Todo
-----
-* RC-FDTD v2
-    * Create a material whose properties are determined via numerical integration, implement another material class that stores past values of the electric field within its boundaries in order to do so.
-* Add a tips section
-    * One tip: if the field lines look very thick, move forward your current pulse in time. It is also helpful for current pulses to be smooth (i.e. no step or delta functions), as these discontinuous functions seem to mess up simulation math
+[Official documentation](https://rcfdtdpy.readthedocs.io/en/latest/index.html)
+
+[Anaconda.org package](https://anaconda.org/jr137/rcfdtdpy)
+
+[PyPI package](https://pypi.org/project/rcfdtdpy/)
