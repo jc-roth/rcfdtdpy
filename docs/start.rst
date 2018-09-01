@@ -20,7 +20,7 @@ define our simulation parameters.
 .. code::
 
     # Imports
-    from rcfdtdpy import Simulation, Current, NumericMaterial, vis
+    from rcfdtdpy import Simulation, Current, NumericMaterial
     import numpy as np
     from scipy.fftpack import fft, fftfreq
     from scipy.optimize import curve_fit
@@ -164,22 +164,10 @@ simulation is run.
     # Run simulation
     s.simulate()
 
-Now that the simulation has been run a timeseries of the simulation can be viewed via the :code:`vis.timeseries`
-function
-
-.. code::
-
-    # View timeseries
-    vis.timeseries(s, z*1e6, iunit='um')
-
-.. image:: images/start_timeseries.gif
-   :align: center
-   :scale: 50
-
-We also export the fields stored by the :code:`Simulation` object. The :code:`Simulation` object simulates two sets of
-electric and magnetic fields: a field that interacts with materials and one that does not. This provides every
-simulation with a reference set of field values. We export the stored field values as well as the electric
-electric susceptibility.
+Now that the simulation has been run we export the fields stored by the :code:`Simulation` object. The
+:code:`Simulation` object simulates two sets of electric and magnetic fields: a field that interacts with materials and
+one that does not. This provides every simulation with a reference set of field values. We export the stored field
+values as well as the electric electric susceptibility.
 
 .. code::
 
