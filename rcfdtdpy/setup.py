@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='rcfdtdpy',
-      version='0.2.5',
+      version='0.2.6',
       url='https://rcfdtdpy.readthedocs.io/en/latest/index.html',
       project_urls={
             'Documentation': 'https://rcfdtdpy.readthedocs.io/en/latest/index.html',
