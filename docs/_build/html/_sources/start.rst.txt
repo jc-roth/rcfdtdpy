@@ -3,7 +3,9 @@ Getting Started
 
 rcfdtdpy can be installed into an Anaconda 3.6 environment via
 
-`include conda install command`
+.. code::
+
+   conda install -c jr137 rcfdtdpy
 
 From here it is easy to start one's first simulation. Perhaps we want to simulate a terahertz spectroscopy conductivity
 measurement of a Drude metal using the :code:`NumericMaterial` class. We must first import the required libraries and
@@ -308,4 +310,5 @@ metal
    :align: center
    :scale: 50
 
-That's it! We have successfully simulated a Drude metal and examined how simulations are run with rcfdtdpy!
+That's it! We have successfully simulated a Drude metal and examined how simulations are run with rcfdtdpy! You can
+download the complete :download:`start.py<../examples/start.py>` file.
