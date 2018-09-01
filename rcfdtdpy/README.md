@@ -1,0 +1,1 @@
+This package provides a framework for performing RC-FDTD simulations aimed at investigating a particular problem: the simulation of materials that have rapidly evolving electric susceptibilities.

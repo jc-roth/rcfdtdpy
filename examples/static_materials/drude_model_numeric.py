@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from rcfdtdpy import Simulation as Sim
 from rcfdtdpy import Current
 from rcfdtdpy import NumericMaterial as Mat
-from rcfdtdpy import vis
+from examples import vis
 
 # ----------------------------
 # Define simulation parameters

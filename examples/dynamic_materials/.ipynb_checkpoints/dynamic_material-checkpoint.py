@@ -2,13 +2,10 @@
 from rcfdtdpy import Simulation as Sim
 from rcfdtdpy import Current as Current
 from rcfdtdpy import NumericMaterial as Mat
-from rcfdtdpy import vis
 import numpy as np
-from scipy.fftpack import fft, fftfreq, fftshift
 from scipy.special import erf
 from matplotlib import pyplot as plt
 from pathlib import Path
-from tqdm import tqdm
 from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
 import matplotlib.gridspec as gridspec

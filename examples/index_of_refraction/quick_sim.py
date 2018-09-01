@@ -1,7 +1,8 @@
 # Imports
-from rcfdtdpy import Sim, Current, Mat, vis
+from rcfdtdpy import Sim, Current, Mat
+from examples import vis
 import numpy as np
-from scipy.fftpack import fft, fftfreq, fftshift
+from scipy.fftpack import fft, fftfreq
 from matplotlib import pyplot as plt
 
 # ==================

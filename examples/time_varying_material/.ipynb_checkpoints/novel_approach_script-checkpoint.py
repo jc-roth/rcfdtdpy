@@ -1,11 +1,8 @@
 # Imports
-from rcfdtdpy import Sim, Current, Mat, vis
+from rcfdtdpy import Sim, Current, Mat
 import numpy as np
-from scipy.fftpack import fft, fftfreq, fftshift
-from scipy.special import erf
 from matplotlib import pyplot as plt
 from pathlib import Path
-from tqdm import tqdm
 from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
 import matplotlib.gridspec as gridspec

@@ -2,13 +2,10 @@
 from rcfdtdpy import Simulation as Sim
 from rcfdtdpy import Current as Current
 from rcfdtdpy import NumericMaterial as Mat
-from rcfdtdpy import vis
 import numpy as np
-from scipy.fftpack import fft, fftfreq, fftshift
 from scipy.special import erf
 from matplotlib import pyplot as plt
 from pathlib import Path
-from tqdm import tqdm
 from matplotlib.colors import BoundaryNorm
 from matplotlib.ticker import MaxNLocator
 import matplotlib.gridspec as gridspec
@@ -22,7 +19,7 @@ development = True
 # Setup simulation
 # ----------------
 # Constants
-c0 = 3e8 # um/ps
+c0 = 3e8 # m/s
 di = 0.03e-6 # 0.03 um
 dn = di/c0 # (0.03 um) / (3e8 m/s) = 0.1 fs
 epsilon0 = 8.854187e-12
@@ -106,13 +103,13 @@ if development:
 # Setup material susceptibility
 # -----------------------------
 # Define ground state chi
-a_g = np.complex64(1e16)
+a_g = np.complex64(10)
 gamma_g = np.complex64(1e12 * 2 * np.pi)
 def chi_g(t):
     return a_g*(1-np.exp(-2*gamma_g*t))
 
 # Define excited state chi
-a_e = np.complex64(1e16)
+a_e = np.complex64(1e12)
 gamma_e = np.complex64(1e10 * 2 * np.pi)
 def chi_e(t):
     return a_e*(1-np.exp(-2*gamma_e*t))
@@ -293,7 +290,7 @@ axc = cfig.add_subplot(spec[0,0], sharex=axs)
 axcc = cfig.add_subplot(spec[0,1])
 # Formatting
 axc.set_ylabel('$t$ [ps]', fontsize=12)
-axs.set_ylabel('$E_t(t)$', fontsize=12)
+axs.set_ylabel('$E_t(t)-E_t(0)$', fontsize=12)
 axs.set_xlabel('$\Delta t$ [fs]', fontsize=12)
 axc.tick_params(labelsize=10, bottom=False, labelbottom=False)
 axs.tick_params(labelsize=10)
@@ -320,7 +317,7 @@ norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
 # Plot colormesh and colorbar
 im = axc.pcolormesh(dtime_grid*1e15, time_grid*1e12, trans_ars_to_plot, cmap=cmap, norm=norm)
 cb = plt.colorbar(im, cax=axcc)
-cb.set_label('$E_t$', fontsize=12)
+cb.set_label(r'$\mathcal{R}\left(E_t\right)$', fontsize=12)
 
 # Plot lineout
 n200 = np.argmin(np.abs(np.subtract(t_to_plot, -200e-15)))
@@ -328,11 +325,11 @@ n100 = np.argmin(np.abs(np.subtract(t_to_plot, -100e-15)))
 zero = np.argmin(np.abs(np.subtract(t_to_plot, 0)))
 p100 = np.argmin(np.abs(np.subtract(t_to_plot, 100e-15)))
 p200 = np.argmin(np.abs(np.subtract(t_to_plot, 200e-15)))
-axs.plot(t_diffs*1e15, np.real(trans_ars.T)[n200], label='$\Delta t=-200$fs')
-axs.plot(t_diffs*1e15, np.real(trans_ars.T)[n100], label='$\Delta t=-100$fs')
-axs.plot(t_diffs*1e15, np.real(trans_ars.T)[zero], label='$\Delta t=0$')
-axs.plot(t_diffs*1e15, np.real(trans_ars.T)[p100], label='$\Delta t=100$fs')
-axs.plot(t_diffs*1e15, np.real(trans_ars.T)[p200], label='$\Delta t=200$fs')
+axs.plot(t_diffs*1e15, trans_ars_to_plot[n200], label='$\Delta t=-200$fs')
+axs.plot(t_diffs*1e15, trans_ars_to_plot[n100], label='$\Delta t=-100$fs')
+axs.plot(t_diffs*1e15, trans_ars_to_plot[zero], label='$\Delta t=0$')
+axs.plot(t_diffs*1e15, trans_ars_to_plot[p100], label='$\Delta t=100$fs')
+axs.plot(t_diffs*1e15, trans_ars_to_plot[p200], label='$\Delta t=200$fs')
 axs.legend(bbox_to_anchor=(1.01, 0.95), loc=2, borderaxespad=0., fontsize=8)
 
 # Final plotting things

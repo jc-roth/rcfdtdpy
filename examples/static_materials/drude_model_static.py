@@ -23,11 +23,11 @@
 
 # Imports
 from rcfdtdpy import Simulation as Sim
-from rcfdtdpy import Material as Mat
 from rcfdtdpy import StaticMaterial as StaticMat
-from rcfdtdpy import Current, vis
+from rcfdtdpy import Current
+from examples import vis
 import numpy as np
-from scipy.fftpack import fft, fftfreq, fftshift
+from scipy.fftpack import fft, fftfreq
 from scipy.optimize import curve_fit
 from matplotlib import pyplot as plt
 from pathlib import Path

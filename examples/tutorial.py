@@ -1,5 +1,6 @@
 # Imports
-from rcfdtdpy import Simulation, Current, NumericMaterial, vis
+from rcfdtdpy import Simulation, Current, NumericMaterial
+from examples import vis
 import numpy as np
 from scipy.fftpack import fft, fftfreq
 from scipy.optimize import curve_fit
@@ -77,7 +78,7 @@ s = Simulation(i0, i1, di, n0, n1, dn, epsilon0, mu0, 'absorbing', thzpulse, dru
 s.simulate()
 
 # View timeseries
-vis.timeseries(s, z*1e6, iunit='um')
+vis.timeseries(s, z * 1e6, iunit='um')
 
 # Export field values
 hfield, efield, hfield_ref, efield_ref = s.export_ifields()

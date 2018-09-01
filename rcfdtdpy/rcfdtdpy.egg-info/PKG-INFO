@@ -1,10 +1,13 @@
-Metadata-Version: 1.0
+Metadata-Version: 1.2
 Name: rcfdtdpy
-Version: 0.2
+Version: 0.2.4
 Summary: UNKNOWN
-Home-page: https://github.com/jcroth73/RC-FDTD
-Author: UNKNOWN
+Home-page: https://rcfdtdpy.readthedocs.io/en/latest/index.html
+Author: Jack Roth
 Author-email: jroth@slac.stanford.edu
 License: UNKNOWN
+Project-URL: Documentation, https://rcfdtdpy.readthedocs.io/en/latest/index.html
+Project-URL: Source, https://github.com/jroth137/rcfdtdpy
 Description: UNKNOWN
 Platform: UNKNOWN
+Requires-Python: >=3

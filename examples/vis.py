@@ -1,7 +1,7 @@
 """
 Used to quickly visualize results from the sim module, should not be used for production quality plots
 """
-from .sim import Simulation
+from rcfdtdpy.sim import Simulation
 
 import numpy as np
 from matplotlib import pyplot as plt

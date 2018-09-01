@@ -1,8 +1,10 @@
+README.md
+setup.py
 rcfdtdpy/__init__.py
 rcfdtdpy/sim.py
-rcfdtdpy/vis.py
 rcfdtdpy.egg-info/PKG-INFO
 rcfdtdpy.egg-info/SOURCES.txt
 rcfdtdpy.egg-info/dependency_links.txt
 rcfdtdpy.egg-info/not-zip-safe
+rcfdtdpy.egg-info/requires.txt
 rcfdtdpy.egg-info/top_level.txt
