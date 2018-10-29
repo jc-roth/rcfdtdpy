@@ -22,7 +22,7 @@ simulation as well as the computational complexity of the simulation. These are 
 
 Refer to the RC-FDTD Simulations page in order to learn more about how RC-FDTD simulations work and how simulation
 parameters might be tweaked to produce more accurate results. For a description of various simulations run with this
-package refer to `LINK FINAL DOE REPORT PDF`.
+package refer to :download:`this report<files/report.pdf>`.
 
 .. toctree::
    :maxdepth: 2
