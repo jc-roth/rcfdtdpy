@@ -24,7 +24,7 @@ copyright = '2018, Jack Roth'
 author = 'Jack Roth'
 
 # The short X.Y version
-version = ''
+version = '0.2.6'
 # The full version, including alpha/beta/rc tags
 release = ''
 

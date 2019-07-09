@@ -77,3 +77,11 @@ step is calculated at the initialization of the :code:`NumericMaterial`.
 
 .. autoclass:: rcfdtdpy.sim.NumericMaterial
    :members:
+
+TwoStateMaterial
+_______________
+
+The :code:`TwoStateMaterial` class is possibly unstable. Its use is not recommended.
+
+.. autoclass:: rcfdtdpy.sim.TwoStateMaterial
+   :members:
