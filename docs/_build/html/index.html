@@ -17,33 +17,36 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Getting Started" href="start.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -154,16 +157,16 @@ simulation of materials that have rapidly evolving electric susceptibilities.</p
 <p>The scope of this problem is such that a few assumptions have been made that simplify the implementation of the
 simulation as well as the computational complexity of the simulation. These are as follows</p>
 <ul class="simple">
-<li>All materials are linear dielectrics such that <span class="math notranslate nohighlight">\(P(z,\omega)=\epsilon_0\chi E(z,\omega)\)</span>.</li>
-<li>The electric and magnetic fields are plane waves propagating along spatial coordinate <span class="math notranslate nohighlight">\(z\)</span>.</li>
-<li>Materials are uniform along spatial coordinates <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>.</li>
-<li>The electric and magnetic fields are zero for all time prior to the start of the simulation (<span class="math notranslate nohighlight">\(E(z,t)=0\)</span> for all <span class="math notranslate nohighlight">\(t&lt;0\)</span>).</li>
-<li>The electric field <span class="math notranslate nohighlight">\(E(z,t)\)</span> is approximately constant over all time intervals of duration <span class="math notranslate nohighlight">\(\Delta t\)</span>.</li>
-<li>The magnetization of all materials is zero (<span class="math notranslate nohighlight">\(\vec{M}=\vec{0}\)</span>).</li>
+<li><p>All materials are linear dielectrics such that <span class="math notranslate nohighlight">\(P(z,\omega)=\epsilon_0\chi E(z,\omega)\)</span>.</p></li>
+<li><p>The electric and magnetic fields are plane waves propagating along spatial coordinate <span class="math notranslate nohighlight">\(z\)</span>.</p></li>
+<li><p>Materials are uniform along spatial coordinates <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>.</p></li>
+<li><p>The electric and magnetic fields are zero for all time prior to the start of the simulation (<span class="math notranslate nohighlight">\(E(z,t)=0\)</span> for all <span class="math notranslate nohighlight">\(t&lt;0\)</span>).</p></li>
+<li><p>The electric field <span class="math notranslate nohighlight">\(E(z,t)\)</span> is approximately constant over all time intervals of duration <span class="math notranslate nohighlight">\(\Delta t\)</span>.</p></li>
+<li><p>The magnetization of all materials is zero (<span class="math notranslate nohighlight">\(\vec{M}=\vec{0}\)</span>).</p></li>
 </ul>
 <p>Refer to the RC-FDTD Simulations page in order to learn more about how RC-FDTD simulations work and how simulation
 parameters might be tweaked to produce more accurate results. For a description of various simulations run with this
-package refer to <a class="reference download internal" href="_downloads/report.pdf" download=""><code class="xref download docutils literal notranslate"><span class="pre">this</span> <span class="pre">report</span></code></a>.</p>
+package refer to <a class="reference download internal" download="" href="_downloads/2e442b2463d4ab3e8aac3eac909e5aa3/report.pdf"><code class="xref download docutils literal notranslate"><span class="pre">this</span> <span class="pre">report</span></code></a>.</p>
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
@@ -181,9 +184,9 @@ package refer to <a class="reference download internal" href="_downloads/report.
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
-<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
-<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
 </div>
 
@@ -222,36 +225,16 @@ package refer to <a class="reference download internal" href="_downloads/report.
   
 
 
-  
-
-    
-    
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'./',
-              VERSION:'',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

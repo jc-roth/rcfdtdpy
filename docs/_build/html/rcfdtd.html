@@ -17,34 +17,37 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Reference" href="reference.html" />
     <link rel="prev" title="Getting Started" href="start.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -155,12 +158,12 @@ in time using a set of update equations. Within the simulation, space is discret
 <span class="math notranslate nohighlight">\(\Delta z\)</span> and time into intervals of length <span class="math notranslate nohighlight">\(\Delta t\)</span>. A specific point in time and space is accessed via
 <span class="math notranslate nohighlight">\(z=i\Delta z\)</span> and <span class="math notranslate nohighlight">\(t=n\Delta t\)</span>. The simulation relies on a number of assumptions:</p>
 <ul class="simple">
-<li>All materials are linear dielectrics such that <span class="math notranslate nohighlight">\(P(z,\omega)=\epsilon_0\chi E(z,\omega)\)</span>.</li>
-<li>The electric and magnetic fields are plane waves propagating along spatial coordinate <span class="math notranslate nohighlight">\(z\)</span>.</li>
-<li>Materials are uniform along spatial coordinates <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>.</li>
-<li>The electric and magnetic fields are zero for all time prior to the start of the simulation (<span class="math notranslate nohighlight">\(E(z,t)=0\)</span> for all <span class="math notranslate nohighlight">\(t&lt;0\)</span>).</li>
-<li>The electric field <span class="math notranslate nohighlight">\(E(z,t)\)</span> is approximately constant over all time intervals of duration <span class="math notranslate nohighlight">\(\Delta t\)</span>.</li>
-<li>The magnetization of all materials is zero (<span class="math notranslate nohighlight">\(\vec{M}=\vec{0}\)</span>).</li>
+<li><p>All materials are linear dielectrics such that <span class="math notranslate nohighlight">\(P(z,\omega)=\epsilon_0\chi E(z,\omega)\)</span>.</p></li>
+<li><p>The electric and magnetic fields are plane waves propagating along spatial coordinate <span class="math notranslate nohighlight">\(z\)</span>.</p></li>
+<li><p>Materials are uniform along spatial coordinates <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span>.</p></li>
+<li><p>The electric and magnetic fields are zero for all time prior to the start of the simulation (<span class="math notranslate nohighlight">\(E(z,t)=0\)</span> for all <span class="math notranslate nohighlight">\(t&lt;0\)</span>).</p></li>
+<li><p>The electric field <span class="math notranslate nohighlight">\(E(z,t)\)</span> is approximately constant over all time intervals of duration <span class="math notranslate nohighlight">\(\Delta t\)</span>.</p></li>
+<li><p>The magnetization of all materials is zero (<span class="math notranslate nohighlight">\(\vec{M}=\vec{0}\)</span>).</p></li>
 </ul>
 <p>These assumptions allow the derivation of the discretized displacement field <span class="math notranslate nohighlight">\(D^{i,n}\)</span>. The displacement field
 <span class="math notranslate nohighlight">\(\vec{D}(\vec{r},\omega)\)</span>, with the requirement that simulated materials are linear dielectrics such that
@@ -274,7 +277,7 @@ simulation.</p>
         <a href="reference.html" class="btn btn-neutral float-right" title="Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="start.html" class="btn btn-neutral" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="start.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -300,36 +303,16 @@ simulation.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript">
-          var DOCUMENTATION_OPTIONS = {
-              URL_ROOT:'./',
-              VERSION:'',
-              LANGUAGE:'None',
-              COLLAPSE_INDEX:false,
-              FILE_SUFFIX:'.html',
-              HAS_SOURCE:  true,
-              SOURCELINK_SUFFIX: '.txt'
-          };
-      </script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>
